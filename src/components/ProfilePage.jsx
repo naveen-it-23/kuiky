@@ -60,7 +60,7 @@ export const ProfilePage = () => {
       if (profile.city) setLocation(profile.city);
     } catch (err) {
       console.warn('[ProfilePage] Failed to fetch /api/profile/:', err);
-      if (err.message && (err.message.includes('8012') || err.message.includes('Failed to fetch') || err.status === 502 || err.status === 504)) {
+      if (err.message && (err.message.includes('8012') || err.message.includes('Failed to fetch') || err.message.includes('Load failed') || err.status === 502 || err.status === 504)) {
         setApiSyncStatus('offline');
         setApiMessage('Backend server offline (run: python manage.py runserver 8000)');
       } else {
