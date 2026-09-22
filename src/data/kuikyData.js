@@ -7,54 +7,117 @@ export const locationsList = [
   { id: 'coimbatore', name: 'Coimbatore', nameTa: 'கோயம்புத்தூர்' }
 ];
 
+export const popularRideLocations = [
+  { id: 'loc-1', name: 'Erode Bus Stand', nameTa: 'ஈரோடு பேருந்து நிலையம்', pos: { x: 52, y: 28 }, zone: 'Central' },
+  { id: 'loc-2', name: 'Erode Railway Junction', nameTa: 'ஈரோடு ரயில் நிலையம்', pos: { x: 56, y: 64 }, zone: 'South' },
+  { id: 'loc-3', name: 'Collector Office & GH', nameTa: 'ஆட்சியர் அலுவலகம் & அரசு மருத்துவமனை', pos: { x: 44, y: 56 }, zone: 'South-West' },
+  { id: 'loc-4', name: 'Perundurai Road Corner', nameTa: 'பெருந்துறை ரோடு கார்னர்', pos: { x: 34, y: 44 }, zone: 'West' },
+  { id: 'loc-5', name: 'Brough Road Market', nameTa: 'பிரா ரோடு மார்க்கெட்', pos: { x: 51, y: 42 }, zone: 'Central' },
+  { id: 'loc-6', name: 'Veerappanchatiram Circle', nameTa: 'வீரப்பஞ்சத்திரம் வட்டம்', pos: { x: 42, y: 32 }, zone: 'North' }
+];
+
 export const autoDrivers = [
   {
     id: 'auto-1',
     name: 'Ramesh Kumar',
     nameTa: 'ரமேஷ் குமார்',
-    stand: 'Gobi Bus Stand Auto Stand',
-    standTa: 'கோபி பேருந்து நிலையம் ஆட்டோ சங்கம்',
+    stand: 'Erode Bus Stand Stand #2',
+    standTa: 'ஈரோடு பேருந்து நிலையம் ஆட்டோ சங்கம் #2',
     phone: '+91 94438 12345',
     vehicleNo: 'TN 36 AX 4582',
     type: 'Passenger Auto (3 Seater)',
+    typeKey: 'standard',
     rating: 4.9,
+    trips: 1420,
     experience: '8 Years Exp',
     status: 'Available Now',
     baseFare: 35,
     perKm: 15,
-    eta: '3 mins away'
+    eta: '2 mins away',
+    mapPos: { x: 54, y: 32 },
+    bearing: 45,
+    routeWaypoints: [
+      { x: 54, y: 32 },
+      { x: 53, y: 36 },
+      { x: 52, y: 39 },
+      { x: 51, y: 42 }
+    ]
   },
   {
     id: 'auto-2',
     name: 'Senthil Nathan',
     nameTa: 'செந்தில் நாதன்',
-    stand: 'Gobi Market Auto Stand',
-    standTa: 'கோபி மார்க்கெட் ஆட்டோ சங்கம்',
+    stand: 'Brough Road Eco Stand',
+    standTa: 'பிரா ரோடு எலக்ட்ரிக் ஆட்டோ சங்கம்',
     phone: '+91 98427 67890',
     vehicleNo: 'TN 36 BY 1120',
     type: 'Electric Auto (Eco 4 Seater)',
+    typeKey: 'electric',
     rating: 4.8,
+    trips: 980,
     experience: '5 Years Exp',
     status: 'Available Now',
     baseFare: 30,
     perKm: 12,
-    eta: '5 mins away'
+    eta: '4 mins away',
+    mapPos: { x: 47, y: 38 },
+    bearing: 120,
+    routeWaypoints: [
+      { x: 47, y: 38 },
+      { x: 49, y: 40 },
+      { x: 51, y: 42 }
+    ]
   },
   {
     id: 'auto-3',
     name: 'Murugan K',
     nameTa: 'முருகன் K',
-    stand: 'Erode Road Corner Stand',
-    standTa: 'ஈரோடு ரோடு கார்னர் சங்கம்',
+    stand: 'Erode Railway Junction Stand',
+    standTa: 'ஈரோடு ரயில் நிலையம் ஆட்டோ சங்கம்',
     phone: '+91 97880 54321',
     vehicleNo: 'TN 36 CZ 8901',
-    type: 'Cargo & Parcel Auto',
+    type: 'Cargo & Parcel Auto (500kg)',
+    typeKey: 'cargo',
     rating: 4.7,
+    trips: 2150,
     experience: '12 Years Exp',
     status: 'Available Now',
     baseFare: 50,
     perKm: 18,
-    eta: '7 mins away'
+    eta: '6 mins away',
+    mapPos: { x: 58, y: 60 },
+    bearing: 280,
+    routeWaypoints: [
+      { x: 58, y: 60 },
+      { x: 55, y: 52 },
+      { x: 52, y: 46 },
+      { x: 51, y: 42 }
+    ]
+  },
+  {
+    id: 'auto-4',
+    name: 'Vigneshwaran P',
+    nameTa: 'விக்னேஸ்வரன் P',
+    stand: 'Perundurai Road Express Stand',
+    standTa: 'பெருந்துறை ரோடு எக்ஸ்பிரஸ் சங்கம்',
+    phone: '+91 98941 23456',
+    vehicleNo: 'TN 36 EA 6742',
+    type: 'Passenger Auto (3 Seater)',
+    typeKey: 'standard',
+    rating: 4.9,
+    trips: 870,
+    experience: '6 Years Exp',
+    status: 'Available Now',
+    baseFare: 35,
+    perKm: 15,
+    eta: '3 mins away',
+    mapPos: { x: 38, y: 42 },
+    bearing: 90,
+    routeWaypoints: [
+      { x: 38, y: 42 },
+      { x: 44, y: 42 },
+      { x: 51, y: 42 }
+    ]
   }
 ];
 
@@ -95,6 +158,245 @@ export const ambulanceServices = [
   }
 ];
 
+export const ambulancesByCity = {
+  erode: [
+    {
+      id: 'amb-erode-108',
+      nameEn: 'Govt Headquarters Hospital 108 ICU Unit',
+      nameTa: 'அரசு தலைமை மருத்துவமனை 108 ஆம்புலன்ஸ்',
+      hospitalEn: 'Erode Govt Headquarters Hospital & Trauma Center',
+      hospitalTa: 'ஈரோடு அரசு தலைமை மருத்துவமனை & ட்ராமா சென்டர்',
+      typeEn: 'Advanced ICU (Ventilator + Oxygen + Critical Care)',
+      typeTa: 'அட்வான்ஸ்டு ICU (வென்டிலேட்டர் + ஆக்சிஜன் + முதலுதவி)',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '3-5 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-erode-sudha',
+      nameEn: 'Sudha Critical Care Emergency Ambulance',
+      nameTa: 'சுதா கிரிட்டிகல் கேர் அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Sudha Multi-Speciality, Perundurai Road, Erode',
+      hospitalTa: 'சுதா மல்டி ஸ்பெஷாலிட்டி, பெருந்துறை ரோடு, ஈரோடு',
+      typeEn: 'Cardiac Life Support & Mobile ICU',
+      typeTa: 'கார்டியாக் தீவிர சிகிச்சை & நடமாடும் ICU',
+      phone: '+919788011223',
+      directPhone: '+919788011223',
+      eta: '4-6 mins',
+      rating: '4.9',
+      isFree: false,
+      freeBadgeEn: '24/7 Standby • Rapid Dispatch',
+      freeBadgeTa: '24/7 தயார் • உடனடி அனுப்புதல்'
+    },
+    {
+      id: 'amb-erode-lotus',
+      nameEn: 'Lotus Trauma & Emergency Care Ambulance',
+      nameTa: 'லோட்டஸ் அவசர விபத்து சிகிச்சை ஆம்புலன்ஸ்',
+      hospitalEn: 'Lotus Hospital, Poondurai Road, Erode',
+      hospitalTa: 'லோட்டஸ் மருத்துவமனை, பூந்துறை ரோடு, ஈரோடு',
+      typeEn: 'Basic Life Support (BLS) & Oxygen Unit',
+      typeTa: 'BLS ஸ்ட்ரெச்சர் & ஆக்சிஜன் சிலிண்டர் வசதி',
+      phone: '+919443399887',
+      directPhone: '+919443399887',
+      eta: '5-7 mins',
+      rating: '4.8',
+      isFree: false,
+      freeBadgeEn: '24/7 Emergency Line',
+      freeBadgeTa: '24 மணி நேர சேவை'
+    }
+  ],
+  gobi: [
+    {
+      id: 'amb-gobi-108',
+      nameEn: 'Gobi Govt Headquarters Hospital 108 Unit',
+      nameTa: 'கோபி அரசு தலைமை மருத்துவமனை 108 ஆம்புலன்ஸ்',
+      hospitalEn: 'Gobi Govt Hospital & Emergency Trauma Ward',
+      hospitalTa: 'கோபி அரசு தலைமை மருத்துவமனை, மருத்துவமனை ரோடு',
+      typeEn: 'Advanced ICU & Trauma Support (Oxygen + Ventilator)',
+      typeTa: 'அட்வான்ஸ்டு ICU & விபத்து சிகிச்சை (ஆக்சிஜன் + வென்டிலேட்டர்)',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '3-5 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-gobi-srijayam',
+      nameEn: 'Sri Jayam LifeCare Ambulance Service',
+      nameTa: 'ஸ்ரீ ஜெயம் லைஃப்கேர் அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Main Bazar & Sathy Road Network, Gobi',
+      hospitalTa: 'மெயின் பஜார் & சத்தி ரோடு மருத்துவ நெட்வொர்க், கோபி',
+      typeEn: 'Cardiac Critical Care & Patient Transfer',
+      typeTa: 'கார்டியாக் தீவிர சிகிச்சை & நோயாளி மாற்று வசதி',
+      phone: '+919443399887',
+      directPhone: '+919443399887',
+      eta: '5-7 mins',
+      rating: '4.9',
+      isFree: false,
+      freeBadgeEn: '24/7 Standby • Rapid Response',
+      freeBadgeTa: '24/7 தயார் • உடனடி வருகை'
+    },
+    {
+      id: 'amb-gobi-kurinji',
+      nameEn: 'Kurinji Emergency Medical Unit',
+      nameTa: 'குறிஞ்சி அவசர மருத்துவ ஆம்புலன்ஸ்',
+      hospitalEn: 'Sathyamangalam Main Road, Gobi',
+      hospitalTa: 'சத்தியமங்கலம் மெயின் ரோடு, கோபி',
+      typeEn: 'BLS Stretcher & Oxygen Ambulance',
+      typeTa: 'BLS சக்கர ஸ்ட்ரெச்சர் & ஆக்சிஜன் வசதி',
+      phone: '+919788011223',
+      directPhone: '+919788011223',
+      eta: '6-8 mins',
+      rating: '4.8',
+      isFree: false,
+      freeBadgeEn: '24/7 Available',
+      freeBadgeTa: '24 மணி நேர சேவை'
+    }
+  ],
+  perundurai: [
+    {
+      id: 'amb-perundurai-108',
+      nameEn: 'IRT Govt Medical College 108 Trauma Unit',
+      nameTa: 'IRT அரசு மருத்துவக் கல்லூரி 108 அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Perundurai Medical College & NH-544 Trauma Center',
+      hospitalTa: 'பெருந்துறை அரசு மருத்துவக் கல்லூரி & NH-544 ஹைவே ட்ராமா',
+      typeEn: 'Advanced Highway Trauma ICU & Ventilator',
+      typeTa: 'அதிநவீன ICU & அதிவிரைவு நெடுஞ்சாலை விபத்து சிகிச்சை',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '3-5 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-perundurai-gh',
+      nameEn: 'Perundurai GH Emergency Standby Unit',
+      nameTa: 'பெருந்துறை அரசு மருத்துவமனை அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Perundurai Station Road GH',
+      hospitalTa: 'பெருந்துறை ரயில்வே ஸ்டேஷன் ரோடு GH',
+      typeEn: 'Oxygen Equipped Emergency Unit',
+      typeTa: 'ஆக்சிஜன் வசதி கொண்ட அவசர சிகிச்சை வாகனம்',
+      phone: '+919443399887',
+      directPhone: '+919443399887',
+      eta: '5-7 mins',
+      rating: '4.9',
+      isFree: false,
+      freeBadgeEn: 'Rapid Response',
+      freeBadgeTa: 'உடனடி வருகை'
+    }
+  ],
+  bhavani: [
+    {
+      id: 'amb-bhavani-108',
+      nameEn: 'Bhavani Govt Hospital 108 Emergency Unit',
+      nameTa: 'பவானி அரசு மருத்துவமனை 108 அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Bhavani Govt Hospital, Cauvery Road',
+      hospitalTa: 'பவானி அரசு மருத்துவமனை, காவேரி ரோடு',
+      typeEn: 'Advanced ICU & Critical Support (Oxygen + Ventilator)',
+      typeTa: 'அட்வான்ஸ்டு ICU & விபத்து சிகிச்சை (ஆக்சிஜன் + வென்டிலேட்டர்)',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '3-5 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-bhavani-highway',
+      nameEn: 'Komarapalayam & Bhavani Bypass Ambulance',
+      nameTa: 'குமாரபாளையம் & பவானி பைபாஸ் அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Bhavani New Bridge Bypass Trauma Network',
+      hospitalTa: 'பவானி புதிய பாலம் பைபாஸ் ட்ராமா நெட்வொர்க்',
+      typeEn: 'Highway Rapid Trauma & Stretcher Unit',
+      typeTa: 'நெடுஞ்சாலை அதிவிரைவு விபத்து சிகிச்சை வாகனம்',
+      phone: '+919443399887',
+      directPhone: '+919443399887',
+      eta: '5-7 mins',
+      rating: '4.8',
+      isFree: false,
+      freeBadgeEn: '24/7 Highway Standby',
+      freeBadgeTa: '24/7 நெடுஞ்சாலை சேவை'
+    }
+  ],
+  sathyamangalam: [
+    {
+      id: 'amb-sathy-108',
+      nameEn: 'Sathyamangalam Govt HQ Hospital 108 Unit',
+      nameTa: 'சத்தியமங்கலம் அரசு தலைமை மருத்துவமனை 108',
+      hospitalEn: 'Sathy Govt Hospital, Mysore Trunk Road',
+      hospitalTa: 'சத்தி அரசு மருத்துவமனை, மைசூர் ட்ரங்க் ரோடு',
+      typeEn: 'Advanced ICU & Ghat Road Emergency Support',
+      typeTa: 'அட்வான்ஸ்டு ICU & மலைப்பாதை அவசர சிகிச்சை',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '4-6 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-sathy-bannari',
+      nameEn: 'Bannari Highway Trauma Response Unit',
+      nameTa: 'பண்ணாரி நெடுஞ்சாலை அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Bannari Checkpost & National Highway',
+      hospitalTa: 'பண்ணாரி செக்போஸ்ட் & தேசிய நெடுஞ்சாலை',
+      typeEn: 'Oxygen Support & Emergency Stretcher',
+      typeTa: 'ஆக்சிஜன் சிலிண்டர் & அவசர ஸ்ட்ரெச்சர்',
+      phone: '+919788011223',
+      directPhone: '+919788011223',
+      eta: '6-8 mins',
+      rating: '4.8',
+      isFree: false,
+      freeBadgeEn: '24/7 Standby',
+      freeBadgeTa: '24/7 தயார்'
+    }
+  ],
+  coimbatore: [
+    {
+      id: 'amb-cbe-108',
+      nameEn: 'Coimbatore CMCH Govt 108 Trauma Unit',
+      nameTa: 'கோவை அரசு மருத்துவக் கல்லூரி 108 ஆம்புலன்ஸ்',
+      hospitalEn: 'Coimbatore Medical College Hospital (CMCH)',
+      hospitalTa: 'கோவை அரசு மருத்துவக் கல்லூரி மருத்துவமனை, திருச்சி ரோடு',
+      typeEn: 'Advanced Cardiac ICU & Level-1 Trauma Care',
+      typeTa: 'அட்வான்ஸ்டு கார்டியாக் ICU & அதிதீவிர சிகிச்சை',
+      phone: '108',
+      directPhone: '+919876543210',
+      eta: '3-5 mins',
+      rating: '5.0',
+      isFree: true,
+      freeBadgeEn: '100% FREE GOVT 108 (24/7)',
+      freeBadgeTa: '100% இலவச அரசு சேவை 24/7'
+    },
+    {
+      id: 'amb-cbe-ganga',
+      nameEn: 'Ganga Hospital Emergency Trauma Ambulance',
+      nameTa: 'கங்கா மருத்துவமனை அவசர ஆம்புலன்ஸ்',
+      hospitalEn: 'Ganga Hospital, Mettupalayam Road, Coimbatore',
+      hospitalTa: 'கங்கா மருத்துவமனை, மேட்டுப்பாளையம் ரோடு',
+      typeEn: 'Ortho & Critical Trauma Mobile ICU',
+      typeTa: 'ஆர்த்தோ & விபத்து தீவிர சிகிச்சை வாகனம்',
+      phone: '+919876543210',
+      directPhone: '+919876543210',
+      eta: '4-6 mins',
+      rating: '4.9',
+      isFree: false,
+      freeBadgeEn: '24/7 Priority Line',
+      freeBadgeTa: '24 மணி நேர சேவை'
+    }
+  ]
+};
+
 export const punctureShops = [
   {
     id: 'punc-1',
@@ -104,13 +406,16 @@ export const punctureShops = [
     ownerTa: 'கார்த்திக் மெக்கானிக்',
     phone: '+91 98422 33445',
     whatsapp: '919842233445',
-    address: 'Market Street, Gobi Main Road',
-    addressTa: 'மார்க்கெட் வீதி, கோபி மெயின் ரோடு',
+    address: 'Brough Road, Near Clock Tower, Erode',
+    addressTa: 'பிரா ரோடு, கடிகார கோபுரம் அருகில், ஈரோடு',
     distance: '0.4 km away',
+    eta: '5-8 mins dispatch',
     services: ['2-Wheeler Puncture', '4-Wheeler Tubeless Repair', 'Mobile On-Site Breakdown Assistance', 'Air Pressure & Nitrogen'],
     status: 'Open 24/7',
     mobileMechanic: true,
-    rating: 4.9
+    rating: 4.9,
+    mapPos: { x: 49, y: 39 },
+    priceEstimate: '₹60 - ₹120'
   },
   {
     id: 'punc-2',
@@ -120,13 +425,16 @@ export const punctureShops = [
     ownerTa: 'சரவணன் M',
     phone: '+91 94435 66778',
     whatsapp: '919443566778',
-    address: 'Sathy Road Junction, Gobi',
-    addressTa: 'சத்தி ரோடு ஜங்ஷன், கோபி',
-    distance: '1.2 km away',
+    address: 'Sathy Road, Near Bus Stand, Erode',
+    addressTa: 'சத்தி ரோடு, பேருந்து நிலையம் அருகில், ஈரோடு',
+    distance: '0.9 km away',
+    eta: '10-12 mins dispatch',
     services: ['Heavy Vehicle Tyre Patch', 'Tubeless Repair', 'Alloy Wheel Alignment', 'New Tyre Sales'],
     status: 'Open Now (6 AM - 10 PM)',
     mobileMechanic: true,
-    rating: 4.8
+    rating: 4.8,
+    mapPos: { x: 55, y: 26 },
+    priceEstimate: '₹80 - ₹150'
   },
   {
     id: 'punc-3',
@@ -136,13 +444,54 @@ export const punctureShops = [
     ownerTa: 'குயிக்கி அங்கீகரிக்கப்பட்ட மெக்கானிக் குழு',
     phone: '+91 90420 11223',
     whatsapp: '919042011223',
-    address: 'Covers 15 km Radius around Gobi & Erode',
-    addressTa: 'கோபி & ஈரோடு சுற்றி 15 கி.மீ பரப்பளவு',
-    distance: 'Immediate Mobile Bike Dispatch',
+    address: 'Central Mobile Bike Squad (15 km Radius)',
+    addressTa: 'மத்திய மொபைல் பைக் குழு (15 கி.மீ பரப்பளவு)',
+    distance: '0.6 km away',
+    eta: 'Immediate Mobile Bike Dispatch',
     services: ['Instant Roadside Puncture Patch', 'Battery Jumpstart', 'Emergency Fuel Delivery', 'Towing Support'],
     status: 'Open 24/7',
     mobileMechanic: true,
-    rating: 5.0
+    rating: 5.0,
+    mapPos: { x: 45, y: 46 },
+    priceEstimate: '₹100 visit + patch'
+  },
+  {
+    id: 'punc-4',
+    name: 'Balamurugan Tyre & Vulcanizing',
+    nameTa: 'பாலமுருகன் டயர் & வல்கனைசிங்',
+    owner: 'Murugan P',
+    ownerTa: 'முருகன் P',
+    phone: '+91 98944 88776',
+    whatsapp: '919894488776',
+    address: 'Perundurai Road, Near Collectorate, Erode',
+    addressTa: 'பெருந்துறை ரோடு, ஆட்சியர் அலுவலகம் அருகில், ஈரோடு',
+    distance: '1.4 km away',
+    eta: '12-15 mins dispatch',
+    services: ['Tubeless Plug Patch', 'Nitrogen Filling', 'Rim Inspection', 'Emergency Tube Replacement'],
+    status: 'Open Now (7 AM - 11 PM)',
+    mobileMechanic: true,
+    rating: 4.7,
+    mapPos: { x: 37, y: 52 },
+    priceEstimate: '₹60 - ₹130'
+  },
+  {
+    id: 'punc-5',
+    name: 'Royal Puncture & Battery Works',
+    nameTa: 'ராயல் பஞ்சர் & பேட்டரி ஒர்க்ஸ்',
+    owner: 'Syed Ibrahim',
+    ownerTa: 'சையத் இப்ராஹிம்',
+    phone: '+91 97871 55667',
+    whatsapp: '919787155667',
+    address: 'Railway Station Road, Erode Junction',
+    addressTa: 'ரயில் நிலையம் ரோடு, ஈரோடு ஜங்ஷன்',
+    distance: '1.8 km away',
+    eta: '15 mins dispatch',
+    services: ['2-Wheeler Puncture', 'Car Tyre Repair', '12V Battery Jumpstart', 'Spare Tubes'],
+    status: 'Open 24/7',
+    mobileMechanic: true,
+    rating: 4.9,
+    mapPos: { x: 62, y: 58 },
+    priceEstimate: '₹70 - ₹140'
   }
 ];
 

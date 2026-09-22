@@ -1,102 +1,143 @@
 import React from 'react';
+import { Star } from 'lucide-react';
+import avatarArun from '../assets/avatar_arun.png';
+import avatarPriya from '../assets/avatar_priya.png';
+import avatarVignesh from '../assets/avatar_vignesh.png';
 
-const testimonialsList = [
+const REVIEWS = [
   {
-    id: 't-1',
-    quote: '“Booked an auto in minutes. Super easy and fast!”',
-    name: 'Ramesh Kumar',
-    role: 'Local Resident',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
+    quote: "'Kuiky helped us get an ambulance so quickly during an emergency. Truly lifesaving!'",
+    name: 'Arun Kumar',
+    city: 'Erode',
+    avatar: avatarArun
   },
   {
-    id: 't-2',
-    quote: '“Ambulance service was quick and very helpful. Thank you Kuiky!”',
-    name: 'Priya S',
-    role: 'Gobi',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80'
+    quote: '"Very convenient auto booking. Drivers are polite and on time."',
+    name: 'Priya R',
+    city: 'Perundurai',
+    avatar: avatarPriya
   },
   {
-    id: 't-3',
-    quote: '“Found a puncture shop nearby and got quick service.”',
-    name: 'Arun V',
-    role: 'Traveller',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80'
+    quote: '"Got puncture service within 15 minutes. Excellent support!"',
+    name: 'Vignesh S',
+    city: 'Erode',
+    avatar: avatarVignesh
   }
 ];
 
 export const Testimonials = () => {
   return (
-    <section style={{ padding: '3.5rem 0 4.5rem', backgroundColor: '#ffffff' }}>
-      <div className="container" style={{
-        display: 'grid',
-        gridTemplateColumns: '0.8fr 1.2fr',
-        gap: '2.5rem',
-        alignItems: 'center'
-      }}>
-        {/* Left Column: Heading Info */}
-        <div>
-          <span className="section-tag">WHAT OUR USERS SAY</span>
-          <h2 className="section-title" style={{ fontSize: '1.9rem', maxWidth: '340px' }}>
-            Trusted by Thousands in Our Community
+    <section style={{ padding: '3.75rem 0 4.5rem', backgroundColor: '#ffffff' }}>
+      <div className="container">
+        {/* Section Header */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div
+            style={{
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              color: '#64748b',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '0.35rem'
+            }}
+          >
+            WHAT PEOPLE SAY
+          </div>
+          <h2
+            style={{
+              fontSize: 'clamp(1.8rem, 3.2vw, 2.35rem)',
+              fontWeight: 800,
+              color: '#0f172a',
+              letterSpacing: '-0.025em',
+              margin: 0
+            }}
+          >
+            Trusted by Thousands
           </h2>
-          <p className="section-desc" style={{ fontSize: '0.88rem', marginTop: '0.5rem' }}>
-            Real people. Real experiences. Here's what they say about Kuiky.
-          </p>
         </div>
 
-        {/* Right Column: 3 Cards in a row */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1rem'
-        }}>
-          {testimonialsList.map((item) => (
+        {/* 3 Review Cards Grid */}
+        <div
+          className="testimonials-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '1.75rem'
+          }}
+        >
+          {REVIEWS.map((rev, idx) => (
             <div
-              key={item.id}
+              key={idx}
               style={{
                 backgroundColor: '#ffffff',
-                borderRadius: '1rem',
-                border: '1px solid #f1f5f9',
-                padding: '1.25rem 1rem',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.03)',
+                borderRadius: '18px',
+                border: '1.5px solid #f1f5f9',
+                padding: '1.65rem 1.5rem',
+                boxShadow: '0 4px 18px rgba(0, 0, 0, 0.04)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                height: '100%',
-                transition: 'all 0.2s ease'
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease'
               }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-3px)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.08)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 18px rgba(0, 0, 0, 0.04)';
+              }}
             >
-              <p style={{
-                fontSize: '0.82rem',
-                color: '#334155',
-                lineHeight: 1.5,
-                marginBottom: '1.25rem',
-                fontStyle: 'normal'
-              }}>
-                {item.quote}
+              {/* Review Quote */}
+              <p
+                style={{
+                  fontSize: '0.92rem',
+                  lineHeight: 1.6,
+                  color: '#1f2937',
+                  margin: '0 0 1.5rem 0',
+                  fontWeight: 500
+                }}
+              >
+                {rev.quote}
               </p>
 
-              {/* User Avatar + Name + Subtitle */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <img
-                  src={item.avatar}
-                  alt={item.name}
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '50%',
-                    objectFit: 'cover'
-                  }}
-                />
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a' }}>
-                    {item.name}
+              {/* Author Info + 5 Stars Row */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem'
+                }}
+              >
+                {/* Author Avatar + Name + City */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <img
+                    src={rev.avatar}
+                    alt={rev.name}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      flexShrink: 0
+                    }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#0f172a' }}>
+                      {rev.name}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                      {rev.city}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
-                    {item.role}
-                  </div>
+                </div>
+
+                {/* 5 Yellow Stars */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.15rem' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={15} fill="#f59e0b" color="#f59e0b" />
+                  ))}
                 </div>
               </div>
             </div>
@@ -106,3 +147,5 @@ export const Testimonials = () => {
     </section>
   );
 };
+
+export default Testimonials;

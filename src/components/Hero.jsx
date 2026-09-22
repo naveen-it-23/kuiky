@@ -1,84 +1,64 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Search, ArrowRight, Wrench, ChevronLeft, ChevronRight } from 'lucide-react';
-import heroAutoBanner from '../assets/hero_auto_banner.jpg';
-import heroAmbBanner from '../assets/hero_ambulance_banner.jpg';
-import heroPuncBanner from '../assets/hero_banner_exact.jpg';
+import heroExactDitto from '../assets/hero_exact_ditto_2x.png';
+import heroAmbDitto from '../assets/hero_ambulance_ditto.jpg';
+import heroPuncDitto from '../assets/hero_puncture_ditto.jpg';
+import { HeartPulse, Car, Wrench, ChevronRight, ChevronLeft, PhoneCall } from 'lucide-react';
 
-const HERO_SLIDES = [
-  {
-    id: 'auto',
-    badge: '🛺  Auto Booking',
-    badgeBg: '#fef3c7',
-    badgeColor: '#b45309',
-    badgeBorder: '#fde68a',
-    titleLine1: 'Book an Auto.',
-    titleHighlight: 'Ride in Minutes.',
-    subtitle: 'Reliable local auto rides and verified drivers right at your doorstep.',
-    bgImg: heroAutoBanner,
-    actionModal: 'auto',
-    highlightColor: '#f59e0b',
-  },
-  {
-    id: 'ambulance',
-    badge: '🚑  24/7 Emergency',
-    badgeBg: '#fee2e2',
-    badgeColor: '#dc2626',
-    badgeBorder: '#fecaca',
-    titleLine1: 'Emergency Ambulance.',
-    titleHighlight: 'Help When You Need It.',
-    subtitle: 'Instant 24/7 hospital network connection & toll-free 108 emergency response.',
-    bgImg: heroAmbBanner,
-    actionModal: 'ambulance',
-    highlightColor: '#ef4444',
-  },
-  {
-    id: 'puncture',
-    badge: '🔧  Tyre & Breakdown SOS',
-    badgeBg: '#dcfce7',
-    badgeColor: '#059669',
-    badgeBorder: '#bbf7d0',
-    titleLine1: 'Puncture & Tyre SOS.',
-    titleHighlight: 'Help is One Tap Away.',
-    subtitle: 'Nearby puncture shops and doorstep mobile mechanic breakdown repair.',
-    bgImg: heroPuncBanner,
-    actionModal: 'puncture',
-    highlightColor: '#10b981',
-  },
-];
+const SLIDES_COUNT = 3;
 
 export const Hero = () => {
-  const { setActiveModal, navigateTo } = useLanguage();
-  const [searchVal, setSearchVal] = useState('');
+  const { setActiveModal, navigateTo, activeModal } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
-  const handlePrev = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-  }, []);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
-  const handleNext = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-  }, []);
-
-  // Moves automatically every 3.8 seconds continuously
   useEffect(() => {
-    if (isInputFocused) return; // Only pause while actively typing a search location
-    const interval = setInterval(() => {
-      handleNext();
-    }, 3800);
-    return () => clearInterval(interval);
-  }, [isInputFocused, handleNext]);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const v = searchVal.toLowerCase();
-    if (v.includes('amb') || v.includes('108')) setActiveModal('ambulance');
-    else if (v.includes('punc') || v.includes('tire') || v.includes('tyre')) setActiveModal('puncture');
-    else setActiveModal('auto');
+  // Continuous auto-slide every 4 seconds (pauses only when modal is open)
+  useEffect(() => {
+    if (activeModal) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SLIDES_COUNT);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [activeModal]);
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + SLIDES_COUNT) % SLIDES_COUNT);
   };
 
-  const current = HERO_SLIDES[currentSlide];
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % SLIDES_COUNT);
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 45) {
+      handleNext(); // swipe left -> next slide
+    } else if (diff < -45) {
+      handlePrev(); // swipe right -> prev slide
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
 
   return (
     <section
@@ -86,331 +66,466 @@ export const Hero = () => {
       style={{
         position: 'relative',
         width: '100%',
-        minHeight: '580px',
-        backgroundColor: '#ffffff',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '2.5rem 0 3.25rem',
-        borderBottom: '1px solid #f1f5f9',
+        backgroundColor: '#f8fafc',
+        borderBottom: '1px solid #e2e8f0',
         overflow: 'hidden',
+        boxSizing: 'border-box',
+        WebkitTapHighlightColor: 'transparent',
+        outline: 'none',
+        userSelect: 'none'
       }}
     >
-      {/* 3 Background Image Layers (crossfade transition) */}
-      {HERO_SLIDES.map((slide, idx) => (
-        <div
-          key={slide.id}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `linear-gradient(to right, #ffffff 0%, #ffffff 32%, rgba(255,255,255,0.94) 44%, rgba(255,255,255,0.5) 58%, rgba(255,255,255,0) 72%), url(${slide.bgImg})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center right',
-            backgroundRepeat: 'no-repeat',
-            opacity: currentSlide === idx ? 1 : 0,
-            transition: 'opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1)',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        />
-      ))}
-
-      {/* Clickable Banner Area on the right side: redirects directly to current service page */}
+      {/* ─── SLIDER CAROUSEL TRACK CONTAINER ─── */}
       <div
-        onClick={() => navigateTo('services', current.id)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: '44%',
-          cursor: 'pointer',
-          zIndex: 2,
+          position: 'relative',
+          width: '100%',
+          maxWidth: '1440px',
+          margin: '0 auto',
+          overflow: 'hidden'
         }}
-        title={`Click to view ${current.badge} services`}
-      />
-
-      {/* Navigation Arrow Previous */}
-      <button
-        type="button"
-        onClick={handlePrev}
-        className="hero-slider-arrow hero-slider-arrow-prev"
-        aria-label="Previous service slide"
       >
-        <ChevronLeft size={22} strokeWidth={2.5} />
-      </button>
-
-      {/* Navigation Arrow Next */}
-      <button
-        type="button"
-        onClick={handleNext}
-        className="hero-slider-arrow hero-slider-arrow-next"
-        aria-label="Next service slide"
-      >
-        <ChevronRight size={22} strokeWidth={2.5} />
-      </button>
-
-      {/* Main Content Container */}
-      <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
-        <div style={{ maxWidth: '620px' }}>
-
-          {/* Active Service Badge */}
+        {/* Continuous Horizontal Flex Track */}
+        <div
+          style={{
+            display: 'flex',
+            width: '100%',
+            transform: `translateX(-${currentSlide * 100}%)`,
+            transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
+            willChange: 'transform'
+          }}
+        >
+          {/* ─── SLIDE 0: ALL SERVICES / AUTO ─── */}
           <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            backgroundColor: current.badgeBg,
-            color: current.badgeColor,
-            border: `1px solid ${current.badgeBorder}`,
-            padding: '0.35rem 0.85rem',
-            borderRadius: '9999px',
-            fontSize: '0.8rem',
-            fontWeight: 800,
-            marginBottom: '1rem',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-            transition: 'all 0.3s ease',
+            position: 'relative',
+            width: '100%',
+            flexShrink: 0,
+            aspectRatio: '2048 / 868',
+            userSelect: 'none'
           }}>
-            <span>{current.badge}</span>
-          </div>
-
-          {/* Dynamic Headline */}
-          <h1 style={{
-            fontSize: 'clamp(2rem, 3.2vw, 2.8rem)',
-            fontWeight: 800,
-            color: '#0b1b3d',
-            lineHeight: 1.18,
-            letterSpacing: '-0.03em',
-            marginBottom: '0.75rem',
-            minHeight: '2.4em',
-            transition: 'all 0.3s ease',
-          }}>
-            {current.titleLine1}<br />
-            <span style={{ color: current.highlightColor }}>{current.titleHighlight}</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p style={{
-            fontSize: '0.96rem',
-            color: '#64748b',
-            lineHeight: 1.55,
-            marginBottom: '1.5rem',
-            maxWidth: '520px',
-            minHeight: '2.8em',
-            transition: 'all 0.3s ease',
-          }}>
-            {current.subtitle}
-          </p>
-
-          {/* Search bar */}
-          <form
-            onSubmit={handleSearchSubmit}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#ffffff',
-              borderRadius: '9999px',
-              padding: '0.45rem 0.5rem 0.45rem 1.35rem',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-              border: '1px solid #e2e8f0',
-              maxWidth: '520px',
-              marginBottom: '1.75rem',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <MapPin size={20} color="#64748b" style={{ flexShrink: 0, marginRight: '0.75rem' }} />
-            <input
-              type="text"
-              placeholder="Enter your location (e.g. Gobi, Erode)"
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
-              onFocus={() => setIsInputFocused(true)}
-              onBlur={() => setIsInputFocused(false)}
+            <img
+              src={heroExactDitto}
+              alt="Kuiky - Need Help? We're Just a Tap Away."
               style={{
-                border: 'none',
-                outline: 'none',
                 width: '100%',
-                fontSize: '0.96rem',
-                color: '#1e293b',
-                fontFamily: 'inherit',
-                background: 'transparent',
+                height: 'auto',
+                aspectRatio: '2048 / 868',
+                display: 'block',
+                userSelect: 'none',
+                pointerEvents: 'none'
               }}
             />
-            <button
-              type="submit"
-              aria-label="Search"
+
+            {/* Slide 0 Hotspots */}
+            <div
+              onClick={() => navigateTo('services', 'auto')}
+              title="Click to explore Kuiky Services"
               style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: '#0066ff',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(0,102,255,0.35)',
-                transition: 'all 0.2s ease',
+                position: 'absolute', left: '2.5%', top: '12%', width: '42%', height: '76%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
               }}
-              onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#0052cc'; e.currentTarget.style.transform = 'scale(1.06)'; }}
-              onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#0066ff'; e.currentTarget.style.transform = 'scale(1)'; }}
-            >
-              <Search size={18} strokeWidth={2.5} />
-            </button>
-          </form>
-
-          {/* 3 Pill buttons (Clicking opens modal and sets current slide) */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.85rem' }}>
-
-            {/* Pill 1: Book an Auto */}
-            <button
-              onClick={() => {
-                setCurrentSlide(0);
-                setActiveModal('auto');
-              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'ambulance')}
+              title="🚑 Click to Book Emergency Ambulance"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                backgroundColor: '#f59e0b',
-                color: '#1e1b4b',
-                padding: '0.75rem 1.35rem',
-                borderRadius: '9999px',
-                fontWeight: 800,
-                fontSize: '0.92rem',
-                boxShadow: currentSlide === 0
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #f59e0b, 0 6px 20px rgba(245,158,11,0.45)'
-                  : '0 4px 14px rgba(245,158,11,0.3)',
-                transform: currentSlide === 0 ? 'scale(1.03)' : 'scale(1)',
-                transition: 'all 0.25s ease',
+                position: 'absolute', left: '44.5%', top: '30%', width: '19.2%', height: '54%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px) scale(1.04)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(245,158,11,0.5)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = currentSlide === 0 ? 'scale(1.03)' : 'scale(1)';
-                e.currentTarget.style.boxShadow = currentSlide === 0
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #f59e0b, 0 6px 20px rgba(245,158,11,0.45)'
-                  : '0 4px 14px rgba(245,158,11,0.3)';
-              }}
-            >
-              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>🛺</span>
-              <span>Book an Auto</span>
-              <ArrowRight size={15} strokeWidth={2.5} />
-            </button>
-
-            {/* Pill 2: Emergency Ambulance */}
-            <button
-              onClick={() => {
-                setCurrentSlide(1);
-                setActiveModal('ambulance');
-              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'auto')}
+              title="🛺 Click to Book Passenger / Cargo Auto"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                backgroundColor: '#ef4444',
-                color: '#ffffff',
-                padding: '0.75rem 1.35rem',
-                borderRadius: '9999px',
-                fontWeight: 700,
-                fontSize: '0.92rem',
-                boxShadow: currentSlide === 1
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 6px 20px rgba(239,68,68,0.45)'
-                  : '0 4px 14px rgba(239,68,68,0.3)',
-                transform: currentSlide === 1 ? 'scale(1.03)' : 'scale(1)',
-                transition: 'all 0.25s ease',
+                position: 'absolute', left: '63.8%', top: '40%', width: '16%', height: '46%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px) scale(1.04)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,68,68,0.5)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = currentSlide === 1 ? 'scale(1.03)' : 'scale(1)';
-                e.currentTarget.style.boxShadow = currentSlide === 1
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #ef4444, 0 6px 20px rgba(239,68,68,0.45)'
-                  : '0 4px 14px rgba(239,68,68,0.3)';
-              }}
-            >
-              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>🚑</span>
-              <span>Emergency Ambulance</span>
-              <ArrowRight size={15} strokeWidth={2.5} />
-            </button>
-
-            {/* Pill 3: Find Puncture Shop */}
-            <button
-              onClick={() => {
-                setCurrentSlide(2);
-                setActiveModal('puncture');
-              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'puncture')}
+              title="🔧 Click to Call Tyre & Puncture Repair"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                backgroundColor: '#10b981',
-                color: '#ffffff',
-                padding: '0.75rem 1.35rem',
-                borderRadius: '9999px',
-                fontWeight: 700,
-                fontSize: '0.92rem',
-                boxShadow: currentSlide === 2
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #10b981, 0 6px 20px rgba(16,185,129,0.45)'
-                  : '0 4px 14px rgba(16,185,129,0.3)',
-                transform: currentSlide === 2 ? 'scale(1.03)' : 'scale(1)',
-                transition: 'all 0.25s ease',
+                position: 'absolute', left: '80%', top: '46%', width: '17%', height: '47%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px) scale(1.04)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(16,185,129,0.5)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = currentSlide === 2 ? 'scale(1.03)' : 'scale(1)';
-                e.currentTarget.style.boxShadow = currentSlide === 2
-                  ? '0 0 0 3px #ffffff, 0 0 0 5px #10b981, 0 6px 20px rgba(16,185,129,0.45)'
-                  : '0 4px 14px rgba(16,185,129,0.3)';
-              }}
-            >
-              <Wrench size={16} strokeWidth={2.5} />
-              <span>Find Puncture Shop</span>
-              <ArrowRight size={15} strokeWidth={2.5} />
-            </button>
-
+            />
           </div>
 
-          {/* Slide Indicator Dots */}
+          {/* ─── SLIDE 1: EMERGENCY AMBULANCE ─── */}
           <div style={{
+            position: 'relative',
+            width: '100%',
+            flexShrink: 0,
+            aspectRatio: '2048 / 868',
+            userSelect: 'none'
+          }}>
+            <img
+              src={heroAmbDitto}
+              alt="Kuiky Emergency Ambulance - Help When Seconds Count"
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '2048 / 868',
+                display: 'block',
+                userSelect: 'none',
+                pointerEvents: 'none'
+              }}
+            />
+
+            {/* Slide 1 Hotspots */}
+            <div
+              onClick={() => setActiveModal('ambulance')}
+              title="🚑 Click to Book Emergency Ambulance"
+              style={{
+                position: 'absolute', left: '2.5%', top: '12%', width: '42%', height: '76%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'ambulance')}
+              title="🚑 Click to Dispatch Ambulance to Your Location"
+              style={{
+                position: 'absolute', left: '52%', top: '25%', width: '38%', height: '65%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+            <a
+              href="tel:108"
+              title="📞 Emergency Helpline: Call 108"
+              style={{
+                position: 'absolute', left: '76%', top: '6%', width: '22%', height: '22%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px', textDecoration: 'none',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+          </div>
+
+          {/* ─── SLIDE 2: TYRE & PUNCTURE SOS ─── */}
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            flexShrink: 0,
+            aspectRatio: '2048 / 868',
+            userSelect: 'none'
+          }}>
+            <img
+              src={heroPuncDitto}
+              alt="Kuiky Tyre & Puncture SOS - Mechanic at Your Spot"
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '2048 / 868',
+                display: 'block',
+                userSelect: 'none',
+                pointerEvents: 'none'
+              }}
+            />
+
+            {/* Slide 2 Hotspots */}
+            <div
+              onClick={() => setActiveModal('puncture')}
+              title="🔧 Click to Request Tyre & Puncture Repair"
+              style={{
+                position: 'absolute', left: '2.5%', top: '12%', width: '42%', height: '76%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'puncture')}
+              title="🔧 Click to Call Mechanic to Your Spot"
+              style={{
+                position: 'absolute', left: '52%', top: '25%', width: '38%', height: '65%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+            <div
+              onClick={() => navigateTo('services', 'puncture')}
+              title="📍 Click to Browse Nearby Puncture Shops"
+              style={{
+                position: 'absolute', left: '76%', top: '6%', width: '22%', height: '22%',
+                cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ─── SLIDER NAVIGATION CONTROLS (Positioned directly over the carousel) ─── */}
+
+        {/* Left Arrow Button */}
+        <button
+          onClick={handlePrev}
+          aria-label="Previous Slide"
+          className="hero-slider-arrow hero-slider-arrow-prev"
+          style={{
+            position: 'absolute',
+            left: isMobile ? '0.4rem' : '1.25rem',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: isMobile ? '32px' : '44px',
+            height: isMobile ? '32px' : '44px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(226, 232, 240, 0.9)',
+            color: '#0f172a',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 14px rgba(11, 27, 61, 0.15)',
+            cursor: 'pointer',
+            zIndex: 25,
+            transition: 'all 0.2s ease',
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent'
+          }}
+        >
+          <ChevronLeft size={isMobile ? 18 : 22} strokeWidth={2.5} />
+        </button>
+
+        {/* Right Arrow Button */}
+        <button
+          onClick={handleNext}
+          aria-label="Next Slide"
+          className="hero-slider-arrow hero-slider-arrow-next"
+          style={{
+            position: 'absolute',
+            right: isMobile ? '0.4rem' : '1.25rem',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: isMobile ? '32px' : '44px',
+            height: isMobile ? '32px' : '44px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(226, 232, 240, 0.9)',
+            color: '#0f172a',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 14px rgba(11, 27, 61, 0.15)',
+            cursor: 'pointer',
+            zIndex: 25,
+            transition: 'all 0.2s ease',
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent'
+          }}
+        >
+          <ChevronRight size={isMobile ? 18 : 22} strokeWidth={2.5} />
+        </button>
+
+        {/* Slide Indicator Dots Pill (Hidden on Mobile) */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute',
+            bottom: '0.85rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            marginTop: '1.75rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.88)',
+            backdropFilter: 'blur(8px)',
+            padding: '0.4rem 0.85rem',
+            borderRadius: '9999px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
+            zIndex: 25,
+            WebkitTapHighlightColor: 'transparent'
           }}>
-            {HERO_SLIDES.map((slide, idx) => (
+            {[
+              { label: 'All Services / Auto', activeColor: '#04784b' },
+              { label: 'Ambulance', activeColor: '#dc2626' },
+              { label: 'Puncture Shops', activeColor: '#059669' }
+            ].map((item, idx) => (
               <button
-                key={slide.id}
+                key={item.label}
                 type="button"
                 onClick={() => setCurrentSlide(idx)}
-                aria-label={`Jump to ${slide.badge} slide`}
-                className={`hero-dot-btn ${currentSlide === idx ? 'active' : ''}`}
+                aria-label={`Jump to ${item.label} slide`}
                 style={{
-                  width: currentSlide === idx ? '28px' : '9px',
-                  backgroundColor: currentSlide === idx ? slide.highlightColor : '#cbd5e1',
+                  height: '8px',
+                  width: currentSlide === idx ? '28px' : '8px',
+                  borderRadius: '9999px',
+                  backgroundColor: currentSlide === idx ? item.activeColor : '#cbd5e1',
+                  border: 'none',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  WebkitTapHighlightColor: 'transparent'
                 }}
               />
             ))}
-            <span style={{
-              fontSize: '0.74rem',
-              color: '#94a3b8',
-              fontWeight: 600,
-              marginLeft: '0.35rem',
-            }}>
-              {currentSlide + 1} / {HERO_SLIDES.length}
-            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ─── MOBILE QUICK ACTION SHORTCUTS (Fixed below the banner on mobile screens) ─── */}
+      {isMobile && (
+        <div style={{
+          padding: '1rem 1rem 2.5rem',
+          backgroundColor: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.65rem',
+          borderTop: '1px solid #f1f5f9'
+        }}>
+          <div style={{
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginBottom: '0.15rem'
+          }}>
+            Quick Book a Service
           </div>
 
+          {/* Ambulance Button */}
+          <button
+            onClick={() => setActiveModal('ambulance')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0.85rem 1rem',
+              backgroundColor: '#fef2f2',
+              border: '1.5px solid #fecaca',
+              borderRadius: '14px',
+              cursor: 'pointer',
+              width: '100%',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '10px',
+                backgroundColor: '#fee2e2', color: '#dc2626',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <HeartPulse size={20} />
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#991b1b' }}>Emergency Ambulance</div>
+                <div style={{ fontSize: '0.73rem', color: '#dc2626' }}>24/7 • Instant Response</div>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#dc2626" />
+          </button>
+
+          {/* Auto Button */}
+          <button
+            onClick={() => setActiveModal('auto')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0.85rem 1rem',
+              backgroundColor: '#fffbeb',
+              border: '1.5px solid #fde68a',
+              borderRadius: '14px',
+              cursor: 'pointer',
+              width: '100%',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '10px',
+                backgroundColor: '#fef3c7', color: '#b45309',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <Car size={20} />
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e' }}>Auto Rickshaw</div>
+                <div style={{ fontSize: '0.73rem', color: '#b45309' }}>Fast pickup • From ₹35</div>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#b45309" />
+          </button>
+
+          {/* Puncture Button */}
+          <button
+            onClick={() => setActiveModal('puncture')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0.85rem 1rem',
+              backgroundColor: '#f0fdf4',
+              border: '1.5px solid #bbf7d0',
+              borderRadius: '14px',
+              cursor: 'pointer',
+              width: '100%',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '10px',
+                backgroundColor: '#dcfce7', color: '#04784b',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <Wrench size={20} />
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#04784b' }}>Tyre & Puncture</div>
+                <div style={{ fontSize: '0.73rem', color: '#059669' }}>Roadside repair • 15 mins</div>
+              </div>
+            </div>
+            <ChevronRight size={18} color="#04784b" />
+          </button>
+
+          {/* Explore All */}
+          <button
+            onClick={() => navigateTo('services', 'auto')}
+            style={{
+              width: '100%',
+              padding: '0.6rem',
+              borderRadius: '10px',
+              backgroundColor: 'transparent',
+              color: '#04784b',
+              border: '1.5px dashed #bbf7d0',
+              fontWeight: 700,
+              fontSize: '0.84rem',
+              cursor: 'pointer',
+              marginTop: '0.1rem',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            Explore All Services →
+          </button>
         </div>
-      </div>
+      )}
     </section>
   );
 };
 
-
-
+export default Hero;

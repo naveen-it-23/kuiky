@@ -5,6 +5,11 @@
   --font-heading: 'Outfit', var(--font-primary);
   --font-cursive: 'Caveat', cursive, sans-serif;
   
+  --primary-green: #10a349;
+  --primary-green-dark: #059669;
+  --primary-green-light: #f0fdf4;
+  --primary-green-border: #bbf7d0;
+
   --primary-blue: #0066ff;
   --primary-blue-dark: #0052cc;
   --primary-blue-light: #e0f2fe;
@@ -36,6 +41,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -222,6 +228,100 @@ button {
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.auth-minimal-modal {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  max-width: 380px;
+  width: 100%;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Exact Reference Auth Card */
+.auth-exact-card {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 20px;
+  max-width: 390px;
+  width: 100%;
+  padding: 2.25rem 1.85rem 1.75rem;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+}
+
+@media (max-width: 440px) {
+  .auth-exact-card {
+    padding: 1.75rem 1.35rem 1.5rem;
+    border-radius: 16px;
+  }
+}
+
+/* Dual-Panel Auth Modal with Side All-Services Banner */
+.auth-dual-card {
+  background: #ffffff;
+  border-radius: 18px;
+  max-width: 700px;
+  width: 100%;
+  height: 440px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px -12px rgba(11, 27, 61, 0.3), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.auth-dual-banner {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  background-color: #f1f5f9;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.auth-dual-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 62%;
+  display: block;
+}
+
+.auth-dual-body {
+  height: 100%;
+  padding: 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .auth-dual-card {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    height: auto;
+    max-height: 94vh;
+    border-radius: 18px;
+    overflow-y: auto;
+  }
+  .auth-dual-banner {
+    height: 150px;
+    min-height: 150px;
+    padding: 1rem;
+  }
+  .auth-dual-body {
+    height: auto;
+    padding: 1.75rem 1.5rem;
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -249,11 +349,144 @@ button {
 }
 
 /* Responsiveness */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+}
+
 @media (max-width: 960px) {
   .section-title {
     font-size: 1.75rem;
   }
 }
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Minimal Auth Modal */
+.auth-minimal-modal {
+  background-color: #ffffff;
+  border-radius: 20px;
+  max-width: 390px;
+  width: 100%;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  position: relative;
+  padding: 2.25rem 1.75rem 2rem;
+  margin: auto;
+  animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+.auth-split-image {
+  flex: 1;
+  min-width: 320px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+}
+
+.auth-split-form {
+  flex: 1.15;
+  background: #ffffff;
+  padding: 3rem 2.5rem 2.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .auth-split-modal {
+    flex-direction: column;
+    max-width: 440px;
+    max-height: 92vh;
+  }
+  .auth-split-image {
+    min-height: 140px;
+    max-height: 160px;
+    min-width: 100%;
+    padding: 1.25rem;
+  }
+  .auth-split-form {
+    padding: 2rem 1.5rem 1.75rem !important;
+  }
+}
+
+
+.auth-form-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px; /* 16px prevents iOS Safari from automatically zooming the page on focus */
+  color: #0f172a;
+  background: transparent;
+  font-family: inherit;
+}
+
+.auth-form-input::placeholder {
+  color: #94a3b8;
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.75rem !important;
+  }
+  .auth-modal-card {
+    padding: 1.5rem 1.15rem 1.25rem !important;
+    border-radius: 1.25rem !important;
+    max-height: 94vh !important;
+  }
+  .login-btn-text-full {
+    display: none !important;
+  }
+  .login-btn-text-short {
+    display: inline !important;
+  }
+}
+
+@media (min-width: 481px) {
+  .login-btn-text-short {
+    display: none !important;
+  }
+  .login-btn-text-full {
+    display: inline !important;
+  }
+}
+
+.mobile-menu-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+  }
+}
+
+
 
 /* ========================================================
    Hero 3-Service Carousel Slider Styles
@@ -315,5 +548,644 @@ button {
   }
 }
 
+/* ========================================================
+   Home Page Redesign Components (Exact Reference Match)
+   ======================================================== */
+.font-cursive {
+  font-family: var(--font-cursive);
+}
+
+.hero-booking-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  position: relative;
+  z-index: 10;
+}
+
+.service-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08);
+}
+
+.step-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .hero-top-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-booking-card {
+    padding: 1.15rem 1.25rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .app-banner-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+    text-align: center;
+  }
+  .app-banner-grid > div {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .footer-grid-5 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-interactive-card {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin-top: 1rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-grid-5 {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+/* ========================================================
+   COMPREHENSIVE MOBILE RESPONSIVENESS & OVERFLOW FIXES
+   ======================================================== */
+
+/* Prevent any horizontal scroll across viewport */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+section, footer {
+  scroll-margin-top: 72px;
+}
+
+/* Nav desktop vs mobile text helpers */
+.nav-loc-text-desktop {
+  display: inline;
+}
+.nav-loc-text-mobile {
+  display: none;
+}
+.nav-user-name-desktop {
+  display: inline;
+}
+
+/* Container padding on mobile */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 0.85rem !important;
+  }
+  .nav-container {
+    height: 60px !important;
+    padding: 0 0.75rem !important;
+  }
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .nav-loc-text-desktop {
+    display: none !important;
+  }
+  .nav-loc-text-mobile {
+    display: inline !important;
+  }
+  .nav-user-name-desktop {
+    display: none !important;
+  }
+  .kuiky-logo span {
+    display: none !important;
+  }
+  .nav-right-actions {
+    gap: 0.35rem !important;
+  }
+}
+
+/* Section spacing on mobile */
+@media (max-width: 768px) {
+  section {
+    padding-top: 2.25rem !important;
+    padding-bottom: 2.75rem !important;
+  }
+  section#home {
+    padding: 0 !important;
+  }
+}
+
+/* Headings scale down nicely on mobile */
+@media (max-width: 640px) {
+  h2 {
+    font-size: 1.55rem !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.25 !important;
+  }
+  .section-title {
+    font-size: 1.55rem !important;
+  }
+}
+
+/* Services section mobile slider */
+@media (max-width: 768px) {
+  .services-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .services-header-right {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.75rem !important;
+  }
+  #services .service-cards-grid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 1rem !important;
+    padding: 0.25rem 0.25rem 0.75rem !important;
+    position: relative !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #services .service-cards-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  #services .service-card {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+    box-sizing: border-box !important;
+    padding: 1.35rem 1.25rem 1.25rem !important;
+  }
+}
+
+/* About section mobile layout & centered images */
+@media (max-width: 768px) {
+  .about-section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .about-hero-grid,
+  .about-story-grid,
+  .about-community-banner {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    justify-items: center !important;
+  }
+
+  /* Section 1: Hero Vehicles Image */
+  .about-hero-image-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    text-align: center !important;
+  }
+
+  .about-hero-image {
+    width: 100% !important;
+    max-width: min(520px, 100%) !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    display: block !important;
+    border-radius: 16px !important;
+  }
+
+  .about-hero-cursive {
+    top: 4% !important;
+    right: 4% !important;
+    transform: scale(0.85) !important;
+    transform-origin: top right !important;
+  }
+
+  /* Section 2: Story Phone Mockup Image */
+  .about-story-image-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+  }
+
+  .about-story-card {
+    margin: 0 auto !important;
+    max-width: min(290px, 85vw) !important;
+    width: 100% !important;
+  }
+
+  .about-story-image {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    display: block !important;
+    object-fit: cover !important;
+  }
+
+  /* Section 5: Community Trio Image */
+  .about-community-banner {
+    grid-template-columns: 1fr !important;
+    border-radius: 20px !important;
+  }
+
+  .about-community-text {
+    padding: 1.75rem 1.25rem 1rem !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .about-community-text h3,
+  .about-community-text p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .about-community-image-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 1rem 0 !important;
+    text-align: center !important;
+    position: relative !important;
+  }
+
+  .about-community-image {
+    margin: 0 auto !important;
+    max-width: min(340px, 88vw) !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .about-community-cursive {
+    top: 5% !important;
+    right: 5% !important;
+    transform: scale(0.8) !important;
+    transform-origin: top right !important;
+  }
+}
+
+/* How It Works section mobile layout */
+@media (max-width: 768px) {
+  #how-it-works {
+    padding-top: 2.25rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+  .how-steps-outer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
+  }
+  .how-it-works-arrow {
+    display: none !important;
+  }
+  .how-quote-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-top: 1.25rem !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .app-banner-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+    text-align: center !important;
+    justify-items: center !important;
+  }
+  .app-banner-phones {
+    width: 200px !important;
+    margin: 0 auto !important;
+  }
+  .app-banner-features {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.85rem !important;
+  }
+}
+
+/* Testimonials section mobile layout */
+@media (max-width: 640px) {
+  .testimonials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.15rem !important;
+  }
+}
+
+/* Footer mobile layout */
+@media (max-width: 860px) {
+  .footer-grid-5 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .footer-grid-5 {
+    grid-template-columns: 1fr !important;
+    gap: 1.85rem !important;
+  }
+  footer {
+    padding: 2.5rem 0 1.75rem !important;
+  }
+}
+
+/* Modals on mobile devices (Bottom-sheet) */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  .modal-content {
+    border-radius: 22px 22px 0 0 !important;
+    max-height: 92vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1.15rem !important;
+  }
+  .auth-exact-card,
+  .auth-minimal-modal {
+    border-radius: 22px 22px 0 0 !important;
+    max-height: 92vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.75rem 1.25rem 1.5rem !important;
+  }
+}
+
+/* Prevent iOS Safari auto-zoom on inputs */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Touch-friendly minimum tap targets */
+@media (max-width: 768px) {
+  button {
+    min-height: 40px;
+  }
+}
+
+/* All Services Page mobile layout */
+@media (max-width: 640px) {
+  .all-services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .all-services-hero {
+    padding: 1.5rem 1rem !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+}
+
+/* Rapido Services Map Animations & Layout */
+@keyframes dash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+
+/* Contact Page Mobile Responsive Styles */
+@media (max-width: 860px) {
+  .contact-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .contact-hero-image-wrap {
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .contact-hero-image {
+    max-width: min(460px, 100%) !important;
+    margin: 0 auto !important;
+  }
+
+  .contact-quick-badges {
+    gap: 1.25rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-hero-section {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .contact-quick-badges {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ========================================================
+   Rapido Services Map - Split Sidebar + Map Viewport
+   ======================================================== */
+.rapido-layout-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background-color: #f8fafc;
+}
+
+.rapido-sidebar-panel {
+  width: 380px !important;
+  min-width: 320px !important;
+  max-width: 400px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: relative !important;
+  z-index: 20;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.04);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ========================================================
+   Global Custom Smooth Scrollbars for ALL Elements & Modals
+   ======================================================== */
+*::-webkit-scrollbar,
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+*::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox scrollbar support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.rapido-map-viewport {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background-color: #e2e8f0;
+}
+
+/* Mobile & Tablet Responsive Layout */
+@media (max-width: 860px) {
+  .rapido-layout-container {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rapido-sidebar-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    order: 2 !important; /* Sidebar / booking form below map */
+    overflow-y: visible !important;
+  }
+
+  .rapido-map-viewport {
+    width: 100% !important;
+    height: 270px !important;
+    min-height: 270px !important;
+    max-height: 300px !important;
+    flex: 0 0 270px !important;
+    order: 1 !important; /* Map on top so user sees live autos */
+  }
+}
+
+/* ========================================================
+   Rapido Embedded In-Page Card (Responsive Height)
+   ======================================================== */
+.rapido-embed-card {
+  width: 100%;
+  height: 640px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  margin-bottom: 2.75rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+@media (max-width: 860px) {
+  .rapido-embed-card {
+    height: 720px !important;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Service vehicle selector pill hover effects */
+.service-selector-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.service-selector-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
 
 

@@ -3,12 +3,13 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { ServicesSection } from './components/ServicesSection';
-import { HowItWorks } from './components/HowItWorks';
 import { AboutSection } from './components/AboutSection';
-import { StatsBanner } from './components/StatsBanner';
-import { NearbySection } from './components/NearbySection';
+import { HowItWorks } from './components/HowItWorks';
 import { Testimonials } from './components/Testimonials';
 import { AllServicesPage } from './components/AllServicesPage';
+import { ProfilePage } from './components/ProfilePage';
+import { AboutPage } from './components/AboutPage';
+import { ContactPage } from './components/ContactPage';
 import { Footer } from './components/Footer';
 import { AutoModal } from './components/modals/AutoModal';
 import { AmbulanceModal } from './components/modals/AmbulanceModal';
@@ -39,7 +40,7 @@ class ErrorBoundary extends Component {
           </pre>
           <button
             onClick={() => window.location.reload()}
-            style={{ padding: '0.6rem 1.2rem', backgroundColor: '#0066ff', color: '#fff', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+            style={{ padding: '0.6rem 1.2rem', backgroundColor: '#10a349', color: '#fff', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
           >
             Reload Page
           </button>
@@ -59,14 +60,18 @@ function AppContent() {
       <main style={{ flex: 1 }}>
         {currentPage === 'services' ? (
           <AllServicesPage />
+        ) : currentPage === 'profile' ? (
+          <ProfilePage />
+        ) : currentPage === 'about' ? (
+          <AboutPage />
+        ) : currentPage === 'contact' ? (
+          <ContactPage />
         ) : (
           <>
             <Hero />
             <ServicesSection />
-            <HowItWorks />
             <AboutSection />
-            <StatsBanner />
-            <NearbySection />
+            <HowItWorks />
             <Testimonials />
           </>
         )}
@@ -93,4 +98,3 @@ export function App() {
 }
 
 export default App;
-
