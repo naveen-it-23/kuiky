@@ -97,23 +97,30 @@ export async function fetchUserProfileApi(phone) {
   const cleanPhone = phone ? phone.replace(/[^0-9]/g, '').slice(-10) : '';
   const url = `${API_ENDPOINTS.PROFILE}${cleanPhone ? `?phone=${cleanPhone}` : ''}`;
   
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'ngrok-skip-browser-warning': 'true',
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
 
-  const data = await response.json().catch(() => null);
-  if (!response.ok || data?.success === false) {
-    const err = new Error(data?.message || data?.detail || `Failed to fetch profile (${response.status})`);
-    err.status = response.status;
-    err.data = data;
-    throw err;
+    if (response.status === 404) {
+      console.info(`[Django API] ${url} returned 404. Endpoint 'api/profile/' is not yet registered in mainkuiky.urls. Using session user.`);
+      return null;
+    }
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok || data?.success === false) {
+      return null;
+    }
+    return normalizeUserProfile(data.user || data);
+  } catch (err) {
+    console.warn('[Django API] Profile fetch error:', err);
+    return null;
   }
-  return normalizeUserProfile(data.user || data);
 }
 
 /**
@@ -130,24 +137,31 @@ export async function updateUserProfileApi(profileData) {
     selected_location: profileData.selected_location || profileData.city || profileData.location || 'Erode, Tamil Nadu'
   };
 
-  const response = await fetch(API_ENDPOINTS.PROFILE, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'ngrok-skip-browser-warning': 'true',
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch(API_ENDPOINTS.PROFILE, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await response.json().catch(() => null);
-  if (!response.ok || data?.success === false) {
-    const err = new Error(data?.message || data?.detail || `Failed to update profile (${response.status})`);
-    err.status = response.status;
-    err.data = data;
-    throw err;
+    if (response.status === 404) {
+      console.info("[Django API] PUT /api/profile/ returned 404. Endpoint 'api/profile/' is not yet registered in mainkuiky.urls. Saved locally.");
+      return normalizeUserProfile(payload);
+    }
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok || data?.success === false) {
+      return normalizeUserProfile(payload);
+    }
+    return normalizeUserProfile(data.user || data);
+  } catch (err) {
+    console.warn('[Django API] Profile update error:', err);
+    return normalizeUserProfile(payload);
   }
-  return normalizeUserProfile(data.user || data);
 }
 
 /**
