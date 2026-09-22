@@ -42,62 +42,23 @@ export const ProfilePage = () => {
   const [apiSyncStatus, setApiSyncStatus] = useState(null); // 'connected' | 'offline' | 'error' | null
   const [apiMessage, setApiMessage] = useState(null);
 
-  // Fetch profile from Django backend API: GET /api/profile/?phone=<phone>
-  const loadProfilesFromApi = async () => {
-    setIsLoadingProfile(true);
-    setApiMessage(null);
-    try {
-      // First populate from authenticated session user if available
-      if (currentUser) {
-        if (currentUser.name && currentUser.name !== 'User 1354') setFullName(currentUser.name);
-        if (currentUser.phone) setPhone(currentUser.phone.replace(/^\+91\s*/, ''));
-        if (currentUser.email) setEmail(currentUser.email);
-        if (currentUser.city) setLocation(currentUser.city);
-      }
-
-      const cleanCurrentPhone = (phone || currentUser?.phone || '').replace(/[^0-9]/g, '').slice(-10);
-      if (!cleanCurrentPhone) return;
-
-      const profile = await fetchUserProfileApi(cleanCurrentPhone);
-      if (profile) {
-        setBackendProfile(profile);
-        if (profile.id) setBackendProfileId(profile.id);
-        setApiSyncStatus('connected');
-        setApiMessage(`Synced with /api/profile/?phone=${cleanCurrentPhone}`);
-
-        if (profile.name) setFullName(profile.name);
-        if (profile.phone) setPhone(profile.phone);
-        if (profile.email) setEmail(profile.email);
-        if (profile.city) setLocation(profile.city);
-      } else {
-        setApiSyncStatus('connected');
-        setApiMessage(currentUser ? 'Active Profile Session' : 'Ready');
-      }
-    } catch (err) {
-      console.warn('[ProfilePage] Profile load error:', err);
-      setApiSyncStatus('connected');
-    } finally {
-      setIsLoadingProfile(false);
-    }
-  };
-
+  // Sync state if currentUser changes
   useEffect(() => {
-    loadProfilesFromApi();
-  }, []);
-
-  // Sync state if currentUser changes externally
-  useEffect(() => {
-    if (currentUser?.name && currentUser.name !== 'User 1354') {
-      setFullName(currentUser.name);
-    }
-    if (currentUser?.phone && !currentUser.phone.includes('9080231354')) {
-      setPhone(currentUser.phone.replace(/^\+91\s*/, ''));
-    }
-    if (currentUser?.email && !currentUser.email.includes('1354')) {
-      setEmail(currentUser.email);
-    }
-    if (currentUser?.city && !currentUser.city.includes('Perambalur')) {
-      setLocation(currentUser.city);
+    if (currentUser) {
+      if (currentUser.name && currentUser.name !== 'User 1354') {
+        setFullName(currentUser.name);
+      }
+      if (currentUser.phone && !currentUser.phone.includes('9080231354')) {
+        setPhone(currentUser.phone.replace(/^\+91\s*/, ''));
+      }
+      if (currentUser.email && !currentUser.email.includes('1354')) {
+        setEmail(currentUser.email);
+      }
+      if (currentUser.city && !currentUser.city.includes('Perambalur')) {
+        setLocation(currentUser.city);
+      } else if (currentUser.selected_location) {
+        setLocation(currentUser.selected_location);
+      }
     }
   }, [currentUser]);
 
@@ -244,70 +205,7 @@ export const ProfilePage = () => {
           </p>
         </div>
 
-        {/* Backend DRF API Status Banner for api/profiles/ */}
-        <div style={{
-          marginBottom: '1.25rem',
-          padding: '0.7rem 1rem',
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          fontSize: '0.82rem',
-          fontWeight: 600,
-          backgroundColor: apiSyncStatus === 'connected' ? '#ecfdf5' : apiSyncStatus === 'offline' ? '#fffbeb' : '#f8fafc',
-          border: `1.5px solid ${apiSyncStatus === 'connected' ? '#a7f3d0' : apiSyncStatus === 'offline' ? '#fde68a' : '#e2e8f0'}`,
-          color: apiSyncStatus === 'connected' ? '#065f46' : apiSyncStatus === 'offline' ? '#92400e' : '#475569',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-            <span style={{
-              width: '9px',
-              height: '9px',
-              borderRadius: '50%',
-              backgroundColor: apiSyncStatus === 'connected' ? '#10b981' : apiSyncStatus === 'offline' ? '#f59e0b' : '#94a3b8',
-              display: 'inline-block',
-              boxShadow: apiSyncStatus === 'connected' ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none'
-            }} />
-            <span>
-              {isLoadingProfile 
-                ? 'Fetching /api/profile/?phone=...' 
-                : apiSyncStatus === 'connected' 
-                ? `API Connected • /api/profile/ (Synced: ${backendProfile?.name || fullName})` 
-                : apiSyncStatus === 'offline'
-                ? 'Backend Offline • Run: python manage.py runserver 8000'
-                : apiSyncStatus === 'error'
-                ? `Backend Notice: ${apiMessage || 'User not registered in database yet'}`
-                : 'API Endpoint: /api/profile/?phone=<number>'}
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={loadProfilesFromApi}
-            disabled={isLoadingProfile}
-            style={{
-              background: apiSyncStatus === 'connected' ? '#d1fae5' : '#fef3c7',
-              border: 'none',
-              color: apiSyncStatus === 'connected' ? '#04784b' : '#b45309',
-              fontWeight: 700,
-              fontSize: '0.78rem',
-              cursor: isLoadingProfile ? 'wait' : 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.3rem 0.65rem',
-              borderRadius: '9999px',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <RefreshCw size={13} style={{ animation: isLoadingProfile ? 'spin 1s linear infinite' : 'none' }} />
-            <span>{isLoadingProfile ? 'Fetching...' : 'Refetch API'}</span>
-          </button>
-        </div>
-
-        {/* Top Welcome Banner: "Hello, Sri Raj 👋" with subtle foliage illustration */}
+        {/* Top Welcome Banner: "Hello, naveen 👋" with subtle foliage illustration */}
         <div style={{
           position: 'relative',
           backgroundColor: '#ecfdf5',
