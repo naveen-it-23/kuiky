@@ -129,9 +129,9 @@ export async function fetchUserProfileApi(phone) {
  * @returns {Promise<object>}
  */
 export async function updateUserProfileApi(profileData) {
-  const cleanPhone = (profileData.phone || '').replace(/[^0-9]/g, '').slice(-10);
+  const digits = (profileData.phone || '').replace(/[^0-9]/g, '').slice(-10);
   const payload = {
-    phone: cleanPhone,
+    phone: `+91${digits}`,
     name: profileData.name || profileData.full_name || '',
     email: profileData.email || '',
     selected_location: profileData.selected_location || profileData.city || profileData.location || 'Erode, Tamil Nadu'
