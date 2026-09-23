@@ -383,18 +383,32 @@ export async function fetchAmbulancesApi(locationId = null) {
 
 /**
  * Normalizes a puncture work record from Django /api/puncture-works/ [name='puncture-list']
+ * Supports all Django model field name variations: name/shop_name, owner/owner_name/mechanic_name, etc.
  * @param {object} item
  * @param {number} idx
  * @returns {object}
  */
 export function normalizePunctureShop(item, idx = 0) {
   if (!item) return null;
-  const name = item.name || item.shop_name || `Puncture Shop ${idx + 1}`;
+  const name = item.shop_name || item.shopName || item.puncture_shop_name || item.punctureShopName || item.name || item.title || item.business_name || item.store_name || `Puncture Shop ${idx + 1}`;
   const nameTa = item.name_ta || item.nameTa || name;
-  const owner = item.owner || item.owner_name || item.mechanic_name || 'Verified Mechanic';
+  
+  let owner = item.owner || item.owner_name || item.ownerName || item.mechanic_name || item.mechanicName || item.proprietor || item.contact_person || item.contactPerson || item.person_name || item.technician_name || item.driver_name;
+  if (!owner && item.user) {
+    if (typeof item.user === 'string') owner = item.user;
+    else if (item.user.username) owner = `${item.user.first_name || ''} ${item.user.last_name || ''}`.trim() || item.user.username;
+  }
+  if (!owner && item.user_name) owner = item.user_name;
+  if (!owner && item.shop_name && item.name && item.name !== item.shop_name) {
+    owner = item.name;
+  }
+  if (!owner) {
+    owner = 'Verified Mechanic';
+  }
   const ownerTa = item.owner_ta || item.ownerTa || owner;
-  const phone = item.phone || item.mobile || item.contact_number || '+91 98422 33445';
-  const address = item.address || item.location_address || 'Erode, Tamil Nadu';
+
+  const phone = item.phone || item.mobile || item.phone_number || item.phoneNumber || item.mobile_number || item.contact_no || item.contact_number || '+91 98422 33445';
+  const address = item.address || item.location_address || item.locationAddress || item.shop_address || item.location || 'Erode, Tamil Nadu';
   const addressTa = item.address_ta || item.addressTa || address;
   const distance = item.distance || `${(0.4 + (idx * 0.4)).toFixed(1)} km away`;
   const eta = item.eta || item.eta_text || `${5 + (idx * 3)} mins dispatch`;
@@ -403,18 +417,22 @@ export function normalizePunctureShop(item, idx = 0) {
   if (Array.isArray(item.services) && item.services.length > 0) {
     services = item.services;
   } else if (typeof item.services === 'string' && item.services.trim()) {
-    services = item.services.split(',').map(s => s.trim());
+    services = item.services.split(',').map(s => s.trim()).filter(Boolean);
+  } else if (Array.isArray(item.services_offered) && item.services_offered.length > 0) {
+    services = item.services_offered;
+  } else if (typeof item.services_offered === 'string' && item.services_offered.trim()) {
+    services = item.services_offered.split(',').map(s => s.trim()).filter(Boolean);
   }
 
-  const status = item.status || (item.is_open !== false ? 'Open 24/7' : 'Closed');
+  const status = item.status || (item.is_open === false ? 'Closed' : (item.is_active === false ? 'Closed' : 'Open 24/7'));
   const mobileMechanic = item.mobile_mechanic !== undefined 
     ? Boolean(item.mobile_mechanic) 
     : (item.mobileMechanic !== undefined ? Boolean(item.mobileMechanic) : true);
-  const rating = item.rating ? Number(item.rating) : 4.8;
-  const priceEstimate = item.price_estimate || item.priceEstimate || '₹60 - ₹120';
+  const rating = item.rating ? Number(item.rating) : (item.stars ? Number(item.stars) : 4.8);
+  const priceEstimate = item.price_estimate || item.priceEstimate || item.charges || item.rate || item.price || '₹60 - ₹120';
 
-  const latitude = item.latitude ? Number(item.latitude) : (11.3410 + (idx * 0.003));
-  const longitude = item.longitude ? Number(item.longitude) : (77.7172 + (idx * 0.004));
+  const latitude = item.latitude ? Number(item.latitude) : (item.lat ? Number(item.lat) : (11.3410 + (idx * 0.003)));
+  const longitude = item.longitude ? Number(item.longitude) : (item.lng || item.lon ? Number(item.lng || item.lon) : (77.7172 + (idx * 0.004)));
   const mapPos = item.mapPos || latLngToMapPos(latitude, longitude);
 
   return {
@@ -424,7 +442,7 @@ export function normalizePunctureShop(item, idx = 0) {
     owner,
     ownerTa,
     phone,
-    whatsapp: item.whatsapp || String(phone).replace(/[^0-9]/g, ''),
+    whatsapp: item.whatsapp || item.whatsapp_number || item.whatsappNumber || String(phone).replace(/[^0-9]/g, ''),
     address,
     addressTa,
     distance,
@@ -442,34 +460,51 @@ export function normalizePunctureShop(item, idx = 0) {
 }
 
 /**
- * Fetch puncture works list from Django /api/puncture-works/ [name='puncture-list']
+ * Fetch puncture works list from Django backend with cache-busting and fallback endpoint resilience.
  * @param {string} filter
  * @returns {Promise<Array<object>>}
  */
 export async function fetchPunctureWorksApi(filter = null) {
-  try {
-    const response = await fetch(API_ENDPOINTS.PUNCTURE_WORKS, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-      },
-    });
+  const candidateUrls = [
+    API_ENDPOINTS.PUNCTURE_WORKS,
+    `${API_BASE_URL}/api/puncture-shops/`,
+    `${API_BASE_URL}/api/punctures/`,
+    `${API_BASE_URL}/api/puncture/`,
+  ];
+  if (!API_BASE_URL.includes('127.0.0.1') && !API_BASE_URL.includes('localhost')) {
+    candidateUrls.push(
+      'http://127.0.0.1:8000/api/puncture-works/',
+      'http://localhost:8000/api/puncture-works/'
+    );
+  }
 
-    if (response.ok) {
-      const data = await response.json().catch(() => null);
-      const list = Array.isArray(data) ? data : (data?.results || data?.puncture_works || data?.shops || []);
-      if (Array.isArray(list) && list.length > 0) {
-        const mapped = list.map((item, idx) => normalizePunctureShop(item, idx));
-        if (filter === '247') return mapped.filter(s => String(s.status).includes('24/7'));
-        if (filter === 'mobile') return mapped.filter(s => s.mobileMechanic);
-        if (filter === 'tubeless') return mapped.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
-        return mapped;
+  for (const endpoint of candidateUrls) {
+    try {
+      const url = `${endpoint}${endpoint.includes('?') ? '&' : '?'}_t=${Date.now()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        const list = Array.isArray(data) ? data : (data?.results || data?.puncture_works || data?.shops || data?.data || []);
+        if (Array.isArray(list) && list.length > 0) {
+          const mapped = list.map((item, idx) => normalizePunctureShop(item, idx));
+          if (filter === '247') return mapped.filter(s => String(s.status).includes('24/7'));
+          if (filter === 'mobile') return mapped.filter(s => s.mobileMechanic);
+          if (filter === 'tubeless') return mapped.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
+          return mapped;
+        }
       }
+    } catch {
+      // try next candidate endpoint
     }
-  } catch {
-    // Continue to fallback
   }
 
   // Gracefully fallback to local puncture shops dataset
@@ -478,6 +513,64 @@ export async function fetchPunctureWorksApi(filter = null) {
   if (filter === 'mobile') return fallbackList.filter(s => s.mobileMechanic);
   if (filter === 'tubeless') return fallbackList.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
   return fallbackList;
+}
+
+/**
+ * Re-fetch puncture shop details live from backend on click.
+ * Resolves with the matching shop and the fresh shops list.
+ * @param {string|number} shopId
+ * @param {object} [fallbackShop]
+ * @returns {Promise<{shop: object, freshList: Array<object>}>}
+ */
+export async function fetchPunctureShopDetailApi(shopId, fallbackShop = null) {
+  // 1. Try detail endpoint if valid ID
+  if (shopId && !String(shopId).startsWith('punc-')) {
+    const detailUrls = [
+      `${API_ENDPOINTS.PUNCTURE_WORKS}${shopId}/?_t=${Date.now()}`,
+      `${API_BASE_URL}/api/puncture-shops/${shopId}/?_t=${Date.now()}`,
+      `http://127.0.0.1:8000/api/puncture-works/${shopId}/?_t=${Date.now()}`,
+    ];
+    for (const url of detailUrls) {
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+          },
+        });
+        if (res.ok) {
+          const item = await res.json().catch(() => null);
+          if (item && (item.id || item.name || item.shop_name)) {
+            const normalized = normalizePunctureShop(item);
+            return { shop: normalized, freshList: null };
+          }
+        }
+      } catch {}
+    }
+  }
+
+  // 2. Fetch fresh list from backend
+  try {
+    const freshList = await fetchPunctureWorksApi();
+    if (Array.isArray(freshList) && freshList.length > 0) {
+      const matched = freshList.find(s => 
+        String(s.id) === String(shopId) ||
+        (fallbackShop && s.name && fallbackShop.name && s.name.trim().toLowerCase() === fallbackShop.name.trim().toLowerCase()) ||
+        (fallbackShop && s.owner && fallbackShop.owner && s.owner.trim().toLowerCase() === fallbackShop.owner.trim().toLowerCase())
+      );
+      if (matched) {
+        return { shop: matched, freshList };
+      }
+      return { shop: freshList[0], freshList };
+    }
+  } catch (err) {
+    console.warn('[api] Failed to fetch fresh puncture shop detail:', err);
+  }
+
+  return { shop: fallbackShop, freshList: null };
 }
 
 /**
@@ -644,6 +737,7 @@ export default {
   fetchBookingsApi,
   fetchAmbulancesApi,
   fetchPunctureWorksApi,
+  fetchPunctureShopDetailApi,
   fetchDriverLocationsApi,
   normalizeDriverLocation,
   normalizeAmbulance,

@@ -1009,6 +1009,15 @@ textarea {
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* Contact Page Mobile Responsive Styles */
 @media (max-width: 860px) {

@@ -37,6 +37,7 @@ import {
   fetchDriverLocationsApi, 
   fetchLocationsApi, 
   fetchPunctureWorksApi, 
+  fetchPunctureShopDetailApi,
   latLngToMapPos 
 } from '../../config/api';
 
@@ -110,6 +111,7 @@ export const RapidoServicesMap = ({
   const [punctureShopsList, setPunctureShopsList] = useState(punctureShops);
   const [selectedPunctureShop, setSelectedPunctureShop] = useState(punctureShops[0]);
   const [previewPunctureShop, setPreviewPunctureShop] = useState(null);
+  const [isFetchingShopDetail, setIsFetchingShopDetail] = useState(false);
   const [punctureFilter, setPunctureFilter] = useState(initialFilter || 'all'); // 'all' | '247' | 'mobile' | 'tubeless'
   const [sosState, setSosState] = useState('dispatched'); // 'dispatched' | 'arrived'
   const [sosMechanicPos, setSosMechanicPos] = useState(punctureShops[0]?.mapPos || { x: 49, y: 39 });
@@ -128,6 +130,32 @@ export const RapidoServicesMap = ({
     });
     return () => { isMounted = false; };
   }, []);
+
+  // Handle clicking any puncture shop (static marker pin, moving mechanic, or list item)
+  // Immediately previews the shop for instant feedback, then re-fetches live backend details
+  const handlePunctureShopClick = async (shop) => {
+    if (!shop) return;
+    setSelectedPunctureShop(shop);
+    setPreviewPunctureShop(shop);
+    setIsFetchingShopDetail(true);
+
+    try {
+      const result = await fetchPunctureShopDetailApi(shop.id, shop);
+      if (result) {
+        if (result.freshList && Array.isArray(result.freshList) && result.freshList.length > 0) {
+          setPunctureShopsList(result.freshList);
+        }
+        if (result.shop) {
+          setSelectedPunctureShop(result.shop);
+          setPreviewPunctureShop(result.shop);
+        }
+      }
+    } catch (err) {
+      console.warn('[RapidoServicesMap] handlePunctureShopClick refresh error:', err);
+    } finally {
+      setIsFetchingShopDetail(false);
+    }
+  };
 
 
   // Map viewport controls with dynamic center origin for smooth camera zooming
@@ -1369,7 +1397,7 @@ export const RapidoServicesMap = ({
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
                         <button
                           onClick={() => {
-                            setPreviewPunctureShop(selectedPunctureShop);
+                            handlePunctureShopClick(selectedPunctureShop);
                             setMapCenterOrigin(sosMechanicPos);
                             setMapZoom(1.5);
                           }}
@@ -1448,10 +1476,7 @@ export const RapidoServicesMap = ({
                           {filteredPunctureShops.map((shp) => (
                             <div
                               key={shp.id}
-                              onClick={() => {
-                                setSelectedPunctureShop(shp);
-                                setPreviewPunctureShop(shp);
-                              }}
+                              onClick={() => handlePunctureShopClick(shp)}
                               style={{
                                 padding: '0.55rem 0.75rem',
                                 borderRadius: '8px',
@@ -1912,10 +1937,7 @@ export const RapidoServicesMap = ({
                   return (
                     <div
                       key={shop.id || idx}
-                      onClick={() => {
-                        setSelectedPunctureShop(shop);
-                        setPreviewPunctureShop(shop);
-                      }}
+                      onClick={() => handlePunctureShopClick(shop)}
                       style={{
                         position: 'absolute',
                         left: `${pos.x}%`,
@@ -1964,9 +1986,7 @@ export const RapidoServicesMap = ({
                 {/* Moving mechanic for the SELECTED / dispatched shop */}
                 {selectedPunctureShop && (
                   <div
-                    onClick={() => {
-                      setPreviewPunctureShop(selectedPunctureShop);
-                    }}
+                    onClick={() => handlePunctureShopClick(selectedPunctureShop)}
                     style={{
                       position: 'absolute',
                       left: `${sosMechanicPos.x}%`,
@@ -2245,11 +2265,28 @@ export const RapidoServicesMap = ({
                       {previewPunctureShop.name}
                     </div>
                     <div style={{ fontSize: '0.66rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      Owner: <strong style={{ color: '#0f172a' }}>{previewPunctureShop.owner}</strong> • {previewPunctureShop.distance}
+                      Owner: <strong style={{ color: '#0f172a' }}>{previewPunctureShop.owner || previewPunctureShop.raw?.owner_name || 'Verified Mechanic'}</strong> • {previewPunctureShop.distance}
                     </div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                  {isFetchingShopDetail && (
+                    <span style={{
+                      backgroundColor: '#fef3c7',
+                      color: '#b45309',
+                      border: '1px solid #fde68a',
+                      fontSize: '0.62rem',
+                      fontWeight: 800,
+                      padding: '0.12rem 0.4rem',
+                      borderRadius: '9999px',
+                      whiteSpace: 'nowrap',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px'
+                    }}>
+                      <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>🔄</span> Live
+                    </span>
+                  )}
                   <span style={{
                     backgroundColor: (
                       previewPunctureShop.id === selectedPunctureShop?.id && sosState === 'dispatched'
