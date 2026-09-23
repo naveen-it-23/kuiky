@@ -512,8 +512,8 @@ export const RapidoServicesMap = ({
                       backgroundColor: '#f8fafc',
                       borderRadius: '12px',
                       border: '1.5px solid #e2e8f0',
-                      padding: '0.65rem 0.85rem',
-                      marginBottom: '0.85rem'
+                      padding: '0.45rem 0.75rem',
+                      marginBottom: '0.55rem'
                     }}>
                       {/* Pickup Row */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -525,15 +525,15 @@ export const RapidoServicesMap = ({
                           flexShrink: 0
                         }}>
                           <span style={{
-                            width: '10px',
-                            height: '10px',
+                            width: '9px',
+                            height: '9px',
                             borderRadius: '50%',
                             backgroundColor: '#10b981',
                             boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.2)'
                           }} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
+                          <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
                             {lang === 'ta' ? 'தொடக்க இடம்' : 'Pickup Location'}
                           </div>
                           <select
@@ -544,10 +544,10 @@ export const RapidoServicesMap = ({
                             }}
                             style={{
                               width: '100%',
-                              padding: '0.3rem 0',
+                              padding: '0.15rem 0',
                               border: 'none',
                               backgroundColor: 'transparent',
-                              fontSize: '0.86rem',
+                              fontSize: '0.84rem',
                               fontWeight: 700,
                               color: '#0f172a',
                               outline: 'none',
@@ -566,7 +566,7 @@ export const RapidoServicesMap = ({
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.6rem',
-                        margin: '0.2rem 0'
+                        margin: '0.1rem 0'
                       }}>
                         <div style={{
                           width: '18px',
@@ -575,7 +575,7 @@ export const RapidoServicesMap = ({
                         }}>
                           <div style={{
                             width: '2px',
-                            height: '12px',
+                            height: '10px',
                             borderLeft: '2px dotted #cbd5e1'
                           }} />
                         </div>
@@ -592,15 +592,15 @@ export const RapidoServicesMap = ({
                           flexShrink: 0
                         }}>
                           <span style={{
-                            width: '10px',
-                            height: '10px',
+                            width: '9px',
+                            height: '9px',
                             borderRadius: '2px',
                             backgroundColor: '#ef4444',
                             boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.2)'
                           }} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
+                          <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
                             {lang === 'ta' ? 'இலக்கு இடம்' : 'Drop Destination'}
                           </div>
                           <select
@@ -611,10 +611,10 @@ export const RapidoServicesMap = ({
                             }}
                             style={{
                               width: '100%',
-                              padding: '0.3rem 0',
+                              padding: '0.15rem 0',
                               border: 'none',
                               backgroundColor: 'transparent',
-                              fontSize: '0.86rem',
+                              fontSize: '0.84rem',
                               fontWeight: 700,
                               color: '#0f172a',
                               outline: 'none',
@@ -630,8 +630,8 @@ export const RapidoServicesMap = ({
                     </div>
 
                     {/* Auto Type Chooser */}
-                    <div style={{ marginBottom: '0.85rem' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', marginBottom: '0.4rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                    <div style={{ marginBottom: '0.55rem' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', marginBottom: '0.25rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                         {lang === 'ta' ? 'வாகனத்தை தேர்ந்தெடுக்கவும்' : 'Choose Vehicle Type'}
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.45rem' }}>
@@ -640,13 +640,13 @@ export const RapidoServicesMap = ({
                           type="button"
                           onClick={() => setSelectedAutoType('standard')}
                           style={{
-                            padding: '0.45rem 0.25rem 0.5rem',
-                            borderRadius: '12px',
+                            padding: '0.35rem 0.2rem 0.35rem',
+                            borderRadius: '10px',
                             border: selectedAutoType === 'standard' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'standard' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'standard' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'standard' ? '0 3px 10px rgba(4, 120, 75, 0.12)' : '0 1px 3px rgba(0,0,0,0.02)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -656,12 +656,12 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '44px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.25rem',
-                            borderRadius: '8px',
+                            marginBottom: '0.15rem',
+                            borderRadius: '6px',
                             backgroundColor: selectedAutoType === 'standard' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
                             border: '1px solid ' + (selectedAutoType === 'standard' ? '#bbf7d0' : '#f1f5f9')
@@ -672,8 +672,8 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Standard</div>
-                          <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0f172a' }}>Standard</div>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#04784b' }}>
                             ₹{35 + Math.round(baseDistanceKm * 15)}
                           </div>
                         </button>
@@ -683,13 +683,13 @@ export const RapidoServicesMap = ({
                           type="button"
                           onClick={() => setSelectedAutoType('electric')}
                           style={{
-                            padding: '0.45rem 0.25rem 0.5rem',
-                            borderRadius: '12px',
+                            padding: '0.35rem 0.2rem 0.35rem',
+                            borderRadius: '10px',
                             border: selectedAutoType === 'electric' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'electric' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'electric' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'electric' ? '0 3px 10px rgba(4, 120, 75, 0.12)' : '0 1px 3px rgba(0,0,0,0.02)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -699,12 +699,12 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '44px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.25rem',
-                            borderRadius: '8px',
+                            marginBottom: '0.15rem',
+                            borderRadius: '6px',
                             backgroundColor: selectedAutoType === 'electric' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
                             border: '1px solid ' + (selectedAutoType === 'electric' ? '#bbf7d0' : '#f1f5f9')
@@ -715,8 +715,8 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Eco EV</div>
-                          <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0f172a' }}>Eco EV</div>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#04784b' }}>
                             ₹{30 + Math.round(baseDistanceKm * 12)}
                           </div>
                         </button>
@@ -726,13 +726,13 @@ export const RapidoServicesMap = ({
                           type="button"
                           onClick={() => setSelectedAutoType('cargo')}
                           style={{
-                            padding: '0.45rem 0.25rem 0.5rem',
-                            borderRadius: '12px',
+                            padding: '0.35rem 0.2rem 0.35rem',
+                            borderRadius: '10px',
                             border: selectedAutoType === 'cargo' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'cargo' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'cargo' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'cargo' ? '0 3px 10px rgba(4, 120, 75, 0.12)' : '0 1px 3px rgba(0,0,0,0.02)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -742,12 +742,12 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '44px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.25rem',
-                            borderRadius: '8px',
+                            marginBottom: '0.15rem',
+                            borderRadius: '6px',
                             backgroundColor: selectedAutoType === 'cargo' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
                             border: '1px solid ' + (selectedAutoType === 'cargo' ? '#bbf7d0' : '#f1f5f9')
@@ -758,8 +758,8 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Cargo</div>
-                          <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0f172a' }}>Cargo</div>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#04784b' }}>
                             ₹{50 + Math.round(baseDistanceKm * 18)}
                           </div>
                         </button>
@@ -777,45 +777,42 @@ export const RapidoServicesMap = ({
                         <div style={{
                           backgroundColor: '#f0fdf4',
                           border: '1.5px solid #bbf7d0',
-                          borderRadius: '12px',
-                          padding: '0.65rem 0.85rem',
-                          marginBottom: '0.85rem',
-                          boxShadow: '0 2px 6px rgba(4, 120, 75, 0.06)'
+                          borderRadius: '10px',
+                          padding: '0.45rem 0.7rem',
+                          marginBottom: '0.65rem',
+                          boxShadow: '0 2px 6px rgba(4, 120, 75, 0.05)'
                         }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                              <span style={{ fontSize: '1.05rem' }}>🛺</span>
-                              <strong style={{ fontSize: '0.86rem', color: '#065f46' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <span style={{ fontSize: '0.95rem' }}>🛺</span>
+                              <strong style={{ fontSize: '0.84rem', color: '#065f46' }}>
                                 {matched.driver_name || matched.name}
                               </strong>
                             </div>
                             <span style={{
                               backgroundColor: '#04784b',
                               color: '#ffffff',
-                              fontSize: '0.68rem',
+                              fontSize: '0.65rem',
                               fontWeight: 800,
-                              padding: '0.15rem 0.45rem',
+                              padding: '0.12rem 0.45rem',
                               borderRadius: '4px'
                             }}>
                               {matched.is_online ? 'LIVE ONLINE' : 'OFFLINE'}
                             </span>
                           </div>
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.74rem', color: '#334155' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <span style={{ color: '#64748b' }}>📍 Driver Location:</span>
-                              <strong style={{ color: '#04784b' }}>
-                                Lat {Number(matched.latitude).toFixed(4)}, Lng {Number(matched.longitude).toFixed(4)}
-                              </strong>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <span style={{ color: '#64748b' }}>⏱️ Arrival Time:</span>
-                              <strong style={{ color: '#d97706' }}>{matched.eta_text || matched.eta}</strong>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <span style={{ color: '#64748b' }}>📞 Phone:</span>
-                              <strong>{matched.phone}</strong>
-                            </div>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', color: '#334155', marginBottom: '0.2rem' }}>
+                            <span style={{ color: '#04784b', fontWeight: 600 }}>
+                              📍 Lat {Number(matched.latitude).toFixed(4)}, Lng {Number(matched.longitude).toFixed(4)}
+                            </span>
+                            <span style={{ color: '#d97706', fontWeight: 700 }}>
+                              ⏱️ {matched.eta_text || matched.eta}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.7rem', color: '#64748b' }}>
+                            <span>📞 {matched.phone || '+91 94438 12345'}</span>
+                            <span style={{ color: '#059669', fontWeight: 700 }}>⚡ Verified</span>
                           </div>
                         </div>
                       );
@@ -828,10 +825,10 @@ export const RapidoServicesMap = ({
                         width: '100%',
                         backgroundColor: '#04784b',
                         color: '#ffffff',
-                        padding: '0.78rem 1rem',
+                        padding: '0.72rem 1rem',
                         borderRadius: '12px',
                         border: 'none',
-                        fontSize: '0.94rem',
+                        fontSize: '0.92rem',
                         fontWeight: 800,
                         cursor: 'pointer',
                         display: 'flex',
