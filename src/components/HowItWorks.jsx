@@ -371,7 +371,7 @@ export const HowItWorks = () => {
               </p>
 
               {/* App Store Buttons */}
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <div className="app-banner-buttons" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 {/* Google Play */}
                 <a
                   href="#playstore"

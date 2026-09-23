@@ -1243,4 +1243,44 @@ textarea {
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
+/* ========================================================
+   Mobile Alignment & Responsiveness Refinements
+   ======================================================== */
+@media (max-width: 640px) {
+  .rapido-map-topbar {
+    padding: 0.6rem 0.75rem !important;
+    gap: 0.45rem !important;
+  }
+  .rapido-service-badge {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.8rem !important;
+    gap: 0.35rem !important;
+  }
+  .rapido-gps-badge {
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.74rem !important;
+  }
+  .rapido-zoom-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.85rem !important;
+  }
+  .driver-label-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .app-banner-buttons {
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 860px) and (min-width: 541px) {
+  .footer-grid-5 > div:last-child {
+    grid-column: span 2 !important;
+  }
+}
+
+
 

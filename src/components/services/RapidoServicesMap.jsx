@@ -214,17 +214,20 @@ export const RapidoServicesMap = ({
     >
 
       {/* ─── TOP BAR / RAPIDO MODE SELECTOR ─── */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.85rem 1.25rem',
-        borderBottom: '1px solid #f1f5f9',
-        backgroundColor: '#ffffff',
-        flexWrap: 'wrap',
-        gap: '0.85rem',
-        flexShrink: 0
-      }}>
+      <div 
+        className="rapido-map-topbar"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0.85rem 1.25rem',
+          borderBottom: '1px solid #f1f5f9',
+          backgroundColor: '#ffffff',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          flexShrink: 0
+        }}
+      >
         {/* Left: Back Button & Mode Tabs */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
           {onClose && (
@@ -254,19 +257,22 @@ export const RapidoServicesMap = ({
 
           {/* Dedicated Service Badge - Display only the active service's title */}
           {activeTab === 'auto' && (
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              backgroundColor: '#ecfdf5',
-              border: '1.5px solid #a7f3d0',
-              padding: '0.5rem 1.15rem',
-              borderRadius: '9999px',
-              boxShadow: '0 2px 8px rgba(4, 120, 75, 0.12)'
-            }}>
+            <div 
+              className="rapido-service-badge"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.55rem',
+                backgroundColor: '#ecfdf5',
+                border: '1.5px solid #a7f3d0',
+                padding: '0.5rem 1.15rem',
+                borderRadius: '9999px',
+                boxShadow: '0 2px 8px rgba(4, 120, 75, 0.12)'
+              }}
+            >
               <span style={{ fontSize: '1.25rem' }}>🛺</span>
               <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#065f46' }}>
-                {lang === 'ta' ? 'ஆட்டோ முன்பதிவு & நேரலை கண்காணிப்பு' : 'Rapido Auto • Live Booking & Track'}
+                {lang === 'ta' ? 'ஆட்டோ முன்பதிவு & நேரலை' : 'Rapido Auto • Live Booking'}
               </span>
               <span style={{
                 backgroundColor: '#04784b',
@@ -282,16 +288,19 @@ export const RapidoServicesMap = ({
           )}
 
           {activeTab === 'puncture' && (
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              backgroundColor: '#fffbeb',
-              border: '1.5px solid #fde68a',
-              padding: '0.5rem 1.15rem',
-              borderRadius: '9999px',
-              boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
-            }}>
+            <div 
+              className="rapido-service-badge"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.55rem',
+                backgroundColor: '#fffbeb',
+                border: '1.5px solid #fde68a',
+                padding: '0.5rem 1.15rem',
+                borderRadius: '9999px',
+                boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
+              }}
+            >
               <span style={{ fontSize: '1.25rem' }}>🔧</span>
               <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e' }}>
                 {lang === 'ta' ? 'பஞ்சர் கடைகள் (அருகில்)' : 'Nearby Tyre & Puncture Works'}
@@ -311,21 +320,24 @@ export const RapidoServicesMap = ({
 
         </div>
 
-      {/* Right: Live GPS Badge & Map Zoom controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Right: Live GPS Badge & Map Zoom controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
 
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            backgroundColor: '#ecfdf5',
-            border: '1px solid #a7f3d0',
-            padding: '0.45rem 0.85rem',
-            borderRadius: '9999px',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            color: '#065f46'
-          }}>
+          <div 
+            className="rapido-gps-badge"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              backgroundColor: '#ecfdf5',
+              border: '1px solid #a7f3d0',
+              padding: '0.45rem 0.85rem',
+              borderRadius: '9999px',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: '#065f46'
+            }}
+          >
             <span style={{
               width: '8px',
               height: '8px',
@@ -334,11 +346,12 @@ export const RapidoServicesMap = ({
               display: 'inline-block',
               animation: 'pulse 1.5s infinite'
             }} />
-            <span>GPS: Erode Central Active</span>
+            <span>GPS: Erode Active</span>
           </div>
 
           <button
             onClick={() => setMapZoom(prev => Math.min(prev + 0.2, 1.8))}
+            className="rapido-zoom-btn"
             style={{
               width: '36px',
               height: '36px',
@@ -354,6 +367,7 @@ export const RapidoServicesMap = ({
           </button>
           <button
             onClick={() => setMapZoom(prev => Math.max(prev - 0.2, 1.0))}
+            className="rapido-zoom-btn"
             style={{
               width: '36px',
               height: '36px',
@@ -1469,23 +1483,33 @@ export const RapidoServicesMap = ({
                         )}
                       </div>
 
-                      <div style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        marginTop: '4px',
-                        backgroundColor: isAssigned ? '#0f172a' : 'rgba(255, 255, 255, 0.95)',
-                        color: isAssigned ? '#ffffff' : '#0f172a',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '6px',
-                        fontSize: '0.7rem',
-                        fontWeight: 800,
-                        whiteSpace: 'nowrap',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                        pointerEvents: 'none'
-                      }}>
-                        {isAssigned ? `Driver: ${driver.name.split(' ')[0]}` : `${driver.name.split(' ')[0]} • ${driver.eta}`}
+                      <div 
+                        className="rapido-driver-badge"
+                        style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          marginTop: '4px',
+                          backgroundColor: isAssigned ? '#0f172a' : 'rgba(255, 255, 255, 0.95)',
+                          color: isAssigned ? '#ffffff' : '#0f172a',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '6px',
+                          fontSize: '0.7rem',
+                          fontWeight: 800,
+                          whiteSpace: 'nowrap',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                          pointerEvents: 'none'
+                        }}
+                      >
+                        {isAssigned ? (
+                          `Driver: ${driver.name.split(' ')[0]}`
+                        ) : (
+                          <>
+                            <span className="driver-label-desktop">{driver.name.split(' ')[0]} • </span>
+                            <span>{driver.eta}</span>
+                          </>
+                        )}
                       </div>
                     </div>
                   );

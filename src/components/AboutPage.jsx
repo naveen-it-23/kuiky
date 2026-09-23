@@ -118,7 +118,7 @@ export const AboutPage = ({ isEmbedded = false }) => {
       }}>
         <div className="about-hero-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '2.5rem',
           alignItems: 'center'
         }}>
@@ -253,7 +253,7 @@ export const AboutPage = ({ isEmbedded = false }) => {
       }}>
         <div className="about-story-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '3rem',
           alignItems: 'center',
           maxWidth: '1060px',
@@ -598,7 +598,7 @@ export const AboutPage = ({ isEmbedded = false }) => {
           border: '1.5px solid #d1fae5',
           overflow: 'hidden',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           alignItems: 'center'
         }}>
           {/* Left: Text */}
