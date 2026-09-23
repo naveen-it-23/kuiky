@@ -92,8 +92,9 @@ export const RapidoServicesMap = ({
   const [sosEta, setSosEta] = useState(180);
 
 
-  // Map viewport controls
+  // Map viewport controls with dynamic center origin for smooth camera zooming
   const [mapZoom, setMapZoom] = useState(1);
+  const [mapCenterOrigin, setMapCenterOrigin] = useState({ x: 50, y: 50 });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const mapContainerRef = useRef(null);
 
@@ -119,6 +120,10 @@ export const RapidoServicesMap = ({
     setIsBookingApi(true);
     const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
     setRideOtp(generatedOtp);
+
+    // Initial smooth camera glide towards user's pickup spot
+    setMapCenterOrigin(pickupLoc.pos);
+    setMapZoom(1.25);
 
     // Filter available online driver matching backend vehicle_type
     const matchingDrivers = onlineDrivers.filter((d) => {
@@ -155,10 +160,16 @@ export const RapidoServicesMap = ({
       setDriverPos(chosenDriver.mapPos);
       setRideState('confirmed');
       setEtaSeconds(120);
+
+      // Smoothly zoom in and center the map on the driver, route line & pickup location!
+      const focusX = (chosenDriver.mapPos.x + pickupLoc.pos.x) / 2;
+      const focusY = (chosenDriver.mapPos.y + pickupLoc.pos.y) / 2;
+      setMapCenterOrigin({ x: focusX, y: focusY });
+      setMapZoom(1.55);
     }, 1600);
   };
 
-  // Animate Auto moving to pickup
+  // Animate Auto moving to pickup & update map camera
   useEffect(() => {
     if (rideState !== 'confirmed' || !assignedDriver) return;
 
@@ -174,11 +185,19 @@ export const RapidoServicesMap = ({
     const interval = setInterval(() => {
       step += 1;
       if (step < totalSteps) {
-        setDriverPos(waypoints[step]);
+        const nextPos = waypoints[step];
+        setDriverPos(nextPos);
         setEtaSeconds((prev) => Math.max(prev - 35, 15));
+        // Keep camera focused on driver heading to pickup
+        const curFocusX = (nextPos.x + pickupLoc.pos.x) / 2;
+        const curFocusY = (nextPos.y + pickupLoc.pos.y) / 2;
+        setMapCenterOrigin({ x: curFocusX, y: curFocusY });
       } else {
         setDriverPos(pickupLoc.pos);
         setRideState('arrived');
+        // Zoom in closer directly on the pickup location when driver arrives!
+        setMapCenterOrigin({ x: pickupLoc.pos.x, y: pickupLoc.pos.y });
+        setMapZoom(1.75);
         clearInterval(interval);
       }
     }, 2800);
@@ -220,6 +239,9 @@ export const RapidoServicesMap = ({
     setRideState('idle');
     setAssignedDriver(null);
     setLiveBooking(null);
+    // Smoothly zoom back out and reset map center
+    setMapCenterOrigin({ x: 50, y: 50 });
+    setMapZoom(1);
   };
 
   const filteredPunctureShops = punctureShops.filter((shop) => {
@@ -1052,6 +1074,24 @@ export const RapidoServicesMap = ({
                         <span>WhatsApp</span>
                       </a>
                     </div>
+
+                    <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
+                      <button
+                        onClick={handleCancelRide}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontWeight: 700,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          padding: '0.35rem 0.65rem',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Cancel Ride & Reset Map View
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1358,13 +1398,107 @@ export const RapidoServicesMap = ({
 
         {/* ─── RIGHT PANEL: CLEAN, UNOBSTRUCTED LIVE MAP VIEWPORT ─── */}
         <div className="rapido-map-viewport">
-          {/* High-Res Map Background with Pan/Zoom */}
+          {/* Floating Map Zoom & Recenter Controls */}
+          <div style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.45rem',
+            zIndex: 45
+          }}>
+            {/* Zoom In */}
+            <button
+              type="button"
+              onClick={() => setMapZoom(prev => Math.min(Number((prev + 0.25).toFixed(2)), 2.5))}
+              style={{
+                width: '36px',
+                height: '36px',
+                backgroundColor: '#ffffff',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: '10px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontWeight: 900,
+                fontSize: '1.2rem',
+                color: '#0f172a',
+                transition: 'all 0.15s ease'
+              }}
+              title="Zoom In"
+            >
+              +
+            </button>
+
+            {/* Zoom Out */}
+            <button
+              type="button"
+              onClick={() => setMapZoom(prev => Math.max(Number((prev - 0.25).toFixed(2)), 0.85))}
+              style={{
+                width: '36px',
+                height: '36px',
+                backgroundColor: '#ffffff',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: '10px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontWeight: 900,
+                fontSize: '1.2rem',
+                color: '#0f172a',
+                transition: 'all 0.15s ease'
+              }}
+              title="Zoom Out"
+            >
+              −
+            </button>
+
+            {/* Recenter & Fit Route */}
+            <button
+              type="button"
+              onClick={() => {
+                if (rideState === 'confirmed' || rideState === 'arrived') {
+                  const focusX = (driverPos.x + pickupLoc.pos.x) / 2;
+                  const focusY = (driverPos.y + pickupLoc.pos.y) / 2;
+                  setMapCenterOrigin({ x: focusX, y: focusY });
+                  setMapZoom(1.55);
+                } else {
+                  setMapCenterOrigin({ x: 50, y: 50 });
+                  setMapZoom(1);
+                }
+              }}
+              style={{
+                width: '36px',
+                height: '36px',
+                backgroundColor: '#ffffff',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: '10px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#04784b',
+                transition: 'all 0.15s ease'
+              }}
+              title="Recenter on Route"
+            >
+              <Navigation size={16} />
+            </button>
+          </div>
+
+          {/* High-Res Map Background with Dynamic Pan & Zoom */}
           <div style={{
             position: 'absolute',
             inset: 0,
             transform: `scale(${mapZoom})`,
-            transformOrigin: 'center center',
-            transition: 'transform 0.3s ease',
+            transformOrigin: `${mapCenterOrigin.x}% ${mapCenterOrigin.y}%`,
+            transition: 'transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), transform-origin 0.85s cubic-bezier(0.2, 0.8, 0.2, 1)',
             cursor: 'grab'
           }}>
             <img
