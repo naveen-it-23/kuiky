@@ -1223,28 +1223,42 @@ export const RapidoServicesMap = ({
                   )}
                 </div>
 
-                {/* Filter Pills */}
-                <div style={{ display: 'flex', gap: '0.35rem', overflowX: 'auto', paddingBottom: '0.2rem' }}>
-                  {['all', '247', 'mobile', 'tubeless'].map((fKey) => (
+                {/* Filter Pills — Fitted 4-column layout without horizontal sliding */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '0.3rem',
+                  width: '100%'
+                }}>
+                  {[
+                    { key: 'all', label: 'All Shops' },
+                    { key: '247', label: '24/7 Open' },
+                    { key: 'mobile', label: 'Doorstep 🛵' },
+                    { key: 'tubeless', label: 'Tubeless' }
+                  ].map(({ key: fKey, label }) => (
                     <button
                       key={fKey}
+                      type="button"
                       onClick={() => setPunctureFilter(fKey)}
                       style={{
-                        padding: '0.25rem 0.65rem',
+                        padding: '0.32rem 0.15rem',
                         borderRadius: '9999px',
-                        border: 'none',
+                        border: punctureFilter === fKey ? '1.5px solid #d97706' : '1px solid #fde68a',
                         backgroundColor: punctureFilter === fKey ? '#d97706' : '#ffffff',
                         color: punctureFilter === fKey ? '#ffffff' : '#78350f',
-                        fontSize: '0.72rem',
+                        fontSize: '0.69rem',
                         fontWeight: 700,
                         cursor: 'pointer',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: punctureFilter === fKey ? '0 2px 6px rgba(217, 119, 6, 0.25)' : 'none',
+                        transition: 'all 0.15s ease'
                       }}
                     >
-                      {fKey === 'all' && 'All Shops'}
-                      {fKey === '247' && '24/7 Open'}
-                      {fKey === 'mobile' && 'Doorstep Van 🛵'}
-                      {fKey === 'tubeless' && 'Tubeless Repair'}
+                      {label}
                     </button>
                   ))}
                 </div>
