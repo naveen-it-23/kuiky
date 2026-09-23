@@ -109,9 +109,10 @@ export const RapidoServicesMap = ({
   // ─── PUNCTURE STATE ───
   const [punctureShopsList, setPunctureShopsList] = useState(punctureShops);
   const [selectedPunctureShop, setSelectedPunctureShop] = useState(punctureShops[0]);
+  const [previewPunctureShop, setPreviewPunctureShop] = useState(null);
   const [punctureFilter, setPunctureFilter] = useState(initialFilter || 'all'); // 'all' | '247' | 'mobile' | 'tubeless'
-  const [sosState, setSosState] = useState('idle'); // 'idle' | 'dispatched' | 'arrived'
-  const [sosMechanicPos, setSosMechanicPos] = useState({ x: 45, y: 46 });
+  const [sosState, setSosState] = useState('dispatched'); // 'dispatched' | 'arrived'
+  const [sosMechanicPos, setSosMechanicPos] = useState(punctureShops[0]?.mapPos || { x: 49, y: 39 });
   const [sosEta, setSosEta] = useState(180);
 
   // Fetch puncture works from Django backend (/api/puncture-works/ [name='puncture-list'])
@@ -242,34 +243,63 @@ export const RapidoServicesMap = ({
     return () => clearInterval(interval);
   }, [rideState, assignedDriver, pickupLoc]);
 
-  // ─── PUNCTURE SOS DISPATCH SIMULATION ───
+  // ─── PUNCTURE MOBILE MECHANIC ARRIVING EN-ROUTE (MATCHING AUTO SERVICE) ───
+  useEffect(() => {
+    if (activeTab !== 'puncture' || !selectedPunctureShop) return;
+
+    const startPos = selectedPunctureShop.mapPos || latLngToMapPos(selectedPunctureShop.latitude, selectedPunctureShop.longitude);
+    setSosMechanicPos(startPos);
+    setSosState('dispatched');
+    setSosEta(180);
+
+    // Initial smooth camera glide towards user's breakdown spot and route
+    const focusX = (startPos.x + pickupLoc.pos.x) / 2;
+    const focusY = (startPos.y + pickupLoc.pos.y) / 2;
+    setMapCenterOrigin({ x: focusX, y: focusY });
+    setMapZoom(1.35);
+
+    const waypoints = [
+      startPos,
+      { x: startPos.x * 0.65 + pickupLoc.pos.x * 0.35, y: startPos.y * 0.65 + pickupLoc.pos.y * 0.35 },
+      { x: startPos.x * 0.35 + pickupLoc.pos.x * 0.65, y: startPos.y * 0.35 + pickupLoc.pos.y * 0.65 },
+      pickupLoc.pos
+    ];
+
+    let step = 0;
+    const totalSteps = waypoints.length;
+
+    const interval = setInterval(() => {
+      step += 1;
+      if (step < totalSteps) {
+        const nextPos = waypoints[step];
+        setSosMechanicPos(nextPos);
+        setSosEta((prev) => Math.max(prev - 45, 15));
+        const curFocusX = (nextPos.x + pickupLoc.pos.x) / 2;
+        const curFocusY = (nextPos.y + pickupLoc.pos.y) / 2;
+        setMapCenterOrigin({ x: curFocusX, y: curFocusY });
+      } else {
+        setSosMechanicPos(pickupLoc.pos);
+        setSosState('arrived');
+        setMapCenterOrigin({ x: pickupLoc.pos.x, y: pickupLoc.pos.y });
+        setMapZoom(1.55);
+        clearInterval(interval);
+      }
+    }, 2600);
+
+    return () => clearInterval(interval);
+  }, [activeTab, selectedPunctureShop, pickupLoc]);
+
   const handleRequestDoorstepSos = (shop) => {
     setSelectedPunctureShop(shop);
     setSosState('dispatched');
-    setSosMechanicPos(shop.mapPos);
+    const startPos = shop.mapPos || latLngToMapPos(shop.latitude, shop.longitude);
+    setSosMechanicPos(startPos);
     setSosEta(180);
-
-    // Animate mechanic bike towards user breakdown spot (pickupLoc.pos)
-    const startX = shop.mapPos.x;
-    const startY = shop.mapPos.y;
-    const endX = pickupLoc.pos.x;
-    const endY = pickupLoc.pos.y;
-
-    let progress = 0;
-    const sosInterval = setInterval(() => {
-      progress += 0.25;
-      if (progress <= 1) {
-        setSosMechanicPos({
-          x: startX + (endX - startX) * progress,
-          y: startY + (endY - startY) * progress
-        });
-        setSosEta((prev) => Math.max(prev - 45, 10));
-      } else {
-        setSosMechanicPos({ x: endX, y: endY });
-        setSosState('arrived');
-        clearInterval(sosInterval);
-      }
-    }, 2400);
+    const focusX = (startPos.x + pickupLoc.pos.x) / 2;
+    const focusY = (startPos.y + pickupLoc.pos.y) / 2;
+    setMapCenterOrigin({ x: focusX, y: focusY });
+    setMapZoom(1.45);
+    setPreviewPunctureShop(null);
   };
 
   const handleCancelRide = () => {
@@ -1335,10 +1365,14 @@ export const RapidoServicesMap = ({
                         </div>
                       </div>
 
-                      {/* Action Buttons: Request Doorstep & Call */}
+                      {/* Action Buttons: View Details & Call */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
                         <button
-                          onClick={() => handleRequestDoorstepSos(selectedPunctureShop)}
+                          onClick={() => {
+                            setPreviewPunctureShop(selectedPunctureShop);
+                            setMapCenterOrigin(sosMechanicPos);
+                            setMapZoom(1.5);
+                          }}
                           style={{
                             width: '100%',
                             backgroundColor: '#d97706',
@@ -1356,7 +1390,7 @@ export const RapidoServicesMap = ({
                             boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)'
                           }}
                         >
-                          <span>🛵 Request Mobile Mechanic to My Spot</span>
+                          <span>🛵 View Arriving Mechanic Details</span>
                         </button>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
@@ -1414,7 +1448,10 @@ export const RapidoServicesMap = ({
                           {filteredPunctureShops.map((shp) => (
                             <div
                               key={shp.id}
-                              onClick={() => setSelectedPunctureShop(shp)}
+                              onClick={() => {
+                                setSelectedPunctureShop(shp);
+                                setPreviewPunctureShop(shp);
+                              }}
                               style={{
                                 padding: '0.55rem 0.75rem',
                                 borderRadius: '8px',
@@ -1521,9 +1558,9 @@ export const RapidoServicesMap = ({
             flexDirection: 'column',
             gap: '0.45rem',
             zIndex: 45,
-            opacity: previewDriver ? 0 : 1,
-            pointerEvents: previewDriver ? 'none' : 'auto',
-            transform: previewDriver ? 'scale(0.85)' : 'scale(1)',
+            opacity: (previewDriver || previewPunctureShop) ? 0 : 1,
+            pointerEvents: (previewDriver || previewPunctureShop) ? 'none' : 'auto',
+            transform: (previewDriver || previewPunctureShop) ? 'scale(0.85)' : 'scale(1)',
             transition: 'opacity 0.2s ease, transform 0.2s ease'
           }}>
             {/* Zoom In */}
@@ -1672,8 +1709,8 @@ export const RapidoServicesMap = ({
               </svg>
             )}
 
-            {/* SVG ROUTE LINE (When Mobile Puncture Mechanic is Dispatched) */}
-            {activeTab === 'puncture' && sosState === 'dispatched' && (
+            {/* SVG ROUTE LINE (When Mobile Puncture Mechanic is En-Route) */}
+            {activeTab === 'puncture' && (
               <svg style={{
                 position: 'absolute',
                 inset: 0,
@@ -1866,102 +1903,86 @@ export const RapidoServicesMap = ({
 
 
 
-            {/* ─── PUNCTURE MODE: PUNCTURE SHOPS PLOTTED ON MAP ─── */}
-            {activeTab === 'puncture' && (
-              <>
-                {filteredPunctureShops.map((shop) => {
-                  const isSelected = selectedPunctureShop && selectedPunctureShop.id === shop.id;
+            {/* ─── PUNCTURE MODE: ONLY THE NEARBY PUNCTURE SHOP DRIVER ARRIVING (MATCHING AUTO SERVICE) ─── */}
+            {activeTab === 'puncture' && selectedPunctureShop && (
+              <div 
+                onClick={() => {
+                  setPreviewPunctureShop(selectedPunctureShop);
+                }}
+                style={{
+                  position: 'absolute',
+                  left: `${sosMechanicPos.x}%`,
+                  top: `${sosMechanicPos.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 35,
+                  cursor: 'pointer',
+                  transition: 'left 2.5s linear, top 2.5s linear'
+                }}
+                title="Click to view mechanic details from backend"
+              >
+                {/* Pulsing ring indicator */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '62px',
+                  height: '62px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(217, 119, 6, 0.25)',
+                  animation: 'pulse 1.6s infinite',
+                  pointerEvents: 'none'
+                }} />
 
-                  return (
-                    <div
-                      key={shop.id}
-                      onClick={() => setSelectedPunctureShop(shop)}
-                      style={{
-                        position: 'absolute',
-                        left: `${shop.mapPos.x}%`,
-                        top: `${shop.mapPos.y}%`,
-                        transform: 'translate(-50%, -50%)',
-                        zIndex: isSelected ? 30 : 20,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <div style={{
-                        backgroundColor: isSelected ? '#d97706' : '#ffffff',
-                        border: isSelected ? '3px solid #ffffff' : '2px solid #d97706',
-                        borderRadius: '50%',
-                        width: isSelected ? '46px' : '38px',
-                        height: isSelected ? '46px' : '38px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: isSelected ? '1.35rem' : '1.15rem',
-                        boxShadow: '0 4px 14px rgba(217, 119, 6, 0.3)',
-                        color: isSelected ? '#ffffff' : '#d97706'
-                      }}>
-                        🔧
-                      </div>
-
-                      <div style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        marginTop: '4px',
-                        backgroundColor: isSelected ? '#0f172a' : '#ffffff',
-                        color: isSelected ? '#ffffff' : '#0f172a',
-                        padding: '0.2rem 0.55rem',
-                        borderRadius: '6px',
-                        fontSize: '0.72rem',
-                        fontWeight: 800,
-                        whiteSpace: 'nowrap',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                        border: '1px solid #e2e8f0'
-                      }}>
-                        {shop.name.split(' ')[0]} • {shop.distance}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Mobile Mechanic En-Route Bike Marker */}
-                {sosState === 'dispatched' && (
-                  <div style={{
+                {/* Mechanic Vehicle / Bike Icon Button */}
+                <div style={{
+                  backgroundColor: '#ffffff',
+                  border: '3px solid #d97706',
+                  borderRadius: '50%',
+                  width: '52px',
+                  height: '52px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 6px 20px rgba(217, 119, 6, 0.45)',
+                  position: 'relative'
+                }}>
+                  <span style={{ fontSize: '1.65rem' }}>🛵</span>
+                  {/* Status Online indicator */}
+                  <span style={{
                     position: 'absolute',
-                    left: `${sosMechanicPos.x}%`,
-                    top: `${sosMechanicPos.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 35,
-                    transition: 'left 2.4s linear, top 2.4s linear'
-                  }}>
-                    <div style={{
-                      backgroundColor: '#d97706',
-                      border: '3px solid #ffffff',
-                      borderRadius: '50%',
-                      width: '46px',
-                      height: '46px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.4rem',
-                      boxShadow: '0 4px 16px rgba(217, 119, 6, 0.4)'
-                    }}>
-                      🛵
-                    </div>
-                    <div style={{
-                      backgroundColor: '#0f172a',
-                      color: '#ffffff',
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '6px',
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      whiteSpace: 'nowrap',
-                      marginTop: '4px'
-                    }}>
-                      Mechanic on the way ({sosEta}s)
-                    </div>
-                  </div>
-                )}
-              </>
+                    top: '2px',
+                    right: '2px',
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    backgroundColor: '#22c55e',
+                    border: '2px solid #ffffff'
+                  }} />
+                </div>
+
+                {/* Live Badge: Mechanic Name & Arriving ETA */}
+                <div style={{
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  padding: '0.22rem 0.55rem',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  whiteSpace: 'nowrap',
+                  marginTop: '5px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.25)',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem'
+                }}>
+                  <span style={{ color: '#fbbf24' }}>🔧</span>
+                  <span>
+                    {(selectedPunctureShop.owner || selectedPunctureShop.name).split(' ')[0]} • {sosState === 'arrived' ? 'Arrived!' : `${sosEta}s ETA`}
+                  </span>
+                </div>
+              </div>
             )}
 
 
@@ -2123,6 +2144,220 @@ export const RapidoServicesMap = ({
                   }}
                 >
                   Select Driver
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ─── STATIONARY OVERLAY: CLICKED PUNCTURE SHOP / MECHANIC BACKEND DETAILS ─── */}
+          {activeTab === 'puncture' && previewPunctureShop && (
+            <div
+              className="rapido-driver-preview-card"
+              style={{
+                position: 'absolute',
+                bottom: '0.65rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#ffffff',
+                borderRadius: '1rem',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.22)',
+                border: '2px solid #d97706',
+                padding: '0.75rem 0.85rem',
+                zIndex: 60,
+                width: 'calc(100% - 1.25rem)',
+                maxWidth: '340px'
+              }}
+            >
+              {/* Header Row: shop name + status + close */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>🔧</span>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewPunctureShop.name}
+                    </div>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      Owner: {previewPunctureShop.owner} • {previewPunctureShop.distance}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+                  <span style={{
+                    backgroundColor: String(previewPunctureShop.status || '').includes('Closed') ? '#f1f5f9' : '#fef3c7',
+                    color: String(previewPunctureShop.status || '').includes('Closed') ? '#64748b' : '#b45309',
+                    fontSize: '0.68rem', fontWeight: 800,
+                    padding: '0.18rem 0.45rem', borderRadius: '9999px', whiteSpace: 'nowrap'
+                  }}>
+                    {sosState === 'dispatched' ? `🛵 Dispatched (${sosEta}s)` : (previewPunctureShop.status || '🟢 Open 24/7')}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewPunctureShop(null)}
+                    style={{
+                      background: '#f1f5f9', border: 'none',
+                      width: '24px', height: '24px', borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', color: '#64748b', fontSize: '0.75rem', flexShrink: 0,
+                      fontWeight: 700
+                    }}
+                    title="Close preview"
+                  >✕</button>
+                </div>
+              </div>
+
+              {/* Info Grid: 2 clean rows of backend label + value */}
+              <div style={{
+                backgroundColor: '#fffbeb',
+                border: '1px solid #fde68a',
+                borderRadius: '8px',
+                padding: '0.5rem 0.7rem',
+                marginBottom: '0.55rem',
+                fontSize: '0.75rem'
+              }}>
+                {/* GPS row — compact, no wrap */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.35rem', flexWrap: 'nowrap' }}>
+                  <span style={{ color: '#d97706', flexShrink: 0, fontSize: '0.75rem' }}>📍</span>
+                  <span style={{ color: '#92400e', flexShrink: 0, fontSize: '0.68rem', fontWeight: 600 }}>GPS Location:</span>
+                  <span style={{ fontWeight: 700, color: '#b45309', fontSize: '0.72rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {Number(previewPunctureShop.latitude || 11.3410).toFixed(4)}, {Number(previewPunctureShop.longitude || 77.7172).toFixed(4)}
+                  </span>
+                </div>
+
+                {/* Two-column: Address + ETA */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem', marginBottom: '0.35rem' }}>
+                  <div>
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Address</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewPunctureShop.address || 'Erode'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>ETA / Dispatch</div>
+                    <div style={{ fontWeight: 700, color: '#d97706', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                      {sosState === 'dispatched' ? `${sosEta}s ETA` : (previewPunctureShop.eta || '3-5 mins')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Two-column: Phone + Rating / Price */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem' }}>
+                  <div>
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Phone</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.78rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewPunctureShop.phone}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Est. Rate / Rating</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                      ⭐ {previewPunctureShop.rating} • {previewPunctureShop.priceEstimate || '₹60'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Services Badges row from Backend */}
+              {Array.isArray(previewPunctureShop.services) && previewPunctureShop.services.length > 0 && (
+                <div style={{
+                  display: 'flex',
+                  gap: '0.3rem',
+                  overflowX: 'hidden',
+                  marginBottom: '0.55rem',
+                  flexWrap: 'nowrap'
+                }}>
+                  {previewPunctureShop.services.slice(0, 3).map((srv, idx) => (
+                    <span key={idx} style={{
+                      backgroundColor: '#fef3c7',
+                      color: '#92400e',
+                      border: '1px solid #fde68a',
+                      fontSize: '0.64rem',
+                      fontWeight: 700,
+                      padding: '0.15rem 0.4rem',
+                      borderRadius: '4px',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      ✓ {srv.replace('Repair', '').replace('Assistance', '').trim()}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '0.45rem' }}>
+                <a
+                  href={`tel:${previewPunctureShop.phone}`}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#f1f5f9',
+                    color: '#0f172a',
+                    height: '38px',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.3rem',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid #e2e8f0'
+                  }}
+                >
+                  <Phone size={13} /> Call
+                </a>
+
+                {previewPunctureShop.whatsapp && (
+                  <a
+                    href={`https://wa.me/${String(previewPunctureShop.whatsapp).replace(/[^0-9]/g, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#22c55e',
+                      color: '#ffffff',
+                      height: '38px',
+                      borderRadius: '8px',
+                      textAlign: 'center',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.3rem',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <MessageSquare size={13} /> WhatsApp
+                  </a>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMapCenterOrigin(sosMechanicPos);
+                    setMapZoom(1.6);
+                  }}
+                  style={{
+                    flex: 1.15,
+                    backgroundColor: '#d97706',
+                    color: '#ffffff',
+                    border: 'none',
+                    height: '38px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.76rem',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.25rem'
+                  }}
+                >
+                  <span>📍 Focus</span>
                 </button>
               </div>
             </div>
