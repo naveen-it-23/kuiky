@@ -163,43 +163,44 @@ export const AboutPage = ({ isEmbedded = false }) => {
               Kuiky is your trusted platform to book an auto, call an ambulance or find a puncture shop — all in one place, anytime, anywhere.
             </p>
 
-            {/* 3 Badges Row */}
+            {/* 3 Badges Row — fixed 3-column grid, no wrap, always 1 row */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1.75rem',
-              flexWrap: 'wrap'
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '0.75rem 1rem',
+              width: '100%',
+              maxWidth: '480px'
             }}>
               {/* Badge 1 */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <div style={{ color: '#059669', display: 'flex', alignItems: 'center' }}>
-                  <Zap size={22} fill="#059669" color="#059669" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ color: '#059669', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                  <Zap size={20} fill="#059669" color="#059669" />
                 </div>
-                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
                   Fast<br />
                   <span style={{ fontWeight: 600, color: '#64748b' }}>Response</span>
                 </div>
               </div>
 
               {/* Badge 2 */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <div style={{ color: '#059669', display: 'flex', alignItems: 'center' }}>
-                  <ShieldCheck size={23} color="#059669" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ color: '#059669', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                  <ShieldCheck size={20} color="#059669" />
                 </div>
-                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
                   Safe &<br />
                   <span style={{ fontWeight: 600, color: '#64748b' }}>Reliable</span>
                 </div>
               </div>
 
               {/* Badge 3 */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <div style={{ color: '#059669', display: 'flex', alignItems: 'center' }}>
-                  <Users size={23} color="#059669" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ color: '#059669', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                  <Users size={20} color="#059669" />
                 </div>
-                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
                   For a<br />
-                  <span style={{ fontWeight: 600, color: '#64748b' }}>Better Community</span>
+                  <span style={{ fontWeight: 600, color: '#64748b' }}>Community</span>
                 </div>
               </div>
             </div>
