@@ -521,7 +521,11 @@ export const AmbulanceModal = () => {
                           padding: '0.15rem 0.55rem',
                           borderRadius: '9999px',
                           fontSize: '0.72rem',
-                          fontWeight: 800
+                          fontWeight: 800,
+                          whiteSpace: 'nowrap',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          lineHeight: 1.2
                         }}>
                           {amb.freeBadge}
                         </span>

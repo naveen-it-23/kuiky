@@ -230,7 +230,7 @@ export const ambulancesByCity = {
       eta: '3-5 mins',
       rating: '5.0',
       isFree: false,
-      freeBadgeEn: '24/7 Priority Emergency Line',
+      freeBadgeEn: '24/7 Priority Line',
       freeBadgeTa: '24/7 முன்னுரிமை அவசர சேவை'
     },
     {
@@ -280,7 +280,7 @@ export const ambulancesByCity = {
       eta: '3-5 mins',
       rating: '5.0',
       isFree: false,
-      freeBadgeEn: '24/7 Priority Emergency Line',
+      freeBadgeEn: '24/7 Priority Line',
       freeBadgeTa: '24/7 முன்னுரிமை அவசர சேவை'
     },
     {

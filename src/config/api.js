@@ -336,7 +336,7 @@ export function normalizeAmbulance(item, idx = 0) {
     eta,
     rating,
     isFree,
-    freeBadgeEn: item.badge || item.freeBadgeEn || '24/7 Verified Emergency Line',
+    freeBadgeEn: item.badge || item.freeBadgeEn || '24/7 Verified Emergency',
     freeBadgeTa: item.badge_ta || item.freeBadgeTa || '24/7 சரிபார்க்கப்பட்ட அவசர சேவை',
     latitude: item.latitude ? Number(item.latitude) : null,
     longitude: item.longitude ? Number(item.longitude) : null,

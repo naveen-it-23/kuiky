@@ -926,11 +926,11 @@ export const AllServicesPage = () => {
                       justifyContent: 'space-between'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {lang === 'ta' ? (drv.nameTa || drv.driver_name) : (drv.driver_name || drv.nameEn || drv.name)}
                       </strong>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#d97706' }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#d97706', whiteSpace: 'nowrap', flexShrink: 0 }}>
                         ★ {drv.rating}
                       </span>
                     </div>
@@ -1430,22 +1430,49 @@ export const AllServicesPage = () => {
                 >
                   <div>
                     {/* Badge & Rating */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.5rem',
+                      marginBottom: '0.75rem',
+                      flexWrap: 'wrap'
+                    }}>
                       <span style={{
-                        fontSize: '0.74rem',
+                        fontSize: '0.72rem',
                         fontWeight: 800,
                         backgroundColor: amb.isFree ? '#fee2e2' : '#f1f5f9',
                         color: amb.isFree ? '#b91c1c' : '#475569',
                         padding: '0.22rem 0.65rem',
                         borderRadius: '9999px',
-                        border: amb.isFree ? '1px solid #fecaca' : '1px solid #e2e8f0'
+                        border: amb.isFree ? '1px solid #fecaca' : '1px solid #e2e8f0',
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        lineHeight: 1.2,
+                        flexShrink: 1,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
                       }}>
-                        {amb.isFree ? '🚨 ' : '🚑 '}
-                        {lang === 'ta' ? amb.freeBadgeTa : amb.freeBadgeEn}
+                        <span style={{ flexShrink: 0 }}>{amb.isFree ? '🚨' : '🚑'}</span>
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {lang === 'ta' ? amb.freeBadgeTa : amb.freeBadgeEn}
+                        </span>
                       </span>
 
-                      <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#d97706' }}>
-                        ★ {amb.rating} ({amb.eta})
+                      <span style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        color: '#d97706',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginLeft: 'auto'
+                      }}>
+                        ★ {amb.rating} <span style={{ color: '#64748b', fontWeight: 600, fontSize: '0.74rem' }}>({amb.eta})</span>
                       </span>
                     </div>
 
@@ -1930,12 +1957,12 @@ export const AllServicesPage = () => {
                   padding: '1.25rem',
                   marginBottom: '1.75rem'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
                     <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#92400e', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Zap size={16} />
                       <span>{lang === 'ta' ? 'அருகிலுள்ள உள்ளூர் ஓட்டுநர்கள்' : 'Available Local Drivers in Gobi'}</span>
                     </h4>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#15803d', backgroundColor: '#dcfce7', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#15803d', backgroundColor: '#dcfce7', padding: '0.15rem 0.5rem', borderRadius: '9999px', whiteSpace: 'nowrap', flexShrink: 0 }}>
                       🟢 Live
                     </span>
                   </div>
@@ -1954,12 +1981,12 @@ export const AllServicesPage = () => {
                           border: '1px solid #fde68a'
                         }}
                       >
-                        <div>
-                          <strong style={{ fontSize: '0.92rem', color: '#0f172a', display: 'block' }}>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <strong style={{ fontSize: '0.92rem', color: '#0f172a', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {lang === 'ta' ? drv.nameTa : drv.nameEn}
                           </strong>
-                          <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                            {drv.vehicle} • {drv.rating}★ ({drv.trips} trips)
+                          <span style={{ fontSize: '0.78rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                            {drv.vehicle} • ★ {drv.rating} ({drv.trips} trips)
                           </span>
                         </div>
                         <a
