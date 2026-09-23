@@ -2004,7 +2004,7 @@ export const RapidoServicesMap = ({
                 padding: '0.75rem 0.85rem',
                 zIndex: 60,
                 width: 'calc(100% - 1.25rem)',
-                maxWidth: '340px'
+                maxWidth: '380px'
               }}
             >
               {/* Header Row: name + status + close */}
@@ -2159,25 +2159,33 @@ export const RapidoServicesMap = ({
                 left: '50%',
                 transform: 'translateX(-50%)',
                 backgroundColor: '#ffffff',
-                borderRadius: '1rem',
-                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.22)',
+                borderRadius: '1.1rem',
+                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.22)',
                 border: '2px solid #d97706',
-                padding: '0.75rem 0.85rem',
+                padding: '0.8rem 0.9rem',
                 zIndex: 60,
                 width: 'calc(100% - 1.25rem)',
-                maxWidth: '340px'
+                maxWidth: '380px',
+                boxSizing: 'border-box'
               }}
             >
               {/* Header Row: shop name + status + close */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
-                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>🔧</span>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.5rem', gap: '0.45rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, flex: 1 }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    backgroundColor: '#fef3c7', border: '1.5px solid #d97706',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.2rem', flexShrink: 0
+                  }}>
+                    🔧
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
                       {previewPunctureShop.name}
                     </div>
-                    <div style={{ fontSize: '0.68rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      Owner: {previewPunctureShop.owner} • {previewPunctureShop.distance}
+                    <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                      Owner: <strong style={{ color: '#0f172a' }}>{previewPunctureShop.owner}</strong> • {previewPunctureShop.distance}
                     </div>
                   </div>
                 </div>
@@ -2186,18 +2194,18 @@ export const RapidoServicesMap = ({
                     backgroundColor: String(previewPunctureShop.status || '').includes('Closed') ? '#f1f5f9' : '#fef3c7',
                     color: String(previewPunctureShop.status || '').includes('Closed') ? '#64748b' : '#b45309',
                     fontSize: '0.68rem', fontWeight: 800,
-                    padding: '0.18rem 0.45rem', borderRadius: '9999px', whiteSpace: 'nowrap'
+                    padding: '0.18rem 0.48rem', borderRadius: '9999px', whiteSpace: 'nowrap'
                   }}>
-                    {sosState === 'dispatched' ? `🛵 Dispatched (${sosEta}s)` : (previewPunctureShop.status || '🟢 Open 24/7')}
+                    {sosState === 'dispatched' ? `🛵 Dispatched (${sosEta}s)` : (previewPunctureShop.status || 'Open 24/7')}
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewPunctureShop(null)}
                     style={{
                       background: '#f1f5f9', border: 'none',
-                      width: '24px', height: '24px', borderRadius: '50%',
+                      width: '26px', height: '26px', borderRadius: '50%',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', color: '#64748b', fontSize: '0.75rem', flexShrink: 0,
+                      cursor: 'pointer', color: '#64748b', fontSize: '0.8rem', flexShrink: 0,
                       fontWeight: 700
                     }}
                     title="Close preview"
@@ -2205,78 +2213,90 @@ export const RapidoServicesMap = ({
                 </div>
               </div>
 
-              {/* Info Grid: 2 clean rows of backend label + value */}
+              {/* Info Grid: Clean rows with zero clipping */}
               <div style={{
                 backgroundColor: '#fffbeb',
                 border: '1px solid #fde68a',
                 borderRadius: '8px',
-                padding: '0.5rem 0.7rem',
+                padding: '0.55rem 0.75rem',
                 marginBottom: '0.55rem',
                 fontSize: '0.75rem'
               }}>
-                {/* GPS row — compact, no wrap */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.35rem', flexWrap: 'nowrap' }}>
-                  <span style={{ color: '#d97706', flexShrink: 0, fontSize: '0.75rem' }}>📍</span>
-                  <span style={{ color: '#92400e', flexShrink: 0, fontSize: '0.68rem', fontWeight: 600 }}>GPS Location:</span>
-                  <span style={{ fontWeight: 700, color: '#b45309', fontSize: '0.72rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {Number(previewPunctureShop.latitude || 11.3410).toFixed(4)}, {Number(previewPunctureShop.longitude || 77.7172).toFixed(4)}
-                  </span>
+                {/* Row 1: GPS on left, ETA badge on right */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', minWidth: 0 }}>
+                    <span style={{ color: '#d97706', fontSize: '0.78rem', flexShrink: 0 }}>📍</span>
+                    <span style={{ color: '#92400e', fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>GPS:</span>
+                    <span style={{ fontWeight: 800, color: '#b45309', fontSize: '0.74rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {Number(previewPunctureShop.latitude || 11.3410).toFixed(4)}, {Number(previewPunctureShop.longitude || 77.7172).toFixed(4)}
+                    </span>
+                  </div>
+                  <div style={{
+                    backgroundColor: '#ffffff',
+                    color: '#b45309',
+                    border: '1px solid #fde68a',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '6px',
+                    fontWeight: 800,
+                    fontSize: '0.7rem',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  }}>
+                    ⏱ {sosState === 'arrived' ? 'Arrived!' : (sosState === 'dispatched' ? `${sosEta}s ETA` : (previewPunctureShop.eta ? previewPunctureShop.eta.replace('dispatch', '').trim() : '3-5 mins'))}
+                  </div>
                 </div>
 
-                {/* Two-column: Address + ETA */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem', marginBottom: '0.35rem' }}>
-                  <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Address</div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {previewPunctureShop.address || 'Erode'}
-                    </div>
+                {/* Row 2: Full-width Address (Never truncated or cramped!) */}
+                <div style={{ marginBottom: '0.4rem' }}>
+                  <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                    Address
                   </div>
-                  <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>ETA / Dispatch</div>
-                    <div style={{ fontWeight: 700, color: '#d97706', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
-                      {sosState === 'dispatched' ? `${sosEta}s ETA` : (previewPunctureShop.eta || '3-5 mins')}
-                    </div>
+                  <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.76rem', lineHeight: '1.25' }}>
+                    {previewPunctureShop.address || 'Erode, Tamil Nadu'}
                   </div>
                 </div>
 
-                {/* Two-column: Phone + Rating / Price */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem' }}>
+                {/* Row 3: Phone on left + Rate/Rating on right */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
                   <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Phone</div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.78rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                      Phone
+                    </div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.76rem', whiteSpace: 'nowrap' }}>
                       {previewPunctureShop.phone}
                     </div>
                   </div>
                   <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Est. Rate / Rating</div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
-                      ⭐ {previewPunctureShop.rating} • {previewPunctureShop.priceEstimate || '₹60'}
+                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                      Est. Rate / Rating
+                    </div>
+                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.74rem', whiteSpace: 'nowrap' }}>
+                      ⭐ {previewPunctureShop.rating} • {previewPunctureShop.priceEstimate || '₹60 - ₹120'}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Services Badges row from Backend */}
+              {/* Services Badges row from Backend (Wrapped cleanly, NEVER cut off) */}
               {Array.isArray(previewPunctureShop.services) && previewPunctureShop.services.length > 0 && (
                 <div style={{
                   display: 'flex',
-                  gap: '0.3rem',
-                  overflowX: 'hidden',
-                  marginBottom: '0.55rem',
-                  flexWrap: 'nowrap'
+                  gap: '0.35rem',
+                  flexWrap: 'wrap',
+                  marginBottom: '0.6rem'
                 }}>
                   {previewPunctureShop.services.slice(0, 3).map((srv, idx) => (
                     <span key={idx} style={{
-                      backgroundColor: '#fef3c7',
+                      backgroundColor: '#fffbeb',
                       color: '#92400e',
                       border: '1px solid #fde68a',
-                      fontSize: '0.64rem',
+                      fontSize: '0.66rem',
                       fontWeight: 700,
-                      padding: '0.15rem 0.4rem',
-                      borderRadius: '4px',
+                      padding: '0.15rem 0.45rem',
+                      borderRadius: '6px',
                       whiteSpace: 'nowrap'
                     }}>
-                      ✓ {srv.replace('Repair', '').replace('Assistance', '').trim()}
+                      ✓ {srv.replace(/Repair|Assistance/gi, '').trim()}
                     </span>
                   ))}
                 </div>
