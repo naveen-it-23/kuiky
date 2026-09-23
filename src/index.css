@@ -911,11 +911,14 @@ section, footer {
   }
 }
 
-/* Testimonials section mobile layout */
+/* Testimonials slider mobile layout */
+.testimonial-card {
+  padding: 2.25rem 2.25rem;
+}
 @media (max-width: 640px) {
-  .testimonials-grid {
-    grid-template-columns: 1fr !important;
-    gap: 1.15rem !important;
+  .testimonial-card {
+    padding: 1.4rem 1.15rem !important;
+    border-radius: 18px !important;
   }
 }
 
