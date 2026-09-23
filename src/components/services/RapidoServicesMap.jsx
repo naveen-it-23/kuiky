@@ -1506,7 +1506,11 @@ export const RapidoServicesMap = ({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.45rem',
-            zIndex: 45
+            zIndex: 45,
+            opacity: previewDriver ? 0 : 1,
+            pointerEvents: previewDriver ? 'none' : 'auto',
+            transform: previewDriver ? 'scale(0.85)' : 'scale(1)',
+            transition: 'opacity 0.2s ease, transform 0.2s ease'
           }}>
             {/* Zoom In */}
             <button
@@ -1846,148 +1850,7 @@ export const RapidoServicesMap = ({
               </>
             )}
 
-            {/* ─── INTERACTIVE POPUP: CLICKED DRIVER LOCATION DETAILS ─── */}
-            {activeTab === 'auto' && previewDriver && (
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '1rem',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  backgroundColor: '#ffffff',
-                  borderRadius: '1rem',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.25)',
-                  border: '2px solid #04784b',
-                  padding: '1rem 1.25rem',
-                  zIndex: 50,
-                  width: '92%',
-                  maxWidth: '380px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>🛺</span>
-                    <div>
-                      <strong style={{ fontSize: '0.98rem', color: '#0f172a' }}>
-                        {previewDriver.driver_name || previewDriver.name}
-                      </strong>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                        {previewDriver.vehicle || previewDriver.type} ({previewDriver.vehicleNo})
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <span style={{
-                      backgroundColor: previewDriver.is_online ? '#dcfce7' : '#f1f5f9',
-                      color: previewDriver.is_online ? '#15803d' : '#64748b',
-                      fontSize: '0.7rem',
-                      fontWeight: 800,
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '9999px'
-                    }}>
-                      {previewDriver.is_online ? '● Online' : '○ Offline'}
-                    </span>
-                    <button
-                      onClick={() => setPreviewDriver(null)}
-                      style={{
-                        background: '#f1f5f9',
-                        border: 'none',
-                        width: '26px',
-                        height: '26px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        color: '#64748b',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
 
-                {/* All Django Model Fields Table / Box */}
-                <div style={{
-                  backgroundColor: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '10px',
-                  padding: '0.65rem 0.85rem',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '0.45rem',
-                  fontSize: '0.76rem',
-                  marginBottom: '0.75rem'
-                }}>
-                  <div style={{ gridColumn: 'span 2' }}>
-                    <span style={{ color: '#64748b' }}>📍 GPS Location: </span>
-                    <strong style={{ color: '#04784b' }}>
-                      Latitude: {Number(previewDriver.latitude).toFixed(4)}, Longitude: {Number(previewDriver.longitude).toFixed(4)}
-                    </strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b' }}>Vehicle Type: </span>
-                    <strong>{previewDriver.vehicle_type || previewDriver.typeKey}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b' }}>ETA Text: </span>
-                    <strong style={{ color: '#d97706' }}>{previewDriver.eta_text || previewDriver.eta}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b' }}>Phone: </span>
-                    <strong>{previewDriver.phone}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b' }}>Rating: </span>
-                    <strong>★ {previewDriver.rating} ({previewDriver.experience})</strong>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <a
-                    href={`tel:${previewDriver.phone}`}
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#f1f5f9',
-                      color: '#0f172a',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                      fontWeight: 700,
-                      fontSize: '0.8rem',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.35rem'
-                    }}
-                  >
-                    <Phone size={14} /> Call Driver
-                  </a>
-                  <button
-                    onClick={() => {
-                      setSelectedAutoType(previewDriver.typeKey || 'standard');
-                      setAssignedDriver(previewDriver);
-                      setPreviewDriver(null);
-                    }}
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#04784b',
-                      color: '#ffffff',
-                      border: 'none',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      fontWeight: 800,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Select This Driver
-                  </button>
-                </div>
-              </div>
-            )}
 
             {/* ─── PUNCTURE MODE: PUNCTURE SHOPS PLOTTED ON MAP ─── */}
             {activeTab === 'puncture' && (
@@ -2089,6 +1952,167 @@ export const RapidoServicesMap = ({
 
 
           </div>
+
+          {/* ─── STATIONARY OVERLAY: CLICKED DRIVER LOCATION DETAILS ─── */}
+          {activeTab === 'auto' && previewDriver && (
+            <div
+              className="rapido-driver-preview-card"
+              style={{
+                position: 'absolute',
+                bottom: '0.65rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#ffffff',
+                borderRadius: '1rem',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.22)',
+                border: '2px solid #04784b',
+                padding: '0.75rem 0.85rem',
+                zIndex: 60,
+                width: 'calc(100% - 1.25rem)',
+                maxWidth: '340px'
+              }}
+            >
+              {/* Header Row: name + status + close */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0 }}>
+                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>🛺</span>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewDriver.driver_name || previewDriver.name}
+                    </div>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewDriver.vehicle || previewDriver.type} • {previewDriver.vehicleNo}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+                  <span style={{
+                    backgroundColor: previewDriver.is_online ? '#dcfce7' : '#f1f5f9',
+                    color: previewDriver.is_online ? '#15803d' : '#64748b',
+                    fontSize: '0.68rem', fontWeight: 800,
+                    padding: '0.18rem 0.45rem', borderRadius: '9999px', whiteSpace: 'nowrap'
+                  }}>
+                    {previewDriver.is_online ? '● Online' : '○ Offline'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDriver(null)}
+                    style={{
+                      background: '#f1f5f9', border: 'none',
+                      width: '24px', height: '24px', borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', color: '#64748b', fontSize: '0.75rem', flexShrink: 0,
+                      fontWeight: 700
+                    }}
+                    title="Close preview"
+                  >✕</button>
+                </div>
+              </div>
+
+              {/* Info Grid: 2 clean rows of label + value */}
+              <div style={{
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '0.5rem 0.7rem',
+                marginBottom: '0.55rem',
+                fontSize: '0.75rem'
+              }}>
+                {/* GPS row — compact, no wrap */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.35rem', flexWrap: 'nowrap' }}>
+                  <span style={{ color: '#04784b', flexShrink: 0, fontSize: '0.75rem' }}>📍</span>
+                  <span style={{ color: '#64748b', flexShrink: 0, fontSize: '0.68rem', fontWeight: 600 }}>GPS:</span>
+                  <span style={{ fontWeight: 700, color: '#04784b', fontSize: '0.72rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {Number(previewDriver.latitude || 11.3410).toFixed(4)}, {Number(previewDriver.longitude || 77.7172).toFixed(4)}
+                  </span>
+                </div>
+
+                {/* Two-column: vehicle type + ETA */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem', marginBottom: '0.35rem' }}>
+                  <div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Vehicle</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.78rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'capitalize' }}>
+                      {previewDriver.vehicle_type || previewDriver.typeKey || 'Auto'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>ETA</div>
+                    <div style={{ fontWeight: 700, color: '#d97706', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                      {previewDriver.eta_text || previewDriver.eta || '3 mins'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Two-column: phone + rating */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.3rem 0.5rem' }}>
+                  <div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Phone</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.78rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {previewDriver.phone || '9876543220'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rating</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                      ★ {previewDriver.rating || '4.8'}
+                      {previewDriver.experience && (
+                        <span style={{ color: '#64748b', fontWeight: 500, fontSize: '0.68rem', marginLeft: '0.2rem' }}>• {previewDriver.experience}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '0.45rem' }}>
+                <a
+                  href={`tel:${previewDriver.phone || '9876543220'}`}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#f1f5f9',
+                    color: '#0f172a',
+                    height: '38px',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.3rem',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid #e2e8f0'
+                  }}
+                >
+                  <Phone size={13} /> Call Driver
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedAutoType(previewDriver.typeKey || 'standard');
+                    setAssignedDriver(previewDriver);
+                    setPreviewDriver(null);
+                  }}
+                  style={{
+                    flex: 1.15,
+                    backgroundColor: '#04784b',
+                    color: '#ffffff',
+                    border: 'none',
+                    height: '38px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    boxShadow: '0 2px 8px rgba(4, 120, 75, 0.25)'
+                  }}
+                >
+                  Select Driver
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
