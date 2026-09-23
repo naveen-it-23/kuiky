@@ -453,39 +453,6 @@ export const Testimonials = () => {
           </div>
         </div>
 
-        {/* ─── BOTTOM PAGINATION DOTS & MOBILE CONTROLS ─── */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.45rem',
-            marginTop: '1.75rem'
-          }}
-        >
-          {REVIEWS.map((_, dotIdx) => {
-            const isActive = dotIdx === currentIndex;
-            return (
-              <button
-                key={dotIdx}
-                type="button"
-                onClick={() => setCurrentIndex(dotIdx)}
-                aria-label={`Go to slide ${dotIdx + 1}`}
-                style={{
-                  width: isActive ? '28px' : '9px',
-                  height: '9px',
-                  borderRadius: '9999px',
-                  backgroundColor: isActive ? '#059669' : '#cbd5e1',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)'
-                }}
-              />
-            );
-          })}
-        </div>
-
       </div>
     </section>
   );
