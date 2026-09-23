@@ -59,6 +59,7 @@ export const RapidoServicesMap = ({
   const [rideOtp, setRideOtp] = useState('4829');
   const [liveBooking, setLiveBooking] = useState(null);
   const [isBookingApi, setIsBookingApi] = useState(false);
+  const [previewDriver, setPreviewDriver] = useState(null);
 
   // Fetch driver locations from Django backend (/api/driver-locations/)
   useEffect(() => {
@@ -742,6 +743,61 @@ export const RapidoServicesMap = ({
                         </button>
                       </div>
                     </div>
+
+                    {/* Live Backend Driver Location Preview Card */}
+                    {(() => {
+                      const matched = onlineDrivers.find((d) => {
+                        const vType = String(d.vehicle_type || d.typeKey || '').toLowerCase();
+                        return vType.includes(selectedAutoType) || d.typeKey === selectedAutoType;
+                      }) || onlineDrivers[0];
+                      if (!matched) return null;
+                      return (
+                        <div style={{
+                          backgroundColor: '#f0fdf4',
+                          border: '1.5px solid #bbf7d0',
+                          borderRadius: '12px',
+                          padding: '0.65rem 0.85rem',
+                          marginBottom: '0.85rem',
+                          boxShadow: '0 2px 6px rgba(4, 120, 75, 0.06)'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <span style={{ fontSize: '1.05rem' }}>🛺</span>
+                              <strong style={{ fontSize: '0.86rem', color: '#065f46' }}>
+                                {matched.driver_name || matched.name}
+                              </strong>
+                            </div>
+                            <span style={{
+                              backgroundColor: '#04784b',
+                              color: '#ffffff',
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
+                              padding: '0.15rem 0.45rem',
+                              borderRadius: '4px'
+                            }}>
+                              {matched.is_online ? 'LIVE ONLINE' : 'OFFLINE'}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.74rem', color: '#334155' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ color: '#64748b' }}>📍 Driver Location:</span>
+                              <strong style={{ color: '#04784b' }}>
+                                Lat {Number(matched.latitude).toFixed(4)}, Lng {Number(matched.longitude).toFixed(4)}
+                              </strong>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ color: '#64748b' }}>⏱️ Arrival Time:</span>
+                              <strong style={{ color: '#d97706' }}>{matched.eta_text || matched.eta}</strong>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ color: '#64748b' }}>📞 Phone:</span>
+                              <strong>{matched.phone}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Book Button */}
                     <button
@@ -1469,7 +1525,10 @@ export const RapidoServicesMap = ({
                   return (
                     <div
                       key={driver.id}
-                      onClick={() => setAssignedDriver(driver)}
+                      onClick={() => {
+                        setAssignedDriver(driver);
+                        setPreviewDriver(driver);
+                      }}
                       style={{
                         position: 'absolute',
                         left: `${pos.x}%`,
@@ -1551,6 +1610,149 @@ export const RapidoServicesMap = ({
                   );
                 })}
               </>
+            )}
+
+            {/* ─── INTERACTIVE POPUP: CLICKED DRIVER LOCATION DETAILS ─── */}
+            {activeTab === 'auto' && previewDriver && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '1rem',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '1rem',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.25)',
+                  border: '2px solid #04784b',
+                  padding: '1rem 1.25rem',
+                  zIndex: 50,
+                  width: '92%',
+                  maxWidth: '380px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <span style={{ fontSize: '1.25rem' }}>🛺</span>
+                    <div>
+                      <strong style={{ fontSize: '0.98rem', color: '#0f172a' }}>
+                        {previewDriver.driver_name || previewDriver.name}
+                      </strong>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                        {previewDriver.vehicle || previewDriver.type} ({previewDriver.vehicleNo})
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span style={{
+                      backgroundColor: previewDriver.is_online ? '#dcfce7' : '#f1f5f9',
+                      color: previewDriver.is_online ? '#15803d' : '#64748b',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '9999px'
+                    }}>
+                      {previewDriver.is_online ? '● Online' : '○ Offline'}
+                    </span>
+                    <button
+                      onClick={() => setPreviewDriver(null)}
+                      style={{
+                        background: '#f1f5f9',
+                        border: 'none',
+                        width: '26px',
+                        height: '26px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        color: '#64748b',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                {/* All Django Model Fields Table / Box */}
+                <div style={{
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '10px',
+                  padding: '0.65rem 0.85rem',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.45rem',
+                  fontSize: '0.76rem',
+                  marginBottom: '0.75rem'
+                }}>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <span style={{ color: '#64748b' }}>📍 GPS Location: </span>
+                    <strong style={{ color: '#04784b' }}>
+                      Latitude: {Number(previewDriver.latitude).toFixed(4)}, Longitude: {Number(previewDriver.longitude).toFixed(4)}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b' }}>Vehicle Type: </span>
+                    <strong>{previewDriver.vehicle_type || previewDriver.typeKey}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b' }}>ETA Text: </span>
+                    <strong style={{ color: '#d97706' }}>{previewDriver.eta_text || previewDriver.eta}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b' }}>Phone: </span>
+                    <strong>{previewDriver.phone}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b' }}>Rating: </span>
+                    <strong>★ {previewDriver.rating} ({previewDriver.experience})</strong>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <a
+                    href={`tel:${previewDriver.phone}`}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#f1f5f9',
+                      color: '#0f172a',
+                      padding: '0.55rem',
+                      borderRadius: '8px',
+                      textAlign: 'center',
+                      fontWeight: 700,
+                      fontSize: '0.8rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.35rem'
+                    }}
+                  >
+                    <Phone size={14} /> Call Driver
+                  </a>
+                  <button
+                    onClick={() => {
+                      setSelectedAutoType(previewDriver.typeKey || 'standard');
+                      setAssignedDriver(previewDriver);
+                      setPreviewDriver(null);
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#04784b',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '0.55rem',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.8rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Select This Driver
+                  </button>
+                </div>
+              </div>
             )}
 
             {/* ─── PUNCTURE MODE: PUNCTURE SHOPS PLOTTED ON MAP ─── */}
