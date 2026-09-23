@@ -32,7 +32,13 @@ import contactMapImg from '../../assets/contact_map_erode_hd.png';
 import vehicleAutoStandardImg from '../../assets/vehicles/vehicle_auto_standard.jpg';
 import vehicleAutoElectricImg from '../../assets/vehicles/vehicle_auto_electric.jpg';
 import vehicleAutoCargoImg from '../../assets/vehicles/vehicle_auto_cargo.jpg';
-import { createBookingApi, fetchDriverLocationsApi, latLngToMapPos } from '../../config/api';
+import { 
+  createBookingApi, 
+  fetchDriverLocationsApi, 
+  fetchLocationsApi, 
+  fetchPunctureWorksApi, 
+  latLngToMapPos 
+} from '../../config/api';
 
 export const RapidoServicesMap = ({ 
   initialMode = 'auto', 
@@ -47,6 +53,7 @@ export const RapidoServicesMap = ({
   const [activeTab, setActiveTab] = useState(initialMode);
   
   // ─── AUTO BOOKING STATE ───
+  const [locationsData, setLocationsData] = useState(popularRideLocations);
   const [pickupLoc, setPickupLoc] = useState(popularRideLocations[4]); // Brough Road Market
   const [dropLoc, setDropLoc] = useState(popularRideLocations[1]); // Railway Junction
   const [selectedAutoType, setSelectedAutoType] = useState(initialAutoType || 'standard'); // 'standard' | 'electric' | 'cargo'
@@ -81,15 +88,45 @@ export const RapidoServicesMap = ({
     return () => { isMounted = false; };
   }, []);
 
+  // Fetch locations from Django backend (/api/locations/ [name='locations-list'])
+  useEffect(() => {
+    let isMounted = true;
+    fetchLocationsApi().then((data) => {
+      if (isMounted && Array.isArray(data) && data.length > 0) {
+        setLocationsData(data);
+        if (data[4]) setPickupLoc(prev => data.find(l => l.id === prev?.id) || data[4]);
+        if (data[1]) setDropLoc(prev => data.find(l => l.id === prev?.id) || data[1]);
+      }
+    }).catch(err => {
+      console.warn('[RapidoServicesMap] fetchLocationsApi warning:', err);
+    });
+    return () => { isMounted = false; };
+  }, []);
+
   // Filter only drivers where is_online === true (matching Django backend field)
   const onlineDrivers = driversList.filter((d) => d.is_online !== false);
 
   // ─── PUNCTURE STATE ───
+  const [punctureShopsList, setPunctureShopsList] = useState(punctureShops);
   const [selectedPunctureShop, setSelectedPunctureShop] = useState(punctureShops[0]);
   const [punctureFilter, setPunctureFilter] = useState(initialFilter || 'all'); // 'all' | '247' | 'mobile' | 'tubeless'
   const [sosState, setSosState] = useState('idle'); // 'idle' | 'dispatched' | 'arrived'
   const [sosMechanicPos, setSosMechanicPos] = useState({ x: 45, y: 46 });
   const [sosEta, setSosEta] = useState(180);
+
+  // Fetch puncture works from Django backend (/api/puncture-works/ [name='puncture-list'])
+  useEffect(() => {
+    let isMounted = true;
+    fetchPunctureWorksApi().then((data) => {
+      if (isMounted && Array.isArray(data) && data.length > 0) {
+        setPunctureShopsList(data);
+        setSelectedPunctureShop(prev => data.find(s => s.id === prev?.id) || data[0]);
+      }
+    }).catch(err => {
+      console.warn('[RapidoServicesMap] fetchPunctureWorksApi warning:', err);
+    });
+    return () => { isMounted = false; };
+  }, []);
 
 
   // Map viewport controls with dynamic center origin for smooth camera zooming
@@ -244,10 +281,10 @@ export const RapidoServicesMap = ({
     setMapZoom(1);
   };
 
-  const filteredPunctureShops = punctureShops.filter((shop) => {
-    if (punctureFilter === '247') return shop.status.includes('24/7');
-    if (punctureFilter === 'mobile') return shop.mobileMechanic;
-    if (punctureFilter === 'tubeless') return shop.services.some(s => s.toLowerCase().includes('tubeless'));
+  const filteredPunctureShops = punctureShopsList.filter((shop) => {
+    if (punctureFilter === '247') return String(shop.status || '').includes('24/7');
+    if (punctureFilter === 'mobile') return Boolean(shop.mobileMechanic);
+    if (punctureFilter === 'tubeless') return Array.isArray(shop.services) && shop.services.some(s => s.toLowerCase().includes('tubeless'));
     return true;
   });
 
@@ -364,7 +401,7 @@ export const RapidoServicesMap = ({
                 fontSize: '0.74rem',
                 fontWeight: 800
               }}>
-                {punctureShops.length} Spots
+                {punctureShopsList.length} Spots
               </span>
             </div>
           )}
@@ -539,7 +576,7 @@ export const RapidoServicesMap = ({
                           <select
                             value={pickupLoc.id}
                             onChange={(e) => {
-                              const found = popularRideLocations.find(l => l.id === e.target.value);
+                              const found = locationsData.find(l => l.id === e.target.value);
                               if (found) setPickupLoc(found);
                             }}
                             style={{
@@ -554,7 +591,7 @@ export const RapidoServicesMap = ({
                               cursor: 'pointer'
                             }}
                           >
-                            {popularRideLocations.map((loc) => (
+                            {locationsData.map((loc) => (
                               <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
                             ))}
                           </select>
@@ -606,7 +643,7 @@ export const RapidoServicesMap = ({
                           <select
                             value={dropLoc.id}
                             onChange={(e) => {
-                              const found = popularRideLocations.find(l => l.id === e.target.value);
+                              const found = locationsData.find(l => l.id === e.target.value);
                               if (found) setDropLoc(found);
                             }}
                             style={{
@@ -621,7 +658,7 @@ export const RapidoServicesMap = ({
                               cursor: 'pointer'
                             }}
                           >
-                            {popularRideLocations.map((loc) => (
+                            {locationsData.map((loc) => (
                               <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
                             ))}
                           </select>

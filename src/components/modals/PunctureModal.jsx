@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { punctureShops } from '../../data/kuikyData';
+import { fetchPunctureWorksApi } from '../../config/api';
 import { X, Phone, MessageSquare, Wrench, MapPin, CheckCircle2 } from 'lucide-react';
 
 export const PunctureModal = () => {
   const { activeModal, setActiveModal, currentLocation, lang } = useLanguage();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [requestSubmitted, setRequestSubmitted] = useState(null);
+  const [shopsList, setShopsList] = useState(punctureShops);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchPunctureWorksApi().then((data) => {
+      if (isMounted && Array.isArray(data) && data.length > 0) {
+        setShopsList(data);
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
 
   if (activeModal !== 'puncture') return null;
 
@@ -93,7 +105,7 @@ export const PunctureModal = () => {
 
             {/* Puncture Shops List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {punctureShops.map((shop) => (
+              {shopsList.map((shop) => (
                 <div
                   key={shop.id}
                   style={{

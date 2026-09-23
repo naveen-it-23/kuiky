@@ -1,4 +1,10 @@
-import { autoDrivers } from '../data/kuikyData';
+import { 
+  autoDrivers, 
+  punctureShops, 
+  popularRideLocations, 
+  ambulancesByCity, 
+  locationsList 
+} from '../data/kuikyData';
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://affecting-tingling-duke.ngrok-free.dev';
 
@@ -7,12 +13,13 @@ export const API_ENDPOINTS = {
   SEND_OTP: `${API_BASE_URL}/api/auth/send-otp/`,
   VERIFY_OTP: `${API_BASE_URL}/api/auth/verify-otp/`,
   PROFILE: `${API_BASE_URL}/api/profile/`,
-  LOCATIONS: `${API_BASE_URL}/api/locations/`,
+  LOCATIONS: `${API_BASE_URL}/api/locations/`, // [name='locations-list']
   CATEGORIES: `${API_BASE_URL}/api/categories/`,
   SERVICES: `${API_BASE_URL}/api/services/`,
   BOOKINGS: `${API_BASE_URL}/api/bookings/`,
   BOOKING_CREATE: `${API_BASE_URL}/api/bookings/create/`,
-  AMBULANCES: `${API_BASE_URL}/api/ambulances/`,
+  AMBULANCES: `${API_BASE_URL}/api/ambulances/`, // [name='ambulance-list']
+  PUNCTURE_WORKS: `${API_BASE_URL}/api/puncture-works/`, // [name='puncture-list']
   DRIVER_LOCATIONS: `${API_BASE_URL}/api/driver-locations/`,
 };
 
@@ -169,19 +176,72 @@ export async function updateUserProfileApi(profileData) {
 }
 
 /**
- * Fetch locations list from Django /api/locations/
+ * Normalizes a location record from Django /api/locations/ [name='locations-list']
+ * @param {object} item
+ * @param {number} idx
+ * @returns {object}
+ */
+export function normalizeLocation(item, idx = 0) {
+  if (!item) return null;
+  const id = String(item.id || item.slug || item.code || `loc-${idx + 1}`).toLowerCase();
+  const name = item.name || item.city || item.title || item.location_name || `Location ${idx + 1}`;
+  const nameTa = item.name_ta || item.nameTa || item.name || name;
+  const zone = item.zone || item.district || item.area || 'Central';
+  const latitude = item.latitude !== undefined && item.latitude !== null && !isNaN(Number(item.latitude))
+    ? Number(item.latitude)
+    : 11.3410 + (idx * 0.005);
+  const longitude = item.longitude !== undefined && item.longitude !== null && !isNaN(Number(item.longitude))
+    ? Number(item.longitude)
+    : 77.7172 + (idx * 0.005);
+  const pos = item.pos || (item.mapPos ? item.mapPos : latLngToMapPos(latitude, longitude));
+
+  return {
+    id,
+    name,
+    nameTa,
+    zone,
+    latitude,
+    longitude,
+    pos,
+    raw: item
+  };
+}
+
+/**
+ * Fetch locations list from Django /api/locations/ [name='locations-list']
  * @returns {Promise<Array<object>>}
  */
 export async function fetchLocationsApi() {
-  const response = await fetch(API_ENDPOINTS.LOCATIONS, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'ngrok-skip-browser-warning': 'true',
-    },
-  });
-  return response.json().catch(() => []);
+  const candidateUrls = [
+    API_ENDPOINTS.LOCATIONS,
+    `${API_BASE_URL}/api/location/`
+  ];
+
+  for (const url of candidateUrls) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        const list = Array.isArray(data) ? data : (data?.results || data?.locations || []);
+        if (Array.isArray(list) && list.length > 0) {
+          return list.map((item, idx) => normalizeLocation(item, idx));
+        }
+      }
+    } catch {
+      // Continue to next candidate or fallback
+    }
+  }
+
+  // Gracefully fallback to local popular ride locations
+  return popularRideLocations.map((item, idx) => normalizeLocation(item, idx));
 }
 
 /**
@@ -252,46 +312,192 @@ export async function fetchBookingsApi() {
 }
 
 /**
- * Fetch ambulances list from Django /api/ambulances/
+ * Normalizes an ambulance record from Django /api/ambulances/ [name='ambulance-list']
+ * @param {object} item
+ * @param {number} idx
+ * @returns {object}
+ */
+export function normalizeAmbulance(item, idx = 0) {
+  if (!item) return null;
+  const nameEn = item.name || item.ambulance_name || item.driver_name || item.hospital_name || `Ambulance Unit ${idx + 1}`;
+  const nameTa = item.name_ta || item.nameTa || item.name || nameEn;
+  const hospitalEn = item.hospital || item.hospital_name || item.address || 'Local Hospital & Emergency Care';
+  const hospitalTa = item.hospital_ta || item.hospitalTa || item.hospital || hospitalEn;
+  const typeEn = item.type || item.ambulance_type || 'Advanced ICU & Critical Care';
+  const typeTa = item.type_ta || item.typeTa || item.type || 'அட்வான்ஸ்டு ICU & தீவிர சிகிச்சை';
+  const phone = item.phone || item.contact_number || item.mobile || item.driver_phone || '+91 98427 12108';
+  const eta = item.eta || item.eta_text || '3-6 mins';
+  const rating = String(item.rating || '4.9');
+  const isFree = item.is_free !== undefined ? Boolean(item.is_free) : true;
+
+  return {
+    id: item.id || `amb-api-${idx + 1}`,
+    nameEn,
+    nameTa,
+    hospitalEn,
+    hospitalTa,
+    typeEn,
+    typeTa,
+    phone,
+    directPhone: item.directPhone || phone,
+    eta,
+    rating,
+    isFree,
+    freeBadgeEn: item.badge || item.freeBadgeEn || '24/7 Verified Emergency Line',
+    freeBadgeTa: item.badge_ta || item.freeBadgeTa || '24/7 சரிபார்க்கப்பட்ட அவசர சேவை',
+    latitude: item.latitude ? Number(item.latitude) : null,
+    longitude: item.longitude ? Number(item.longitude) : null,
+    raw: item
+  };
+}
+
+/**
+ * Fetch ambulances list from Django /api/ambulances/ [name='ambulance-list']
  * @param {string|number} locationId
  * @returns {Promise<Array<object>>}
  */
 export async function fetchAmbulancesApi(locationId = null) {
-  try {
-    const url = locationId 
-      ? `${API_ENDPOINTS.AMBULANCES}?location=${locationId}` 
-      : API_ENDPOINTS.AMBULANCES;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-      },
-    });
-    if (!response.ok) return [];
-    const data = await response.json().catch(() => []);
-    const items = Array.isArray(data) ? data : (data.results || data.ambulances || []);
-    return items.map((item, idx) => ({
-      id: item.id || `amb-api-${idx}`,
-      nameEn: item.name || item.driver_name || item.hospital_name || 'Emergency Ambulance Unit',
-      nameTa: item.name_ta || item.name || 'அவசர ஆம்புலன்ஸ் பிரிவு',
-      hospitalEn: item.hospital || item.hospital_name || item.address || 'Local Hospital & Emergency Care',
-      hospitalTa: item.hospital_ta || item.hospital || item.address || 'அருகிலுள்ள மருத்துவமனை & அவசர சிகிச்சை',
-      typeEn: item.type || item.ambulance_type || 'Advanced ICU & Critical Care',
-      typeTa: item.type_ta || item.type || 'அட்வான்ஸ்டு ICU & தீவிர சிகிச்சை',
-      phone: item.phone || item.contact_number || item.mobile || item.driver_phone || '+91 98427 12108',
-      directPhone: item.phone || item.contact_number || item.mobile || '+91 98427 12108',
-      eta: item.eta || '3-6 mins',
-      rating: String(item.rating || '4.9'),
-      isFree: Boolean(item.is_free),
-      freeBadgeEn: item.badge || '24/7 Verified Emergency Line',
-      freeBadgeTa: item.badge_ta || '24/7 சரிபார்க்கப்பட்ட அவசர சேவை'
-    }));
-  } catch (err) {
-    console.warn('[API] fetchAmbulancesApi error:', err);
-    return [];
+  const candidateUrls = [
+    locationId ? `${API_ENDPOINTS.AMBULANCES}?location=${encodeURIComponent(locationId)}` : API_ENDPOINTS.AMBULANCES,
+    API_ENDPOINTS.AMBULANCES,
+    `${API_BASE_URL}/api/ambulance/`
+  ];
+
+  for (const url of candidateUrls) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        const list = Array.isArray(data) ? data : (data?.results || data?.ambulances || []);
+        if (Array.isArray(list) && list.length > 0) {
+          return list.map((item, idx) => normalizeAmbulance(item, idx));
+        }
+      }
+    } catch {
+      // Continue to next candidate or fallback
+    }
   }
+
+  // Gracefully fallback to city / default list
+  const cityKey = locationId ? String(locationId).toLowerCase() : 'erode';
+  const fallbackList = ambulancesByCity[cityKey] || ambulancesByCity['erode'] || [];
+  return fallbackList.map((item, idx) => normalizeAmbulance(item, idx));
+}
+
+/**
+ * Normalizes a puncture work record from Django /api/puncture-works/ [name='puncture-list']
+ * @param {object} item
+ * @param {number} idx
+ * @returns {object}
+ */
+export function normalizePunctureShop(item, idx = 0) {
+  if (!item) return null;
+  const name = item.name || item.shop_name || `Puncture Shop ${idx + 1}`;
+  const nameTa = item.name_ta || item.nameTa || name;
+  const owner = item.owner || item.owner_name || item.mechanic_name || 'Verified Mechanic';
+  const ownerTa = item.owner_ta || item.ownerTa || owner;
+  const phone = item.phone || item.mobile || item.contact_number || '+91 98422 33445';
+  const address = item.address || item.location_address || 'Erode, Tamil Nadu';
+  const addressTa = item.address_ta || item.addressTa || address;
+  const distance = item.distance || `${(0.4 + (idx * 0.4)).toFixed(1)} km away`;
+  const eta = item.eta || item.eta_text || `${5 + (idx * 3)} mins dispatch`;
+
+  let services = ['2-Wheeler Puncture', '4-Wheeler Tubeless Repair', 'Mobile On-Site Breakdown Assistance', 'Air Pressure & Nitrogen'];
+  if (Array.isArray(item.services) && item.services.length > 0) {
+    services = item.services;
+  } else if (typeof item.services === 'string' && item.services.trim()) {
+    services = item.services.split(',').map(s => s.trim());
+  }
+
+  const status = item.status || (item.is_open !== false ? 'Open 24/7' : 'Closed');
+  const mobileMechanic = item.mobile_mechanic !== undefined 
+    ? Boolean(item.mobile_mechanic) 
+    : (item.mobileMechanic !== undefined ? Boolean(item.mobileMechanic) : true);
+  const rating = item.rating ? Number(item.rating) : 4.8;
+  const priceEstimate = item.price_estimate || item.priceEstimate || '₹60 - ₹120';
+
+  const latitude = item.latitude ? Number(item.latitude) : (11.3410 + (idx * 0.003));
+  const longitude = item.longitude ? Number(item.longitude) : (77.7172 + (idx * 0.004));
+  const mapPos = item.mapPos || latLngToMapPos(latitude, longitude);
+
+  return {
+    id: item.id || `punc-${idx + 1}`,
+    name,
+    nameTa,
+    owner,
+    ownerTa,
+    phone,
+    whatsapp: item.whatsapp || String(phone).replace(/[^0-9]/g, ''),
+    address,
+    addressTa,
+    distance,
+    eta,
+    services,
+    status,
+    mobileMechanic,
+    rating,
+    mapPos,
+    priceEstimate,
+    latitude,
+    longitude,
+    raw: item
+  };
+}
+
+/**
+ * Fetch puncture works list from Django /api/puncture-works/ [name='puncture-list']
+ * @param {string} filter
+ * @returns {Promise<Array<object>>}
+ */
+export async function fetchPunctureWorksApi(filter = null) {
+  const candidateUrls = [
+    API_ENDPOINTS.PUNCTURE_WORKS,
+    `${API_BASE_URL}/api/puncture-work/`,
+    `${API_BASE_URL}/api/punctures/`,
+    `${API_BASE_URL}/api/puncture/`
+  ];
+
+  for (const url of candidateUrls) {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json().catch(() => null);
+        const list = Array.isArray(data) ? data : (data?.results || data?.puncture_works || data?.shops || []);
+        if (Array.isArray(list) && list.length > 0) {
+          const mapped = list.map((item, idx) => normalizePunctureShop(item, idx));
+          if (filter === '247') return mapped.filter(s => String(s.status).includes('24/7'));
+          if (filter === 'mobile') return mapped.filter(s => s.mobileMechanic);
+          if (filter === 'tubeless') return mapped.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
+          return mapped;
+        }
+      }
+    } catch {
+      // Continue to next candidate or fallback
+    }
+  }
+
+  // Gracefully fallback to local puncture shops dataset
+  const fallbackList = punctureShops.map((item, idx) => normalizePunctureShop(item, idx));
+  if (filter === '247') return fallbackList.filter(s => String(s.status).includes('24/7'));
+  if (filter === 'mobile') return fallbackList.filter(s => s.mobileMechanic);
+  if (filter === 'tubeless') return fallbackList.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
+  return fallbackList;
 }
 
 /**
@@ -467,8 +673,12 @@ export default {
   createBookingApi,
   fetchBookingsApi,
   fetchAmbulancesApi,
+  fetchPunctureWorksApi,
   fetchDriverLocationsApi,
   normalizeDriverLocation,
+  normalizeAmbulance,
+  normalizePunctureShop,
+  normalizeLocation,
   latLngToMapPos,
   normalizeUserProfile,
 };

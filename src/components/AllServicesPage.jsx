@@ -37,7 +37,7 @@ import vehicleAutoCargoImg from '../assets/vehicles/vehicle_auto_cargo.jpg';
 import ambulance108Img from '../assets/vehicles/ambulance_108_unit.jpg';
 import ambulanceIcuImg from '../assets/vehicles/ambulance_icu_unit.jpg';
 import RapidoServicesMap from './services/RapidoServicesMap';
-import { fetchAmbulancesApi } from '../config/api';
+import { fetchAmbulancesApi, fetchPunctureWorksApi, fetchLocationsApi } from '../config/api';
 
 export const AllServicesPage = () => {
   const { 
@@ -65,8 +65,9 @@ export const AllServicesPage = () => {
   }, [currentLocation]);
 
   const [apiAmbulances, setApiAmbulances] = useState([]);
+  const [livePunctureCount, setLivePunctureCount] = useState(punctureShops.length);
 
-  // Fetch live backend ambulances for current city
+  // Fetch live backend ambulances for current city (/api/ambulances/ [name='ambulance-list'])
   useEffect(() => {
     let isMounted = true;
     if (selectedCity) {
@@ -78,6 +79,17 @@ export const AllServicesPage = () => {
     }
     return () => { isMounted = false; };
   }, [selectedCity]);
+
+  // Fetch live backend puncture works (/api/puncture-works/ [name='puncture-list'])
+  useEffect(() => {
+    let isMounted = true;
+    fetchPunctureWorksApi().then((data) => {
+      if (isMounted && Array.isArray(data) && data.length > 0) {
+        setLivePunctureCount(data.length);
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -1120,7 +1132,7 @@ export const AllServicesPage = () => {
                 color: '#92400e'
               }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#d97706', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                <span>{punctureShops.length} {lang === 'ta' ? 'கடைகள் மேப்பில் உள்ளன' : 'Repair Spots Listed'}</span>
+                <span>{livePunctureCount} {lang === 'ta' ? 'கடைகள் மேப்பில் உள்ளன' : 'Repair Spots Listed'}</span>
               </div>
             </div>
 
