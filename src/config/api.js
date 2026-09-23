@@ -212,32 +212,25 @@ export function normalizeLocation(item, idx = 0) {
  * @returns {Promise<Array<object>>}
  */
 export async function fetchLocationsApi() {
-  const candidateUrls = [
-    API_ENDPOINTS.LOCATIONS,
-    `${API_BASE_URL}/api/location/`
-  ];
+  try {
+    const response = await fetch(API_ENDPOINTS.LOCATIONS, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
 
-  for (const url of candidateUrls) {
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json().catch(() => null);
-        const list = Array.isArray(data) ? data : (data?.results || data?.locations || []);
-        if (Array.isArray(list) && list.length > 0) {
-          return list.map((item, idx) => normalizeLocation(item, idx));
-        }
+    if (response.ok) {
+      const data = await response.json().catch(() => null);
+      const list = Array.isArray(data) ? data : (data?.results || data?.locations || []);
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map((item, idx) => normalizeLocation(item, idx));
       }
-    } catch {
-      // Continue to next candidate or fallback
     }
+  } catch {
+    // Continue to fallback
   }
 
   // Gracefully fallback to local popular ride locations
@@ -357,33 +350,29 @@ export function normalizeAmbulance(item, idx = 0) {
  * @returns {Promise<Array<object>>}
  */
 export async function fetchAmbulancesApi(locationId = null) {
-  const candidateUrls = [
-    locationId ? `${API_ENDPOINTS.AMBULANCES}?location=${encodeURIComponent(locationId)}` : API_ENDPOINTS.AMBULANCES,
-    API_ENDPOINTS.AMBULANCES,
-    `${API_BASE_URL}/api/ambulance/`
-  ];
+  const url = locationId
+    ? `${API_ENDPOINTS.AMBULANCES}?location=${encodeURIComponent(locationId)}`
+    : API_ENDPOINTS.AMBULANCES;
 
-  for (const url of candidateUrls) {
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
 
-      if (response.ok) {
-        const data = await response.json().catch(() => null);
-        const list = Array.isArray(data) ? data : (data?.results || data?.ambulances || []);
-        if (Array.isArray(list) && list.length > 0) {
-          return list.map((item, idx) => normalizeAmbulance(item, idx));
-        }
+    if (response.ok) {
+      const data = await response.json().catch(() => null);
+      const list = Array.isArray(data) ? data : (data?.results || data?.ambulances || []);
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map((item, idx) => normalizeAmbulance(item, idx));
       }
-    } catch {
-      // Continue to next candidate or fallback
     }
+  } catch {
+    // Continue to fallback
   }
 
   // Gracefully fallback to city / default list
@@ -458,38 +447,29 @@ export function normalizePunctureShop(item, idx = 0) {
  * @returns {Promise<Array<object>>}
  */
 export async function fetchPunctureWorksApi(filter = null) {
-  const candidateUrls = [
-    API_ENDPOINTS.PUNCTURE_WORKS,
-    `${API_BASE_URL}/api/puncture-work/`,
-    `${API_BASE_URL}/api/punctures/`,
-    `${API_BASE_URL}/api/puncture/`
-  ];
+  try {
+    const response = await fetch(API_ENDPOINTS.PUNCTURE_WORKS, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
 
-  for (const url of candidateUrls) {
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json().catch(() => null);
-        const list = Array.isArray(data) ? data : (data?.results || data?.puncture_works || data?.shops || []);
-        if (Array.isArray(list) && list.length > 0) {
-          const mapped = list.map((item, idx) => normalizePunctureShop(item, idx));
-          if (filter === '247') return mapped.filter(s => String(s.status).includes('24/7'));
-          if (filter === 'mobile') return mapped.filter(s => s.mobileMechanic);
-          if (filter === 'tubeless') return mapped.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
-          return mapped;
-        }
+    if (response.ok) {
+      const data = await response.json().catch(() => null);
+      const list = Array.isArray(data) ? data : (data?.results || data?.puncture_works || data?.shops || []);
+      if (Array.isArray(list) && list.length > 0) {
+        const mapped = list.map((item, idx) => normalizePunctureShop(item, idx));
+        if (filter === '247') return mapped.filter(s => String(s.status).includes('24/7'));
+        if (filter === 'mobile') return mapped.filter(s => s.mobileMechanic);
+        if (filter === 'tubeless') return mapped.filter(s => s.services.some(srv => srv.toLowerCase().includes('tubeless')));
+        return mapped;
       }
-    } catch {
-      // Continue to next candidate or fallback
     }
+  } catch {
+    // Continue to fallback
   }
 
   // Gracefully fallback to local puncture shops dataset
@@ -626,35 +606,25 @@ export function normalizeDriverLocation(item, idx = 0) {
  * @returns {Promise<Array<object>>}
  */
 export async function fetchDriverLocationsApi() {
-  const candidateUrls = [
-    API_ENDPOINTS.DRIVER_LOCATIONS,
-    `${API_BASE_URL}/api/driver-location/`,
-    `${API_BASE_URL}/api/driverlocations/`,
-    `${API_BASE_URL}/api/drivers/locations/`,
-    `${API_BASE_URL}/api/drivers/`
-  ];
+  try {
+    const response = await fetch(API_ENDPOINTS.DRIVER_LOCATIONS, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
 
-  for (const url of candidateUrls) {
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json().catch(() => null);
-        const list = Array.isArray(data) ? data : (data?.results || data?.drivers || data?.driver_locations || []);
-        if (Array.isArray(list) && list.length > 0) {
-          return list.map((item, idx) => normalizeDriverLocation(item, idx));
-        }
+    if (response.ok) {
+      const data = await response.json().catch(() => null);
+      const list = Array.isArray(data) ? data : (data?.results || data?.drivers || data?.driver_locations || []);
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map((item, idx) => normalizeDriverLocation(item, idx));
       }
-    } catch {
-      // Continue to next or fallback
     }
+  } catch {
+    // Continue to fallback
   }
 
   // Gracefully fallback to normalized local drivers dataset
