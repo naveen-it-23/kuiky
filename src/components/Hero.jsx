@@ -205,8 +205,8 @@ export const Hero = () => {
               }}
             />
             <a
-              href="tel:108"
-              title="📞 Emergency Helpline: Call 108"
+              href="tel:+919842712108"
+              title="📞 Emergency Helpline: Call +91 98427 12108"
               style={{
                 position: 'absolute', left: '76%', top: '6%', width: '22%', height: '22%',
                 cursor: 'pointer', zIndex: 10, borderRadius: '16px', textDecoration: 'none',

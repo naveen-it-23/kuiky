@@ -230,7 +230,7 @@ export const ServicesSection = () => {
                       <circle cx="10" cy="10" r="10" fill="#04784b" />
                       <path d="M6 10.2L8.7 13L14 7.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1f2937' }}>Toll-Free 108 (100% Free)</span>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1f2937' }}>24/7 Priority Emergency Line</span>
                   </div>
                 </div>
 
@@ -298,7 +298,7 @@ export const ServicesSection = () => {
               </button>
 
               <a
-                href="tel:108"
+                href="tel:+919842712108"
                 onClick={(e) => e.stopPropagation()}
                 style={{
                   display: 'inline-flex',
@@ -321,7 +321,7 @@ export const ServicesSection = () => {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                <span>📞 Free 108</span>
+                <span>📞 Call SOS</span>
               </a>
             </div>
           </div>

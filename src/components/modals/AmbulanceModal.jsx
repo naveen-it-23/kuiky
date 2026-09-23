@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { locationsList } from '../../data/kuikyData';
+import { locationsList, ambulancesByCity } from '../../data/kuikyData';
+import { fetchAmbulancesApi } from '../../config/api';
 import { 
   X, 
   PhoneCall, 
@@ -24,6 +25,20 @@ export const AmbulanceModal = () => {
   const [sosSent, setSosSent] = useState(false);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [isDetectingGps, setIsDetectingGps] = useState(false);
+  const [apiAmbulances, setApiAmbulances] = useState([]);
+
+  // Fetch live backend ambulances for current city if available
+  useEffect(() => {
+    let isMounted = true;
+    if (currentLocation?.id) {
+      fetchAmbulancesApi(currentLocation.id).then((res) => {
+        if (isMounted && Array.isArray(res) && res.length > 0) {
+          setApiAmbulances(res);
+        }
+      }).catch(() => {});
+    }
+    return () => { isMounted = false; };
+  }, [currentLocation?.id]);
 
   // Sync patientLoc default whenever currentLocation changes
   useEffect(() => {
@@ -74,192 +89,21 @@ export const AmbulanceModal = () => {
     }
   };
 
-  // Verified Ambulances categorized by city
-  const ambulancesByCity = {
-    erode: [
-      {
-        id: 'amb-erode-108',
-        name: lang === 'ta' ? 'அரசு தலைமை மருத்துவமனை 108 ஆம்புலன்ஸ்' : 'Govt Headquarters Hospital 108 ICU Unit',
-        hospital: lang === 'ta' ? 'ஈரோடு அரசு தலைமை மருத்துவமனை & ட்ராமா சென்டர்' : 'Erode Govt Headquarters Hospital & Trauma Center',
-        type: lang === 'ta' ? 'அட்வான்ஸ்டு ICU (வென்டிலேட்டர் + ஆக்சிஜன் + முதலுதவி)' : 'Advanced ICU (Ventilator + Oxygen + Critical Care)',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '3-5 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-erode-sudha',
-        name: lang === 'ta' ? 'சுதா கிரிட்டிகல் கேர் அவசர ஆம்புலன்ஸ்' : 'Sudha Critical Care Emergency Ambulance',
-        hospital: lang === 'ta' ? 'சுதா மல்டி ஸ்பெஷாலிட்டி, பெருந்துறை ரோடு, ஈரோடு' : 'Sudha Multi-Speciality, Perundurai Road, Erode',
-        type: lang === 'ta' ? 'கார்டியாக் தீவிர சிகிச்சை & நடமாடும் ICU' : 'Cardiac Life Support & Mobile ICU',
-        phone: '+919788011223',
-        directPhone: '+919788011223',
-        eta: '4-6 mins',
-        rating: '4.9',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24/7 தயார் • உடனடி அனுப்புதல்' : '24/7 Standby • Rapid Dispatch'
-      },
-      {
-        id: 'amb-erode-lotus',
-        name: lang === 'ta' ? 'லோட்டஸ் அவசர விபத்து சிகிச்சை ஆம்புலன்ஸ்' : 'Lotus Trauma & Emergency Care Ambulance',
-        hospital: lang === 'ta' ? 'லோட்டஸ் மருத்துவமனை, பூந்துறை ரோடு, ஈரோடு' : 'Lotus Hospital, Poondurai Road, Erode',
-        type: lang === 'ta' ? 'BLS ஸ்ட்ரெச்சர் & ஆக்சிஜன் சிலிண்டர் வசதி' : 'Basic Life Support (BLS) & Oxygen Unit',
-        phone: '+919443399887',
-        directPhone: '+919443399887',
-        eta: '5-7 mins',
-        rating: '4.8',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24 மணி நேர சேவை' : '24/7 Emergency Line'
-      }
-    ],
-    gobi: [
-      {
-        id: 'amb-gobi-108',
-        name: lang === 'ta' ? 'கோபி அரசு தலைமை மருத்துவமனை 108 ஆம்புலன்ஸ்' : 'Gobi Govt Headquarters Hospital 108 Unit',
-        hospital: lang === 'ta' ? 'கோபி அரசு தலைமை மருத்துவமனை, மருத்துவமனை ரோடு' : 'Gobi Govt Hospital & Emergency Trauma Ward',
-        type: lang === 'ta' ? 'அட்வான்ஸ்டு ICU & விபத்து சிகிச்சை (ஆக்சிஜன் + வென்டிலேட்டர்)' : 'Advanced ICU & Trauma Support (Oxygen + Ventilator)',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '3-5 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-gobi-srijayam',
-        name: lang === 'ta' ? 'ஸ்ரீ ஜெயம் லைஃப்கேர் அவசர ஆம்புலன்ஸ்' : 'Sri Jayam LifeCare Ambulance Service',
-        hospital: lang === 'ta' ? 'மெயின் பஜார் & சத்தி ரோடு மருத்துவ நெட்வொர்க், கோபி' : 'Main Bazar & Sathy Road Network, Gobi',
-        type: lang === 'ta' ? 'கார்டியாக் தீவிர சிகிச்சை & நோயாளி மாற்று வசதி' : 'Cardiac Critical Care & Patient Transfer',
-        phone: '+919443399887',
-        directPhone: '+919443399887',
-        eta: '5-7 mins',
-        rating: '4.9',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24/7 தயார் • உடனடி வருகை' : '24/7 Standby • Rapid Response'
-      },
-      {
-        id: 'amb-gobi-kurinji',
-        name: lang === 'ta' ? 'குறிஞ்சி அவசர மருத்துவ ஆம்புலன்ஸ்' : 'Kurinji Emergency Medical Unit',
-        hospital: lang === 'ta' ? 'சத்தியமங்கலம் மெயின் ரோடு, கோபி' : 'Sathyamangalam Main Road, Gobi',
-        type: lang === 'ta' ? 'BLS சக்கர ஸ்ட்ரெச்சர் & ஆக்சிஜன் வசதி' : 'BLS Stretcher & Oxygen Ambulance',
-        phone: '+919788011223',
-        directPhone: '+919788011223',
-        eta: '6-8 mins',
-        rating: '4.8',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24 மணி நேர சேவை' : '24/7 Available'
-      }
-    ],
-    perundurai: [
-      {
-        id: 'amb-perundurai-108',
-        name: lang === 'ta' ? 'IRT அரசு மருத்துவக் கல்லூரி 108 அவசர ஆம்புலன்ஸ்' : 'IRT Govt Medical College 108 Trauma Unit',
-        hospital: lang === 'ta' ? 'பெருந்துறை அரசு மருத்துவக் கல்லூரி & NH-544 ஹைவே ட்ராமா' : 'Perundurai Medical College & NH-544 Trauma Center',
-        type: lang === 'ta' ? 'அதிநவீன ICU & அதிவிரைவு நெடுஞ்சாலை விபத்து சிகிச்சை' : 'Advanced Highway Trauma ICU & Ventilator',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '3-5 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-perundurai-gh',
-        name: lang === 'ta' ? 'பெருந்துறை அரசு மருத்துவமனை அவசர ஆம்புலன்ஸ்' : 'Perundurai GH Emergency Standby Unit',
-        hospital: lang === 'ta' ? 'பெருந்துறை ரயில்வே ஸ்டேஷன் ரோடு GH' : 'Perundurai Station Road GH',
-        type: lang === 'ta' ? 'ஆக்சிஜன் வசதி கொண்ட அவசர சிகிச்சை வாகனம்' : 'Oxygen Equipped Emergency Unit',
-        phone: '+919443399887',
-        directPhone: '+919443399887',
-        eta: '5-7 mins',
-        rating: '4.9',
-        isFree: false,
-        freeBadge: lang === 'ta' ? 'உடனடி வருகை' : 'Rapid Response'
-      }
-    ],
-    bhavani: [
-      {
-        id: 'amb-bhavani-108',
-        name: lang === 'ta' ? 'பவானி அரசு மருத்துவமனை 108 அவசர ஆம்புலன்ஸ்' : 'Bhavani Govt Hospital 108 Emergency Unit',
-        hospital: lang === 'ta' ? 'பவானி அரசு மருத்துவமனை, காவேரி ரோடு' : 'Bhavani Govt Hospital, Cauvery Road',
-        type: lang === 'ta' ? 'அட்வான்ஸ்டு ICU & விபத்து சிகிச்சை (ஆக்சிஜன் + வென்டிலேட்டர்)' : 'Advanced ICU & Critical Support (Oxygen + Ventilator)',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '3-5 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-bhavani-highway',
-        name: lang === 'ta' ? 'குமாரபாளையம் & பவானி பைபாஸ் அவசர ஆம்புலன்ஸ்' : 'Komarapalayam & Bhavani Bypass Ambulance',
-        hospital: lang === 'ta' ? 'பவானி புதிய பாலம் பைபாஸ் ட்ராமா நெட்வொர்க்' : 'Bhavani New Bridge Bypass Trauma Network',
-        type: lang === 'ta' ? 'நெடுஞ்சாலை அதிவிரைவு விபத்து சிகிச்சை வாகனம்' : 'Highway Rapid Trauma & Stretcher Unit',
-        phone: '+919443399887',
-        directPhone: '+919443399887',
-        eta: '5-7 mins',
-        rating: '4.8',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24/7 நெடுஞ்சாலை சேவை' : '24/7 Highway Standby'
-      }
-    ],
-    sathyamangalam: [
-      {
-        id: 'amb-sathy-108',
-        name: lang === 'ta' ? 'சத்தியமங்கலம் அரசு தலைமை மருத்துவமனை 108' : 'Sathyamangalam Govt HQ Hospital 108 Unit',
-        hospital: lang === 'ta' ? 'சத்தி அரசு மருத்துவமனை, மைசூர் ட்ரங்க் ரோடு' : 'Sathy Govt Hospital, Mysore Trunk Road',
-        type: lang === 'ta' ? 'அட்வான்ஸ்டு ICU & மலைப்பாதை அவசர சிகிச்சை' : 'Advanced ICU & Ghat Road Emergency Support',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '4-6 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-sathy-bannari',
-        name: lang === 'ta' ? 'பண்ணாரி நெடுஞ்சாலை அவசர ஆம்புலன்ஸ்' : 'Bannari Highway Trauma Response Unit',
-        hospital: lang === 'ta' ? 'பண்ணாரி செக்போஸ்ட் & தேசிய நெடுஞ்சாலை' : 'Bannari Checkpost & National Highway',
-        type: lang === 'ta' ? 'ஆக்சிஜன் சிலிண்டர் & அவசர ஸ்ட்ரெச்சர்' : 'Oxygen Support & Emergency Stretcher',
-        phone: '+919788011223',
-        directPhone: '+919788011223',
-        eta: '6-8 mins',
-        rating: '4.8',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24/7 தயார்' : '24/7 Standby'
-      }
-    ],
-    coimbatore: [
-      {
-        id: 'amb-cbe-108',
-        name: lang === 'ta' ? 'கோவை அரசு மருத்துவக் கல்லூரி 108 ஆம்புலன்ஸ்' : 'Coimbatore CMCH Govt 108 Trauma Unit',
-        hospital: lang === 'ta' ? 'கோவை அரசு மருத்துவக் கல்லூரி மருத்துவமனை, திருச்சி ரோடு' : 'Coimbatore Medical College Hospital (CMCH)',
-        type: lang === 'ta' ? 'அட்வான்ஸ்டு கார்டியாக் ICU & அதிதீவிர சிகிச்சை' : 'Advanced Cardiac ICU & Level-1 Trauma Care',
-        phone: '108',
-        directPhone: '+919876543210',
-        eta: '3-5 mins',
-        rating: '5.0',
-        isFree: true,
-        freeBadge: lang === 'ta' ? '100% இலவச அரசு சேவை 24/7' : '100% FREE GOVT 108 (24/7)'
-      },
-      {
-        id: 'amb-cbe-ganga',
-        name: lang === 'ta' ? 'கங்கா மருத்துவமனை அவசர ஆம்புலன்ஸ்' : 'Ganga Hospital Emergency Trauma Ambulance',
-        hospital: lang === 'ta' ? 'கங்கா மருத்துவமனை, மேட்டுப்பாளையம் ரோடு' : 'Ganga Hospital, Mettupalayam Road, Coimbatore',
-        type: lang === 'ta' ? 'ஆர்த்தோ & விபத்து தீவிர சிகிச்சை வாகனம்' : 'Ortho & Critical Trauma Mobile ICU',
-        phone: '+919876543210',
-        directPhone: '+919876543210',
-        eta: '4-6 mins',
-        rating: '4.9',
-        isFree: false,
-        freeBadge: lang === 'ta' ? '24 மணி நேர சேவை' : '24/7 Priority Line'
-      }
-    ]
-  };
-
   const currentCityKey = currentLocation?.id || 'erode';
-  const nearbyAmbulanceList = ambulancesByCity[currentCityKey] || ambulancesByCity.erode;
+  const rawList = apiAmbulances.length > 0 
+    ? apiAmbulances 
+    : (ambulancesByCity[currentCityKey] || ambulancesByCity.erode);
+
+  const nearbyAmbulanceList = rawList.map((amb) => ({
+    ...amb,
+    name: lang === 'ta' ? (amb.nameTa || amb.nameEn || amb.name) : (amb.nameEn || amb.name),
+    hospital: lang === 'ta' ? (amb.hospitalTa || amb.hospitalEn || amb.hospital) : (amb.hospitalEn || amb.hospital),
+    type: lang === 'ta' ? (amb.typeTa || amb.typeEn || amb.type) : (amb.typeEn || amb.type),
+    freeBadge: lang === 'ta' ? (amb.freeBadgeTa || amb.freeBadgeEn) : (amb.freeBadgeEn || amb.freeBadgeTa),
+    phone: amb.phone || amb.directPhone || '+91 98427 12108'
+  }));
+
+  const primaryAmbulancePhone = nearbyAmbulanceList[0]?.phone || '+91 98427 12108';
 
   // City-specific hospital suggestions
   const hospitalOptionsByCity = {
@@ -384,14 +228,14 @@ export const AmbulanceModal = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                 <span style={{ color: '#64748b' }}>{lang === 'ta' ? 'அவசர கட்டணம்:' : 'Emergency Cost:'}</span>
-                <strong style={{ color: '#16a34a' }}>{lang === 'ta' ? '100% இலவசம் (அரசு 108 சேவை)' : '100% FREE OF COST (Govt 108)'}</strong>
+                <strong style={{ color: '#16a34a' }}>{lang === 'ta' ? 'உடனடி அவசர சேவை' : 'Priority Emergency Dispatch'}</strong>
               </div>
             </div>
 
             {/* Direct Call Buttons */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <a
-                href="tel:108"
+                href={`tel:${primaryAmbulancePhone.replace(/\s+/g, '')}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -408,7 +252,7 @@ export const AmbulanceModal = () => {
                 }}
               >
                 <PhoneCall size={24} />
-                <span>{lang === 'ta' ? 'அரசு 108 இலவச அவசர அழைப்பு' : 'Call 108 Emergency Hotline (100% Free)'}</span>
+                <span>{lang === 'ta' ? `📞 அவசர அழைப்பு: ${primaryAmbulancePhone}` : `Call Emergency: ${primaryAmbulancePhone}`}</span>
               </a>
 
               <a
@@ -580,7 +424,7 @@ export const AmbulanceModal = () => {
               </div>
             </div>
 
-            {/* 1-TAP BIG EMERGENCY FREE 108 CALL BANNER */}
+            {/* 1-TAP BIG EMERGENCY DIRECT CALL BANNER */}
             <div style={{
               background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
               borderRadius: '1rem',
@@ -598,18 +442,18 @@ export const AmbulanceModal = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.25rem' }}>
                   <span style={{ fontSize: '1.2rem' }}>🚨</span>
                   <strong style={{ fontSize: '1.15rem', letterSpacing: '0.01em' }}>
-                    {lang === 'ta' ? 'அரசு அவசர உதவி 108 (இலவசம்)' : 'TOLL-FREE 108 EMERGENCY HOTLINE'}
+                    {lang === 'ta' ? '24/7 அவசர ஆம்புலன்ஸ் நேரடி அழைப்பு' : '24/7 PRIORITY EMERGENCY AMBULANCE'}
                   </strong>
                 </div>
                 <div style={{ fontSize: '0.82rem', opacity: 0.95 }}>
                   {lang === 'ta' 
-                    ? '100% முற்றிலும் இலவசம் • கட்டணம் இல்லை • 24 மணி நேரமும் உடனடி அரசு சேவை' 
-                    : '100% Free of Cost 24/7 • Zero Charges • Immediate Hospital Priority'}
+                    ? `உடனடி மருத்துவ உதவி • நேரடி தொடர்பு: ${primaryAmbulancePhone} • 24 மணி நேரமும் தயார்` 
+                    : `Immediate medical priority dispatch • Direct contact: ${primaryAmbulancePhone} • Available 24/7`}
                 </div>
               </div>
 
               <a
-                href="tel:108"
+                href={`tel:${primaryAmbulancePhone.replace(/\s+/g, '')}`}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -619,7 +463,7 @@ export const AmbulanceModal = () => {
                   padding: '0.85rem 1.6rem',
                   borderRadius: '9999px',
                   fontWeight: 800,
-                  fontSize: '1.1rem',
+                  fontSize: '1.05rem',
                   textDecoration: 'none',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
                   whiteSpace: 'nowrap',
@@ -629,7 +473,7 @@ export const AmbulanceModal = () => {
                 onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
               >
                 <PhoneCall size={22} color="#dc2626" />
-                <span>{lang === 'ta' ? 'இப்போதே 108 அழைக்க' : 'CALL 108 (FREE)'}</span>
+                <span>{lang === 'ta' ? `அழைக்க: ${primaryAmbulancePhone}` : `Call ${primaryAmbulancePhone}`}</span>
               </a>
             </div>
 
@@ -700,46 +544,26 @@ export const AmbulanceModal = () => {
 
                     {/* Direct Call Button for this specific ambulance */}
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      {amb.isFree ? (
-                        <a
-                          href="tel:108"
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.45rem',
-                            backgroundColor: '#dc2626',
-                            color: '#ffffff',
-                            padding: '0.65rem 1.25rem',
-                            borderRadius: '9999px',
-                            fontWeight: 800,
-                            fontSize: '0.9rem',
-                            textDecoration: 'none',
-                            boxShadow: '0 3px 12px rgba(220, 38, 38, 0.35)'
-                          }}
-                        >
-                          <PhoneCall size={16} />
-                          <span>{lang === 'ta' ? 'இலவச 108' : 'Call 108 Free'}</span>
-                        </a>
-                      ) : (
-                        <a
-                          href={`tel:${amb.phone}`}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.45rem',
-                            backgroundColor: '#0f172a',
-                            color: '#ffffff',
-                            padding: '0.65rem 1.15rem',
-                            borderRadius: '9999px',
-                            fontWeight: 700,
-                            fontSize: '0.88rem',
-                            textDecoration: 'none'
-                          }}
-                        >
-                          <Phone size={16} />
-                          <span>{lang === 'ta' ? 'அழைக்க' : 'Call Unit'}</span>
-                        </a>
-                      )}
+                      <a
+                        href={`tel:${(amb.phone || primaryAmbulancePhone).replace(/\s+/g, '')}`}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          backgroundColor: '#dc2626',
+                          color: '#ffffff',
+                          padding: '0.65rem 1.15rem',
+                          borderRadius: '9999px',
+                          fontWeight: 800,
+                          fontSize: '0.88rem',
+                          textDecoration: 'none',
+                          boxShadow: '0 3px 12px rgba(220, 38, 38, 0.35)',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <PhoneCall size={16} />
+                        <span>{lang === 'ta' ? `${amb.phone || primaryAmbulancePhone} அழைக்க` : `Call ${amb.phone || primaryAmbulancePhone}`}</span>
+                      </a>
                     </div>
                   </div>
                 ))}
@@ -848,7 +672,7 @@ export const AmbulanceModal = () => {
                     >
                       <option value="icu">Advanced ICU (Oxygen + Ventilator)</option>
                       <option value="bls">Basic Life Support (Stretcher Bed)</option>
-                      <option value="108">Emergency 108 Free Govt Service</option>
+                      <option value="emergency">Emergency Priority Response Unit</option>
                     </select>
                   </div>
                 </div>
@@ -876,7 +700,7 @@ export const AmbulanceModal = () => {
                   onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#b91c1c'; }}
                   onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; }}
                 >
-                  <span>🚨 {lang === 'ta' ? 'உடனடி ஆம்புலன்ஸ் வரவழைக்க (108 இலவசம்)' : 'Dispatch Ambulance to My Location (108 Free)'}</span>
+                  <span>🚨 {lang === 'ta' ? 'உடனடி ஆம்புலன்ஸ் வரவழைக்க' : 'Dispatch Ambulance to My Location'}</span>
                   <ChevronRight size={18} />
                 </button>
               </form>

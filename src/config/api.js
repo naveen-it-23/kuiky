@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   SERVICES: `${API_BASE_URL}/api/services/`,
   BOOKINGS: `${API_BASE_URL}/api/bookings/`,
   BOOKING_CREATE: `${API_BASE_URL}/api/bookings/create/`,
+  AMBULANCES: `${API_BASE_URL}/api/ambulances/`,
 };
 
 /**
@@ -247,6 +248,49 @@ export async function fetchBookingsApi() {
   return response.json().catch(() => ({ success: false, count: 0, results: [] }));
 }
 
+/**
+ * Fetch ambulances list from Django /api/ambulances/
+ * @param {string|number} locationId
+ * @returns {Promise<Array<object>>}
+ */
+export async function fetchAmbulancesApi(locationId = null) {
+  try {
+    const url = locationId 
+      ? `${API_ENDPOINTS.AMBULANCES}?location=${locationId}` 
+      : API_ENDPOINTS.AMBULANCES;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
+    if (!response.ok) return [];
+    const data = await response.json().catch(() => []);
+    const items = Array.isArray(data) ? data : (data.results || data.ambulances || []);
+    return items.map((item, idx) => ({
+      id: item.id || `amb-api-${idx}`,
+      nameEn: item.name || item.driver_name || item.hospital_name || 'Emergency Ambulance Unit',
+      nameTa: item.name_ta || item.name || 'அவசர ஆம்புலன்ஸ் பிரிவு',
+      hospitalEn: item.hospital || item.hospital_name || item.address || 'Local Hospital & Emergency Care',
+      hospitalTa: item.hospital_ta || item.hospital || item.address || 'அருகிலுள்ள மருத்துவமனை & அவசர சிகிச்சை',
+      typeEn: item.type || item.ambulance_type || 'Advanced ICU & Critical Care',
+      typeTa: item.type_ta || item.type || 'அட்வான்ஸ்டு ICU & தீவிர சிகிச்சை',
+      phone: item.phone || item.contact_number || item.mobile || item.driver_phone || '+91 98427 12108',
+      directPhone: item.phone || item.contact_number || item.mobile || '+91 98427 12108',
+      eta: item.eta || '3-6 mins',
+      rating: String(item.rating || '4.9'),
+      isFree: Boolean(item.is_free),
+      freeBadgeEn: item.badge || '24/7 Verified Emergency Line',
+      freeBadgeTa: item.badge_ta || '24/7 சரிபார்க்கப்பட்ட அவசர சேவை'
+    }));
+  } catch (err) {
+    console.warn('[API] fetchAmbulancesApi error:', err);
+    return [];
+  }
+}
+
 export default {
   API_BASE_URL,
   API_ENDPOINTS,
@@ -258,5 +302,6 @@ export default {
   fetchServicesApi,
   createBookingApi,
   fetchBookingsApi,
+  fetchAmbulancesApi,
   normalizeUserProfile,
 };

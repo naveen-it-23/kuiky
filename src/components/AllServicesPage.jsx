@@ -37,6 +37,7 @@ import vehicleAutoCargoImg from '../assets/vehicles/vehicle_auto_cargo.jpg';
 import ambulance108Img from '../assets/vehicles/ambulance_108_unit.jpg';
 import ambulanceIcuImg from '../assets/vehicles/ambulance_icu_unit.jpg';
 import RapidoServicesMap from './services/RapidoServicesMap';
+import { fetchAmbulancesApi } from '../config/api';
 
 export const AllServicesPage = () => {
   const { 
@@ -62,6 +63,21 @@ export const AllServicesPage = () => {
       setSelectedCity(currentLocation.id);
     }
   }, [currentLocation]);
+
+  const [apiAmbulances, setApiAmbulances] = useState([]);
+
+  // Fetch live backend ambulances for current city
+  useEffect(() => {
+    let isMounted = true;
+    if (selectedCity) {
+      fetchAmbulancesApi(selectedCity).then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setApiAmbulances(data);
+        }
+      }).catch(() => {});
+    }
+    return () => { isMounted = false; };
+  }, [selectedCity]);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -188,21 +204,21 @@ export const AllServicesPage = () => {
     {
       id: 'srv-amb-emergency',
       category: 'ambulance',
-      titleEn: '24/7 Emergency Ambulance (108)',
-      titleTa: '24/7 அவசர ஆம்புலன்ஸ் (108)',
+      titleEn: '24/7 Emergency Ambulance',
+      titleTa: '24/7 அவசர ஆம்புலன்ஸ்',
       badgeEn: 'Immediate 24/7',
       badgeTa: '24/7 உடனடி அவசரம்',
       badgeColor: '#dc2626',
       badgeBg: '#fef2f2',
       badgeBorder: '#fecaca',
-      taglineEn: 'Toll-Free 108 • 5-8 min dispatch',
-      taglineTa: 'இலவச 108 • 5-8 நிமிட வருகை',
+      taglineEn: 'Direct Priority Line • 5-8 min dispatch',
+      taglineTa: 'நேரடி அவசர உதவி • 5-8 நிமிட வருகை',
       descEn: 'Rapid emergency ambulance dispatch across Gobi, Erode, Perundurai, and surrounding rural areas with direct hospital priority access.',
       descTa: 'மருத்துவ அவசர காலங்களில் உடனே உதவும் ஆம்புலன்ஸ் நெட்வொர்க். மருத்துவமனைக்கு விரைவு முன்னுரிமை பயணம்.',
       img: cardAmbImg,
       icon: '🚑',
-      fareEn: 'Toll-Free 108 / Standard Emergency Line',
-      fareTa: 'இலவச அழைப்பு 108 / உடனடி அவசர உதவி',
+      fareEn: 'Direct Priority Emergency Response Line',
+      fareTa: 'நேரடி முன்னுரிமை அவசர உதவி',
       etaEn: '5-8 min dispatch',
       etaTa: '5-8 நிமிட வருகை',
       featuresEn: [
@@ -218,8 +234,8 @@ export const AllServicesPage = () => {
         'ஆண்டு முழுவதும் 24 மணி நேரமும் தயார்'
       ],
       actionModal: 'ambulance',
-      actionLabelEn: 'Call Emergency 108',
-      actionLabelTa: '108 அழைக்க'
+      actionLabelEn: 'Call Emergency Unit',
+      actionLabelTa: 'அவசர உதவி அழைக்க'
     },
     {
       id: 'srv-amb-icu',
@@ -418,7 +434,8 @@ export const AllServicesPage = () => {
   });
 
   // Contextual search filter for ambulances on the Ambulance tab
-  const currentCityAmbulances = ambulancesByCity[selectedCity] || ambulancesByCity.erode;
+  const baseCityAmbulances = ambulancesByCity[selectedCity] || ambulancesByCity.erode;
+  const currentCityAmbulances = apiAmbulances.length > 0 ? apiAmbulances : baseCityAmbulances;
   const displayAmbulances = currentCityAmbulances.filter((amb) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase().trim();
@@ -443,8 +460,8 @@ export const AllServicesPage = () => {
       tag: lang === 'ta' ? 'ஆம்புலன்ஸ் சேவைகள்' : '24/7 EMERGENCY AMBULANCE',
       title: lang === 'ta' ? 'அவசர ஆம்புலன்ஸ் நெட்வொர்க்' : '24/7 Emergency Ambulance SOS',
       desc: lang === 'ta'
-        ? '108 அவசர ஊர்தி மற்றும் உங்கள் அருகிலுள்ள மருத்துவமனை ஆம்புலன்ஸ் தொடர்புகள்.'
-        : 'Zero waiting, toll-free 108 direct dispatch and verified 24/7 local hospital ambulances.'
+        ? 'நேரடி அவசர ஊர்தி மற்றும் உங்கள் அருகிலுள்ள மருத்துவமனை ஆம்புலன்ஸ் தொடர்புகள்.'
+        : 'Zero waiting, verified direct emergency dispatch and 24/7 local hospital ambulances.'
     },
     puncture: {
       tag: lang === 'ta' ? 'பஞ்சர் சேவைகள்' : 'PUNCTURE & TYRE SOS',
@@ -588,7 +605,7 @@ export const AllServicesPage = () => {
         }}>
           {[
             { id: 'auto', labelEn: '🛺 Auto Rickshaw', labelTa: '🛺 ஆட்டோ ரிக்ஷா', count: autoDrivers.length },
-            { id: 'ambulance', labelEn: '🚑 Ambulance SOS (108)', labelTa: '🚑 ஆம்புலன்ஸ் SOS (108)', count: currentCityAmbulances.length },
+            { id: 'ambulance', labelEn: '🚑 Ambulance SOS', labelTa: '🚑 ஆம்புலன்ஸ் SOS', count: currentCityAmbulances.length },
             { id: 'puncture', labelEn: '🔧 Puncture & Tyre SOS', labelTa: '🔧 பஞ்சர் & டயர் SOS', count: punctureShops.length },
           ].map((cat) => {
             const isActive = activeCategory === cat.id;
@@ -1228,7 +1245,7 @@ export const AllServicesPage = () => {
                   textTransform: 'uppercase'
                 }}>
                   <span>🚨</span>
-                  <span>{lang === 'ta' ? 'தமிழ்நாடு அரசு 108 அவசர மருத்துவ உதவி' : 'Govt of Tamil Nadu • 24/7 Emergency Medical Response'}</span>
+                  <span>{lang === 'ta' ? '24/7 அவசர மருத்துவ உதவி சேவை' : '24/7 Emergency Medical Response & Priority Dispatch'}</span>
                 </div>
 
                 <h2 style={{
@@ -1238,7 +1255,7 @@ export const AllServicesPage = () => {
                   marginBottom: '0.65rem',
                   letterSpacing: '-0.02em'
                 }}>
-                  {lang === 'ta' ? 'அவசர ஆம்புலன்ஸ் 108 — 100% இலவசம் 24/7' : 'Toll-Free Emergency Ambulance 108'}
+                  {lang === 'ta' ? '24/7 அவசர ஆம்புலன்ஸ் — நேரடி உதவி' : '24/7 Priority Emergency Ambulance'}
                 </h2>
 
                 <p style={{
@@ -1248,13 +1265,13 @@ export const AllServicesPage = () => {
                   marginBottom: '1.5rem'
                 }}>
                   {lang === 'ta'
-                    ? 'மருத்துவ அவசர காலங்களில் மேப் தேட தேவையில்லை. உடனே 108 என்ற எண்ணை கட்டணமின்றி அழைத்து உங்கள் இருப்பிடத்திற்கு ஆம்புலன்ஸை வரவழைக்கவும்.'
-                    : 'Zero waiting and zero charges. Dial 108 immediately for priority emergency medical dispatch and rapid hospital transfer across your location.'}
+                    ? 'மருத்துவ அவசர காலங்களில் மேப் தேட தேவையில்லை. உடனே அவசர எண்ணை அழைத்து உங்கள் இருப்பிடத்திற்கு ஆம்புலன்ஸை வரவழைக்கவும்.'
+                    : 'Zero waiting. Dial verified emergency numbers immediately for priority medical dispatch and rapid hospital transfer across your location.'}
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
                   <a
-                    href="tel:108"
+                    href={`tel:${(currentCityAmbulances[0]?.phone || '+91 98427 12108').replace(/\s+/g, '')}`}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -1273,7 +1290,7 @@ export const AllServicesPage = () => {
                     onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
                   >
                     <PhoneCall size={20} strokeWidth={2.8} />
-                    <span>{lang === 'ta' ? 'உடனே 108 அழைக்க (இலவசம்)' : 'Call Toll-Free 108 Now'}</span>
+                    <span>{lang === 'ta' ? `உடனே அழைக்க: ${currentCityAmbulances[0]?.phone || '+91 98427 12108'}` : `Call Emergency: ${currentCityAmbulances[0]?.phone || '+91 98427 12108'}`}</span>
                   </a>
 
                   <button
@@ -1447,7 +1464,7 @@ export const AllServicesPage = () => {
                         borderRadius: '6px',
                         border: '1px solid #e2e8f0'
                       }}>
-                        {amb.isFree ? 'Emergency 108 Unit' : 'Advanced Cardiac ICU'}
+                        {amb.isFree ? 'Emergency Response Unit' : 'Advanced Cardiac ICU'}
                       </span>
                     </div>
 
@@ -1477,7 +1494,7 @@ export const AllServicesPage = () => {
                   {/* Call Actions */}
                   <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
                     <a
-                      href={`tel:${amb.phone}`}
+                      href={`tel:${(amb.phone || '').replace(/\s+/g, '')}`}
                       style={{
                         flex: 1,
                         display: 'inline-flex',
@@ -1503,7 +1520,7 @@ export const AllServicesPage = () => {
 
                     {amb.directPhone && amb.directPhone !== amb.phone && (
                       <a
-                        href={`tel:${amb.directPhone}`}
+                        href={`tel:${(amb.directPhone || '').replace(/\s+/g, '')}`}
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -1544,7 +1561,7 @@ export const AllServicesPage = () => {
                   <span>{lang === 'ta' ? '1. அமைதியாக இருங்கள்' : '1. Stay Calm & State Landmark'}</span>
                 </strong>
                 <p style={{ fontSize: '0.82rem', color: '#7f1d1d', margin: 0, lineHeight: 1.45 }}>
-                  {lang === 'ta' ? 'அழைக்கும் போது உங்கள் அருகிலுள்ள முக்கிய அடையாளம், தெரு பெயர் தெளிவாக கூறவும்.' : 'Provide the exact landmark, building name, and road to the 108 operator clearly.'}
+                  {lang === 'ta' ? 'அழைக்கும் போது உங்கள் அருகிலுள்ள முக்கிய அடையாளம், தெரு பெயர் தெளிவாக கூறவும்.' : 'Provide the exact landmark, building name, and road to the operator clearly.'}
                 </p>
               </div>
 
