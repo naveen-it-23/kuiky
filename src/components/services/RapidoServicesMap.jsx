@@ -203,19 +203,13 @@ export const RapidoServicesMap = ({
   return (
     <div 
       ref={mapContainerRef}
+      className="rapido-root-wrapper"
       style={{
-        width: '100%',
-        height: '100%',
-        minHeight: 0,
-        backgroundColor: '#ffffff',
         borderRadius: onClose ? 0 : '24px',
         border: onClose ? 'none' : '1.5px solid #e2e8f0',
-        overflow: 'hidden',
         boxShadow: onClose ? 'none' : '0 8px 32px rgba(15, 23, 42, 0.07)',
         marginBottom: onClose ? 0 : '3rem',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
+        position: 'relative'
       }}
     >
 
@@ -405,12 +399,12 @@ export const RapidoServicesMap = ({
         {/* ─── LEFT PANEL: BOOKING / SHOP CONTROLS SIDEBAR (ALWAYS SCROLLABLE) ─── */}
         <div className="rapido-sidebar-panel">
           {activeTab === 'auto' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+            <div className="rapido-sidebar-inner">
               {/* Header: Status */}
               <div style={{
                 backgroundColor: rideState === 'confirmed' || rideState === 'arrived' ? '#04784b' : '#f8fafc',
                 color: rideState === 'confirmed' || rideState === 'arrived' ? '#ffffff' : '#0f172a',
-                padding: '0.85rem 1.15rem',
+                padding: '0.8rem 1.1rem',
                 borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
@@ -443,90 +437,151 @@ export const RapidoServicesMap = ({
                 )}
               </div>
 
-              {/* Scrollable Body */}
-              <div style={{ padding: '1.15rem', paddingBottom: '3.5rem', overflowY: 'auto', flex: 1, minHeight: 0 }}>
+              {/* Sidebar Body (No inner scroll on mobile) */}
+              <div className="rapido-sidebar-scroll-body">
                 {/* STATE 1: IDLE / BOOKING FORM */}
                 {rideState === 'idle' && (
                   <div>
-                    {/* Location Picker */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1rem' }}>
-                      {/* Pickup */}
-                      <div>
-                        <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b', display: 'block', marginBottom: '0.25rem' }}>
-                          PICKUP LOCATION
-                        </label>
-                        <select
-                          value={pickupLoc.id}
-                          onChange={(e) => {
-                            const found = popularRideLocations.find(l => l.id === e.target.value);
-                            if (found) setPickupLoc(found);
-                          }}
-                          style={{
-                            width: '100%',
-                            padding: '0.6rem 0.85rem',
-                            borderRadius: '10px',
-                            border: '1.5px solid #cbd5e1',
-                            backgroundColor: '#f8fafc',
-                            fontSize: '0.88rem',
-                            fontWeight: 700,
-                            color: '#0f172a',
-                            outline: 'none'
-                          }}
-                        >
-                          {popularRideLocations.map((loc) => (
-                            <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
-                          ))}
-                        </select>
+                    {/* Modern Compact Route Selector */}
+                    <div style={{
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1.5px solid #e2e8f0',
+                      padding: '0.65rem 0.85rem',
+                      marginBottom: '0.85rem'
+                    }}>
+                      {/* Pickup Row */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <div style={{
+                          width: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          <span style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            backgroundColor: '#10b981',
+                            boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.2)'
+                          }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
+                            {lang === 'ta' ? 'தொடக்க இடம்' : 'Pickup Location'}
+                          </div>
+                          <select
+                            value={pickupLoc.id}
+                            onChange={(e) => {
+                              const found = popularRideLocations.find(l => l.id === e.target.value);
+                              if (found) setPickupLoc(found);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.3rem 0',
+                              border: 'none',
+                              backgroundColor: 'transparent',
+                              fontSize: '0.86rem',
+                              fontWeight: 700,
+                              color: '#0f172a',
+                              outline: 'none',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {popularRideLocations.map((loc) => (
+                              <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
 
-                      {/* Destination */}
-                      <div>
-                        <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b', display: 'block', marginBottom: '0.25rem' }}>
-                          DROP DESTINATION
-                        </label>
-                        <select
-                          value={dropLoc.id}
-                          onChange={(e) => {
-                            const found = popularRideLocations.find(l => l.id === e.target.value);
-                            if (found) setDropLoc(found);
-                          }}
-                          style={{
-                            width: '100%',
-                            padding: '0.6rem 0.85rem',
-                            borderRadius: '10px',
-                            border: '1.5px solid #cbd5e1',
-                            backgroundColor: '#f8fafc',
-                            fontSize: '0.88rem',
-                            fontWeight: 700,
-                            color: '#0f172a',
-                            outline: 'none'
-                          }}
-                        >
-                          {popularRideLocations.map((loc) => (
-                            <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
-                          ))}
-                        </select>
+                      {/* Subtle connecting dotted divider */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        margin: '0.2rem 0'
+                      }}>
+                        <div style={{
+                          width: '18px',
+                          display: 'flex',
+                          justifyContent: 'center'
+                        }}>
+                          <div style={{
+                            width: '2px',
+                            height: '12px',
+                            borderLeft: '2px dotted #cbd5e1'
+                          }} />
+                        </div>
+                        <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }} />
+                      </div>
+
+                      {/* Drop Destination Row */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <div style={{
+                          width: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          <span style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '2px',
+                            backgroundColor: '#ef4444',
+                            boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.2)'
+                          }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1 }}>
+                            {lang === 'ta' ? 'இலக்கு இடம்' : 'Drop Destination'}
+                          </div>
+                          <select
+                            value={dropLoc.id}
+                            onChange={(e) => {
+                              const found = popularRideLocations.find(l => l.id === e.target.value);
+                              if (found) setDropLoc(found);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.3rem 0',
+                              border: 'none',
+                              backgroundColor: 'transparent',
+                              fontSize: '0.86rem',
+                              fontWeight: 700,
+                              color: '#0f172a',
+                              outline: 'none',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {popularRideLocations.map((loc) => (
+                              <option key={loc.id} value={loc.id}>{loc.name} ({loc.zone})</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
 
                     {/* Auto Type Chooser */}
-                    <div style={{ marginBottom: '1rem' }}>
-                      <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b', marginBottom: '0.45rem', letterSpacing: '0.04em' }}>
-                        CHOOSE VEHICLE TYPE
+                    <div style={{ marginBottom: '0.85rem' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', marginBottom: '0.4rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                        {lang === 'ta' ? 'வாகனத்தை தேர்ந்தெடுக்கவும்' : 'Choose Vehicle Type'}
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.45rem' }}>
                         {/* Standard */}
                         <button
                           type="button"
                           onClick={() => setSelectedAutoType('standard')}
                           style={{
-                            padding: '0.5rem 0.35rem 0.6rem',
+                            padding: '0.45rem 0.25rem 0.5rem',
                             borderRadius: '12px',
                             border: selectedAutoType === 'standard' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'standard' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'standard' ? '0 4px 14px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'standard' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -536,11 +591,11 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '52px',
+                            height: '44px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.35rem',
+                            marginBottom: '0.25rem',
                             borderRadius: '8px',
                             backgroundColor: selectedAutoType === 'standard' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
@@ -552,7 +607,7 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0f172a' }}>Standard</div>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Standard</div>
                           <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
                             ₹{35 + Math.round(baseDistanceKm * 15)}
                           </div>
@@ -563,13 +618,13 @@ export const RapidoServicesMap = ({
                           type="button"
                           onClick={() => setSelectedAutoType('electric')}
                           style={{
-                            padding: '0.5rem 0.35rem 0.6rem',
+                            padding: '0.45rem 0.25rem 0.5rem',
                             borderRadius: '12px',
                             border: selectedAutoType === 'electric' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'electric' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'electric' ? '0 4px 14px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'electric' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -579,11 +634,11 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '52px',
+                            height: '44px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.35rem',
+                            marginBottom: '0.25rem',
                             borderRadius: '8px',
                             backgroundColor: selectedAutoType === 'electric' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
@@ -595,7 +650,7 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0f172a' }}>Eco EV</div>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Eco EV</div>
                           <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
                             ₹{30 + Math.round(baseDistanceKm * 12)}
                           </div>
@@ -606,13 +661,13 @@ export const RapidoServicesMap = ({
                           type="button"
                           onClick={() => setSelectedAutoType('cargo')}
                           style={{
-                            padding: '0.5rem 0.35rem 0.6rem',
+                            padding: '0.45rem 0.25rem 0.5rem',
                             borderRadius: '12px',
                             border: selectedAutoType === 'cargo' ? '2.5px solid #04784b' : '1.5px solid #e2e8f0',
                             backgroundColor: selectedAutoType === 'cargo' ? '#f0fdf4' : '#ffffff',
                             cursor: 'pointer',
                             textAlign: 'center',
-                            boxShadow: selectedAutoType === 'cargo' ? '0 4px 14px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
+                            boxShadow: selectedAutoType === 'cargo' ? '0 4px 12px rgba(4, 120, 75, 0.15)' : '0 1px 3px rgba(0,0,0,0.03)',
                             transition: 'all 0.15s ease',
                             display: 'flex',
                             flexDirection: 'column',
@@ -622,11 +677,11 @@ export const RapidoServicesMap = ({
                         >
                           <div style={{
                             width: '100%',
-                            height: '52px',
+                            height: '44px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginBottom: '0.35rem',
+                            marginBottom: '0.25rem',
                             borderRadius: '8px',
                             backgroundColor: selectedAutoType === 'cargo' ? '#ffffff' : '#f8fafc',
                             padding: '2px',
@@ -638,7 +693,7 @@ export const RapidoServicesMap = ({
                               style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                             />
                           </div>
-                          <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0f172a' }}>Cargo</div>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Cargo</div>
                           <div style={{ fontSize: '0.84rem', fontWeight: 900, color: '#04784b', marginTop: '1px' }}>
                             ₹{50 + Math.round(baseDistanceKm * 18)}
                           </div>
@@ -653,20 +708,21 @@ export const RapidoServicesMap = ({
                         width: '100%',
                         backgroundColor: '#04784b',
                         color: '#ffffff',
-                        padding: '0.85rem',
+                        padding: '0.78rem 1rem',
                         borderRadius: '12px',
                         border: 'none',
-                        fontSize: '0.96rem',
+                        fontSize: '0.94rem',
                         fontWeight: 800,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.5rem',
-                        boxShadow: '0 4px 14px rgba(4, 120, 75, 0.3)'
+                        boxShadow: '0 4px 14px rgba(4, 120, 75, 0.28)',
+                        transition: 'all 0.2s ease'
                       }}
                     >
-                      <span>Book Auto Ride • ₹{calculateFare()}</span>
+                      <span>{lang === 'ta' ? `ஆட்டோ முன்பதிவு செய் • ₹${calculateFare()}` : `Book Auto Ride • ₹${calculateFare()}`}</span>
                       <ChevronRight size={18} />
                     </button>
                   </div>
@@ -896,12 +952,12 @@ export const RapidoServicesMap = ({
             </div>
           ) : (
             /* PUNCTURE MODE SIDEBAR */
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+            <div className="rapido-sidebar-inner">
               {/* Header with Quick Filters */}
               <div style={{
                 backgroundColor: '#fffbeb',
                 borderBottom: '1px solid #fde68a',
-                padding: '0.85rem 1.15rem',
+                padding: '0.8rem 1.1rem',
                 flexShrink: 0
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
@@ -950,7 +1006,7 @@ export const RapidoServicesMap = ({
 
               {/* Body: Selected Puncture Shop Details */}
               {selectedPunctureShop && (
-                <div style={{ padding: '1.15rem', paddingBottom: '3.5rem', overflowY: 'auto', flex: 1, minHeight: 0 }}>
+                <div className="rapido-sidebar-scroll-body">
                   {sosState === 'idle' ? (
                     <div>
                       {/* Shop Name & Distance */}

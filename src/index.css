@@ -1056,6 +1056,17 @@ textarea {
 /* ========================================================
    Rapido Services Map - Split Sidebar + Map Viewport
    ======================================================== */
+.rapido-root-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background-color: #ffffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .rapido-layout-container {
   display: flex !important;
   flex-direction: row !important;
@@ -1084,6 +1095,21 @@ textarea {
   z-index: 20;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.04);
   -webkit-overflow-scrolling: touch;
+}
+
+.rapido-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.rapido-sidebar-scroll-body {
+  padding: 1.15rem;
+  padding-bottom: 3.5rem;
+  overflow-y: auto;
+  flex: 1 1 0%;
+  min-height: 0;
 }
 
 /* ========================================================
@@ -1124,12 +1150,21 @@ textarea {
   background-color: #e2e8f0;
 }
 
-/* Mobile & Tablet Responsive Layout */
+/* Mobile & Tablet Responsive Layout - No Nested Scrollbar */
 @media (max-width: 860px) {
+  .rapido-root-wrapper {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
   .rapido-layout-container {
     flex-direction: column !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    flex: none !important;
   }
 
   .rapido-sidebar-panel {
@@ -1139,17 +1174,35 @@ textarea {
     height: auto !important;
     min-height: auto !important;
     border-right: none !important;
-    border-bottom: 1px solid #e2e8f0 !important;
+    border-bottom: none !important;
     order: 2 !important; /* Sidebar / booking form below map */
+    overflow: visible !important;
     overflow-y: visible !important;
+    box-shadow: none !important;
+  }
+
+  .rapido-sidebar-inner {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  .rapido-sidebar-scroll-body {
+    padding: 0.9rem 1rem !important;
+    padding-bottom: 1.25rem !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    flex: none !important;
   }
 
   .rapido-map-viewport {
     width: 100% !important;
-    height: 270px !important;
-    min-height: 270px !important;
-    max-height: 300px !important;
-    flex: 0 0 270px !important;
+    height: 230px !important;
+    min-height: 230px !important;
+    max-height: 250px !important;
+    flex: 0 0 230px !important;
     order: 1 !important; /* Map on top so user sees live autos */
   }
 }
@@ -1173,7 +1226,9 @@ textarea {
 
 @media (max-width: 860px) {
   .rapido-embed-card {
-    height: 720px !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
     border-radius: 16px;
     margin-bottom: 2rem;
   }
