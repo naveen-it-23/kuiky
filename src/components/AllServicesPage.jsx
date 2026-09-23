@@ -680,7 +680,7 @@ export const AllServicesPage = () => {
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
                 gap: '1rem'
               }}>
                 {[
@@ -912,7 +912,7 @@ export const AllServicesPage = () => {
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: '1rem' }}>
                 {displayAutoDrivers.map((drv) => (
                   <div
                     key={drv.id}
@@ -1004,7 +1004,7 @@ export const AllServicesPage = () => {
               borderRadius: '1.25rem',
               padding: '1.5rem',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))',
               gap: '1rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
@@ -1149,7 +1149,7 @@ export const AllServicesPage = () => {
             {/* Breakdown SOS Options Grid */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
               gap: '1.25rem',
               marginBottom: '2rem'
             }}>
@@ -1409,7 +1409,7 @@ export const AllServicesPage = () => {
             {/* City Ambulances Directory Grid */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
               gap: '1.25rem',
               marginBottom: '2.5rem'
             }}>
@@ -1575,7 +1575,7 @@ export const AllServicesPage = () => {
               borderRadius: '1.25rem',
               padding: '1.75rem',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))',
               gap: '1.25rem'
             }}>
               <div>
@@ -1815,7 +1815,7 @@ export const AllServicesPage = () => {
               {/* Specs & Pricing Cards */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))',
                 gap: '0.85rem',
                 marginBottom: '1.75rem'
               }}>
@@ -1898,7 +1898,7 @@ export const AllServicesPage = () => {
                 }}>
                   {lang === 'ta' ? 'முக்கிய சிறப்பம்சங்கள்' : 'What is Included'}
                 </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.65rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: '0.65rem' }}>
                   {(lang === 'ta' ? selectedServiceModal.featuresTa : selectedServiceModal.featuresEn).map((feat, i) => (
                     <div 
                       key={i} 

@@ -1273,37 +1273,95 @@ textarea {
 
 @media (max-width: 640px) {
   .rapido-map-topbar {
-    padding: 0.5rem 0.65rem !important;
-    gap: 0.4rem !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .rapido-map-topbar::-webkit-scrollbar {
-    display: none;
-  }
-  .rapido-service-badge {
-    padding: 0.35rem 0.65rem !important;
-    font-size: 0.8rem !important;
+    padding: 0.45rem 0.6rem !important;
     gap: 0.35rem !important;
+    flex-wrap: nowrap !important;
+    overflow: visible !important;
+    justify-content: space-between !important;
+  }
+
+  /* Left side: badge */
+  .rapido-topbar-left {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 0.35rem !important;
+    overflow: hidden !important;
+  }
+
+  /* Right side: GPS + zoom — stay compact, never grow */
+  .rapido-topbar-right {
+    flex-shrink: 0 !important;
+    gap: 0.3rem !important;
+  }
+
+  /* Service badge container — shrink on mobile */
+  .rapido-service-badge {
+    padding: 0.3rem 0.5rem !important;
+    gap: 0.3rem !important;
     white-space: nowrap !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Hide the long title text on mobile — show only icon + pill */
+  .rapido-badge-title {
+    display: none !important;
+  }
+
+  /* Emoji icon stays */
+  .rapido-badge-icon {
+    font-size: 1.1rem !important;
     flex-shrink: 0 !important;
   }
+
+  /* Count/status pill */
+  .rapido-badge-pill {
+    font-size: 0.7rem !important;
+    padding: 0.18rem 0.5rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* GPS badge — hide text, show only dot on very small */
   .rapido-gps-badge {
-    padding: 0.35rem 0.55rem !important;
-    font-size: 0.74rem !important;
+    padding: 0.3rem 0.45rem !important;
+    font-size: 0.72rem !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
+    gap: 0.3rem !important;
   }
+  .rapido-gps-text {
+    display: none !important;
+  }
+
+  /* Zoom buttons */
   .rapido-zoom-btn {
-    width: 32px !important;
-    height: 32px !important;
+    width: 30px !important;
+    height: 30px !important;
     font-size: 0.85rem !important;
     flex-shrink: 0 !important;
   }
+
+  /* Driver label text on map markers */
   .driver-label-desktop {
     display: none !important;
+  }
+
+  /* Pickup/drop map marker font size */
+  .rapido-pickup-marker,
+  .rapido-drop-marker {
+    font-size: 0.68rem !important;
+    padding: 0.28rem 0.5rem !important;
+    gap: 0.2rem !important;
+  }
+
+  /* Floating zoom controls — move closer to edge */
+  .rapido-floating-map-controls {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    gap: 0.3rem !important;
   }
 }
 

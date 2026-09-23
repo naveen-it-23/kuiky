@@ -317,7 +317,7 @@ export const RapidoServicesMap = ({
         }}
       >
         {/* Left: Back Button & Mode Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+        <div className="rapido-topbar-left" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
           {onClose && (
             <button
               onClick={onClose}
@@ -343,10 +343,10 @@ export const RapidoServicesMap = ({
             </button>
           )}
 
-          {/* Dedicated Service Badge - Display only the active service's title */}
+          {/* Dedicated Service Badge - Auto Mode */}
           {activeTab === 'auto' && (
             <div 
-              className="rapido-service-badge"
+              className="rapido-service-badge rapido-service-badge-auto"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -361,11 +361,11 @@ export const RapidoServicesMap = ({
                 lineHeight: 1
               }}
             >
-              <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🛺</span>
-              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#065f46', whiteSpace: 'nowrap', lineHeight: 1 }}>
+              <span className="rapido-badge-icon" style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🛺</span>
+              <span className="rapido-badge-title" style={{ fontWeight: 800, fontSize: '0.92rem', color: '#065f46', whiteSpace: 'nowrap', lineHeight: 1 }}>
                 {lang === 'ta' ? 'ஆட்டோ முன்பதிவு & நேரலை' : 'Rapido Auto • Live Booking'}
               </span>
-              <span style={{
+              <span className="rapido-badge-pill" style={{
                 backgroundColor: '#04784b',
                 color: '#ffffff',
                 padding: '0.22rem 0.65rem',
@@ -385,9 +385,10 @@ export const RapidoServicesMap = ({
             </div>
           )}
 
+          {/* Dedicated Service Badge - Puncture Mode */}
           {activeTab === 'puncture' && (
             <div 
-              className="rapido-service-badge"
+              className="rapido-service-badge rapido-service-badge-puncture"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -402,11 +403,11 @@ export const RapidoServicesMap = ({
                 lineHeight: 1
               }}
             >
-              <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🔧</span>
-              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e', whiteSpace: 'nowrap', lineHeight: 1 }}>
+              <span className="rapido-badge-icon" style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🔧</span>
+              <span className="rapido-badge-title" style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e', whiteSpace: 'nowrap', lineHeight: 1 }}>
                 {lang === 'ta' ? 'பஞ்சர் கடைகள் (அருகில்)' : 'Nearby Tyre & Puncture Works'}
               </span>
-              <span style={{
+              <span className="rapido-badge-pill" style={{
                 backgroundColor: '#d97706',
                 color: '#ffffff',
                 padding: '0.22rem 0.65rem',
@@ -426,10 +427,51 @@ export const RapidoServicesMap = ({
             </div>
           )}
 
+          {/* Dedicated Service Badge - Ambulance Mode */}
+          {activeTab === 'ambulance' && (
+            <div 
+              className="rapido-service-badge rapido-service-badge-ambulance"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.55rem',
+                backgroundColor: '#fef2f2',
+                border: '1.5px solid #fecaca',
+                padding: '0.45rem 1rem',
+                borderRadius: '9999px',
+                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.12)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                lineHeight: 1
+              }}
+            >
+              <span className="rapido-badge-icon" style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🚑</span>
+              <span className="rapido-badge-title" style={{ fontWeight: 800, fontSize: '0.92rem', color: '#991b1b', whiteSpace: 'nowrap', lineHeight: 1 }}>
+                {lang === 'ta' ? 'அவசர ஆம்புலன்ஸ் நேரலை' : '24/7 Ambulance SOS Care'}
+              </span>
+              <span className="rapido-badge-pill" style={{
+                backgroundColor: '#dc2626',
+                color: '#ffffff',
+                padding: '0.22rem 0.65rem',
+                borderRadius: '9999px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+                lineHeight: 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexShrink: 0
+              }}>
+                <span>108 SOS</span>
+              </span>
+            </div>
+          )}
+
         </div>
 
         {/* Right: Live GPS Badge & Map Zoom controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+        <div className="rapido-topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
 
           <div 
             className="rapido-gps-badge"
@@ -458,7 +500,7 @@ export const RapidoServicesMap = ({
               animation: 'pulse 1.5s infinite',
               flexShrink: 0
             }} />
-            <span style={{ whiteSpace: 'nowrap', lineHeight: 1 }}>GPS: Erode Active</span>
+            <span className="rapido-gps-text" style={{ whiteSpace: 'nowrap', lineHeight: 1 }}>GPS: Erode Active</span>
           </div>
 
           <button
@@ -1457,7 +1499,7 @@ export const RapidoServicesMap = ({
         {/* ─── RIGHT PANEL: CLEAN, UNOBSTRUCTED LIVE MAP VIEWPORT ─── */}
         <div className="rapido-map-viewport">
           {/* Floating Map Zoom & Recenter Controls */}
-          <div style={{
+          <div className="rapido-floating-map-controls" style={{
             position: 'absolute',
             top: '1rem',
             right: '1rem',
@@ -1658,7 +1700,7 @@ export const RapidoServicesMap = ({
                 backgroundColor: activeTab === 'auto' ? 'rgba(4, 120, 75, 0.2)' : 'rgba(217, 119, 6, 0.2)',
                 animation: 'pulse 1.8s infinite'
               }} />
-              <div style={{
+              <div className="rapido-pickup-marker" style={{
                 backgroundColor: activeTab === 'auto' ? '#04784b' : '#dc2626',
                 color: '#ffffff',
                 padding: '0.4rem 0.75rem',
@@ -1688,7 +1730,7 @@ export const RapidoServicesMap = ({
                   pointerEvents: 'none'
                 }}
               >
-                <div style={{
+                <div className="rapido-drop-marker" style={{
                   backgroundColor: '#0284c7',
                   color: '#ffffff',
                   padding: '0.35rem 0.65rem',
