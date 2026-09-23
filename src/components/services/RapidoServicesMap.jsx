@@ -353,24 +353,34 @@ export const RapidoServicesMap = ({
                 gap: '0.55rem',
                 backgroundColor: '#ecfdf5',
                 border: '1.5px solid #a7f3d0',
-                padding: '0.5rem 1.15rem',
+                padding: '0.45rem 1rem',
                 borderRadius: '9999px',
-                boxShadow: '0 2px 8px rgba(4, 120, 75, 0.12)'
+                boxShadow: '0 2px 8px rgba(4, 120, 75, 0.12)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                lineHeight: 1
               }}
             >
-              <span style={{ fontSize: '1.25rem' }}>🛺</span>
-              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#065f46' }}>
+              <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🛺</span>
+              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#065f46', whiteSpace: 'nowrap', lineHeight: 1 }}>
                 {lang === 'ta' ? 'ஆட்டோ முன்பதிவு & நேரலை' : 'Rapido Auto • Live Booking'}
               </span>
               <span style={{
                 backgroundColor: '#04784b',
                 color: '#ffffff',
-                padding: '0.18rem 0.6rem',
+                padding: '0.22rem 0.65rem',
                 borderRadius: '9999px',
                 fontSize: '0.74rem',
-                fontWeight: 800
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+                lineHeight: 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexShrink: 0
               }}>
-                {onlineDrivers.length} Online
+                <span>{onlineDrivers.length}</span>
+                <span>Online</span>
               </span>
             </div>
           )}
@@ -384,24 +394,34 @@ export const RapidoServicesMap = ({
                 gap: '0.55rem',
                 backgroundColor: '#fffbeb',
                 border: '1.5px solid #fde68a',
-                padding: '0.5rem 1.15rem',
+                padding: '0.45rem 1rem',
                 borderRadius: '9999px',
-                boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
+                boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                lineHeight: 1
               }}
             >
-              <span style={{ fontSize: '1.25rem' }}>🔧</span>
-              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e' }}>
+              <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>🔧</span>
+              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400e', whiteSpace: 'nowrap', lineHeight: 1 }}>
                 {lang === 'ta' ? 'பஞ்சர் கடைகள் (அருகில்)' : 'Nearby Tyre & Puncture Works'}
               </span>
               <span style={{
                 backgroundColor: '#d97706',
                 color: '#ffffff',
-                padding: '0.18rem 0.6rem',
+                padding: '0.22rem 0.65rem',
                 borderRadius: '9999px',
                 fontSize: '0.74rem',
-                fontWeight: 800
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+                lineHeight: 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexShrink: 0
               }}>
-                {punctureShopsList.length} Spots
+                <span>{punctureShopsList.length}</span>
+                <span>Spots</span>
               </span>
             </div>
           )}
@@ -409,21 +429,24 @@ export const RapidoServicesMap = ({
         </div>
 
         {/* Right: Live GPS Badge & Map Zoom controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
 
           <div 
             className="rapido-gps-badge"
             style={{
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.45rem',
               backgroundColor: '#ecfdf5',
               border: '1px solid #a7f3d0',
               padding: '0.45rem 0.85rem',
               borderRadius: '9999px',
               fontSize: '0.82rem',
               fontWeight: 700,
-              color: '#065f46'
+              color: '#065f46',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              lineHeight: 1
             }}
           >
             <span style={{
@@ -432,9 +455,10 @@ export const RapidoServicesMap = ({
               borderRadius: '50%',
               backgroundColor: '#10b981',
               display: 'inline-block',
-              animation: 'pulse 1.5s infinite'
+              animation: 'pulse 1.5s infinite',
+              flexShrink: 0
             }} />
-            <span>GPS: Erode Active</span>
+            <span style={{ whiteSpace: 'nowrap', lineHeight: 1 }}>GPS: Erode Active</span>
           </div>
 
           <button

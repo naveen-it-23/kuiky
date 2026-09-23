@@ -876,10 +876,12 @@ export const AllServicesPage = () => {
                 borderRadius: '9999px',
                 fontSize: '0.8rem',
                 fontWeight: 700,
-                color: '#065f46'
+                color: '#065f46',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                <span>{autoDrivers.filter((d) => d.is_online !== false).length} {lang === 'ta' ? 'ஆட்டோக்கள் நேரலை தயார்' : 'Autos Active Nearby'}</span>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block', animation: 'pulse 1.5s infinite', flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>{autoDrivers.filter((d) => d.is_online !== false).length} {lang === 'ta' ? 'ஆட்டோக்கள் நேரலை தயார்' : 'Autos Active Nearby'}</span>
               </div>
             </div>
 

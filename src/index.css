@@ -1245,26 +1245,62 @@ textarea {
 }
 
 /* ========================================================
-   Mobile Alignment & Responsiveness Refinements
+   Rapido Topbar Badges & Mobile Alignment Refinements
    ======================================================== */
+.rapido-service-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+.rapido-service-badge * {
+  white-space: nowrap !important;
+}
+
+.rapido-gps-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+.rapido-gps-badge * {
+  white-space: nowrap !important;
+}
+
 @media (max-width: 640px) {
   .rapido-map-topbar {
-    padding: 0.6rem 0.75rem !important;
-    gap: 0.45rem !important;
+    padding: 0.5rem 0.65rem !important;
+    gap: 0.4rem !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .rapido-map-topbar::-webkit-scrollbar {
+    display: none;
   }
   .rapido-service-badge {
     padding: 0.35rem 0.65rem !important;
     font-size: 0.8rem !important;
     gap: 0.35rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
   .rapido-gps-badge {
     padding: 0.35rem 0.55rem !important;
     font-size: 0.74rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
   .rapido-zoom-btn {
     width: 32px !important;
     height: 32px !important;
     font-size: 0.85rem !important;
+    flex-shrink: 0 !important;
   }
   .driver-label-desktop {
     display: none !important;
