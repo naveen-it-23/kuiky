@@ -1903,86 +1903,146 @@ export const RapidoServicesMap = ({
 
 
 
-            {/* ─── PUNCTURE MODE: ONLY THE NEARBY PUNCTURE SHOP DRIVER ARRIVING (MATCHING AUTO SERVICE) ─── */}
-            {activeTab === 'puncture' && selectedPunctureShop && (
-              <div 
-                onClick={() => {
-                  setPreviewPunctureShop(selectedPunctureShop);
-                }}
-                style={{
-                  position: 'absolute',
-                  left: `${sosMechanicPos.x}%`,
-                  top: `${sosMechanicPos.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 35,
-                  cursor: 'pointer',
-                  transition: 'left 2.5s linear, top 2.5s linear'
-                }}
-                title="Click to view mechanic details from backend"
-              >
-                {/* Pulsing ring indicator */}
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '62px',
-                  height: '62px',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(217, 119, 6, 0.25)',
-                  animation: 'pulse 1.6s infinite',
-                  pointerEvents: 'none'
-                }} />
+            {/* ─── PUNCTURE MODE: ALL NEARBY SHOPS AS CLICKABLE MARKERS + SELECTED SHOP ARRIVING MECHANIC ─── */}
+            {activeTab === 'puncture' && (
+              <>
+                {/* Static shop markers for all OTHER shops (not the selected/dispatched one) */}
+                {punctureShopsList.filter(shop => shop.id !== selectedPunctureShop?.id).map((shop, idx) => {
+                  const pos = shop.mapPos || { x: 45 + idx * 8, y: 40 + idx * 6 };
+                  return (
+                    <div
+                      key={shop.id || idx}
+                      onClick={() => {
+                        setSelectedPunctureShop(shop);
+                        setPreviewPunctureShop(shop);
+                      }}
+                      style={{
+                        position: 'absolute',
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 22,
+                        cursor: 'pointer'
+                      }}
+                      title={`${shop.name} — tap to view details`}
+                    >
+                      {/* Static shop pin */}
+                      <div style={{
+                        backgroundColor: '#ffffff',
+                        border: '2.5px solid #f59e0b',
+                        borderRadius: '50%',
+                        width: '42px',
+                        height: '42px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 14px rgba(217, 119, 6, 0.28)',
+                        position: 'relative'
+                      }}>
+                        <span style={{ fontSize: '1.35rem' }}>🔧</span>
+                      </div>
+                      {/* Shop name badge */}
+                      <div style={{
+                        backgroundColor: 'rgba(255,255,255,0.95)',
+                        color: '#92400e',
+                        border: '1px solid #fde68a',
+                        padding: '0.18rem 0.45rem',
+                        borderRadius: '5px',
+                        fontSize: '0.66rem',
+                        fontWeight: 800,
+                        whiteSpace: 'nowrap',
+                        marginTop: '4px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                        textAlign: 'center'
+                      }}>
+                        {shop.name.split(' ').slice(0, 2).join(' ')} • {shop.distance}
+                      </div>
+                    </div>
+                  );
+                })}
 
-                {/* Mechanic Vehicle / Bike Icon Button */}
-                <div style={{
-                  backgroundColor: '#ffffff',
-                  border: '3px solid #d97706',
-                  borderRadius: '50%',
-                  width: '52px',
-                  height: '52px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 6px 20px rgba(217, 119, 6, 0.45)',
-                  position: 'relative'
-                }}>
-                  <span style={{ fontSize: '1.65rem' }}>🛵</span>
-                  {/* Status Online indicator */}
-                  <span style={{
-                    position: 'absolute',
-                    top: '2px',
-                    right: '2px',
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: '#22c55e',
-                    border: '2px solid #ffffff'
-                  }} />
-                </div>
+                {/* Moving mechanic for the SELECTED / dispatched shop */}
+                {selectedPunctureShop && (
+                  <div
+                    onClick={() => {
+                      setPreviewPunctureShop(selectedPunctureShop);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${sosMechanicPos.x}%`,
+                      top: `${sosMechanicPos.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 35,
+                      cursor: 'pointer',
+                      transition: 'left 2.5s linear, top 2.5s linear'
+                    }}
+                    title="Click to view mechanic details from backend"
+                  >
+                    {/* Pulsing ring indicator */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '62px',
+                      height: '62px',
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(217, 119, 6, 0.25)',
+                      animation: 'pulse 1.6s infinite',
+                      pointerEvents: 'none'
+                    }} />
 
-                {/* Live Badge: Mechanic Name & Arriving ETA */}
-                <div style={{
-                  backgroundColor: '#0f172a',
-                  color: '#ffffff',
-                  padding: '0.22rem 0.55rem',
-                  borderRadius: '6px',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  whiteSpace: 'nowrap',
-                  marginTop: '5px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.25)',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem'
-                }}>
-                  <span style={{ color: '#fbbf24' }}>🔧</span>
-                  <span>
-                    {(selectedPunctureShop.owner || selectedPunctureShop.name).split(' ')[0]} • {sosState === 'arrived' ? 'Arrived!' : `${sosEta}s ETA`}
-                  </span>
-                </div>
-              </div>
+                    {/* Mechanic Vehicle / Bike Icon Button */}
+                    <div style={{
+                      backgroundColor: '#ffffff',
+                      border: '3px solid #d97706',
+                      borderRadius: '50%',
+                      width: '52px',
+                      height: '52px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 6px 20px rgba(217, 119, 6, 0.45)',
+                      position: 'relative'
+                    }}>
+                      <span style={{ fontSize: '1.65rem' }}>🛵</span>
+                      {/* Status Online indicator */}
+                      <span style={{
+                        position: 'absolute',
+                        top: '2px',
+                        right: '2px',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: '#22c55e',
+                        border: '2px solid #ffffff'
+                      }} />
+                    </div>
+
+                    {/* Live Badge: Mechanic Name & Arriving ETA */}
+                    <div style={{
+                      backgroundColor: '#0f172a',
+                      color: '#ffffff',
+                      padding: '0.22rem 0.55rem',
+                      borderRadius: '6px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      whiteSpace: 'nowrap',
+                      marginTop: '5px',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.25)',
+                      textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.3rem'
+                    }}>
+                      <span style={{ color: '#fbbf24' }}>🔧</span>
+                      <span>
+                        {(selectedPunctureShop.owner || selectedPunctureShop.name).split(' ')[0]} • {sosState === 'arrived' ? 'Arrived!' : `${sosEta}s ETA`}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
 
@@ -2191,12 +2251,24 @@ export const RapidoServicesMap = ({
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
                   <span style={{
-                    backgroundColor: String(previewPunctureShop.status || '').includes('Closed') ? '#f1f5f9' : '#fef3c7',
-                    color: String(previewPunctureShop.status || '').includes('Closed') ? '#64748b' : '#b45309',
+                    backgroundColor: (
+                      previewPunctureShop.id === selectedPunctureShop?.id && sosState === 'dispatched'
+                    ) ? '#d97706' : (
+                      String(previewPunctureShop.status || '').includes('Closed') ? '#f1f5f9' : '#fef3c7'
+                    ),
+                    color: (
+                      previewPunctureShop.id === selectedPunctureShop?.id && sosState === 'dispatched'
+                    ) ? '#ffffff' : (
+                      String(previewPunctureShop.status || '').includes('Closed') ? '#64748b' : '#b45309'
+                    ),
                     fontSize: '0.66rem', fontWeight: 800,
                     padding: '0.15rem 0.45rem', borderRadius: '9999px', whiteSpace: 'nowrap'
                   }}>
-                    {sosState === 'dispatched' ? `🛵 Dispatched` : (previewPunctureShop.status || 'Open 24/7')}
+                    {(previewPunctureShop.id === selectedPunctureShop?.id && sosState === 'dispatched')
+                      ? '🛵 En Route'
+                      : (previewPunctureShop.id === selectedPunctureShop?.id && sosState === 'arrived')
+                      ? '✅ Arrived'
+                      : (previewPunctureShop.status || 'Open 24/7')}
                   </span>
                   <button
                     type="button"
@@ -2356,32 +2428,61 @@ export const RapidoServicesMap = ({
                   </a>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMapCenterOrigin(sosMechanicPos);
-                    setMapZoom(1.6);
-                  }}
-                  style={{
-                    flex: 1.1,
-                    backgroundColor: '#d97706',
-                    color: '#ffffff',
-                    border: 'none',
-                    height: '35px',
-                    borderRadius: '8px',
-                    fontWeight: 800,
-                    fontSize: '0.76rem',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.25)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.25rem'
-                  }}
-                >
-                  <span>📍 Focus</span>
-                </button>
+                {previewPunctureShop.id === selectedPunctureShop?.id ? (
+                  /* Already dispatched — focus on the moving mechanic */
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMapCenterOrigin(sosMechanicPos);
+                      setMapZoom(1.6);
+                      setPreviewPunctureShop(null);
+                    }}
+                    style={{
+                      flex: 1.1,
+                      backgroundColor: '#d97706',
+                      color: '#ffffff',
+                      border: 'none',
+                      height: '35px',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.76rem',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(217, 119, 6, 0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.25rem'
+                    }}
+                  >
+                    <span>📍 Track Mechanic</span>
+                  </button>
+                ) : (
+                  /* Not yet dispatched — dispatch this mechanic */
+                  <button
+                    type="button"
+                    onClick={() => handleRequestDoorstepSos(previewPunctureShop)}
+                    style={{
+                      flex: 1.1,
+                      backgroundColor: '#0f172a',
+                      color: '#ffffff',
+                      border: 'none',
+                      height: '35px',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.76rem',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 8px rgba(15, 23, 42, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.25rem'
+                    }}
+                  >
+                    <span>🛵 Dispatch Mechanic</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
