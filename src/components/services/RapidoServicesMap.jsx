@@ -49,6 +49,7 @@ export const RapidoServicesMap = ({
   // ─── AUTO BOOKING STATE ───
   const [pickupLoc, setPickupLoc] = useState(popularRideLocations[4]); // Brough Road Market
   const [dropLoc, setDropLoc] = useState(popularRideLocations[1]); // Railway Junction
+  const [selectedAutoType, setSelectedAutoType] = useState(initialAutoType || 'standard'); // 'standard' | 'electric' | 'cargo'
   const [driversList, setDriversList] = useState(autoDrivers);
   const [isLoadingDrivers, setIsLoadingDrivers] = useState(false);
   const [rideState, setRideState] = useState('idle'); // 'idle' | 'searching' | 'confirmed' | 'arrived' | 'completed'
