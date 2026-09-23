@@ -8,22 +8,43 @@ export const locationsList = [
 ];
 
 export const popularRideLocations = [
-  { id: 'loc-1', name: 'Erode Bus Stand', nameTa: 'ஈரோடு பேருந்து நிலையம்', pos: { x: 52, y: 28 }, zone: 'Central' },
-  { id: 'loc-2', name: 'Erode Railway Junction', nameTa: 'ஈரோடு ரயில் நிலையம்', pos: { x: 56, y: 64 }, zone: 'South' },
-  { id: 'loc-3', name: 'Collector Office & GH', nameTa: 'ஆட்சியர் அலுவலகம் & அரசு மருத்துவமனை', pos: { x: 44, y: 56 }, zone: 'South-West' },
-  { id: 'loc-4', name: 'Perundurai Road Corner', nameTa: 'பெருந்துறை ரோடு கார்னர்', pos: { x: 34, y: 44 }, zone: 'West' },
-  { id: 'loc-5', name: 'Brough Road Market', nameTa: 'பிரா ரோடு மார்க்கெட்', pos: { x: 51, y: 42 }, zone: 'Central' },
-  { id: 'loc-6', name: 'Veerappanchatiram Circle', nameTa: 'வீரப்பஞ்சத்திரம் வட்டம்', pos: { x: 42, y: 32 }, zone: 'North' }
+  { id: 'loc-1', name: 'Erode Bus Stand', nameTa: 'ஈரோடு பேருந்து நிலையம்', pos: { x: 52, y: 28 }, zone: 'Central', latitude: 11.3485, longitude: 77.7280 },
+  { id: 'loc-2', name: 'Erode Railway Junction', nameTa: 'ஈரோடு ரயில் நிலையம்', pos: { x: 56, y: 64 }, zone: 'South', latitude: 11.3280, longitude: 77.7300 },
+  { id: 'loc-3', name: 'Collector Office & GH', nameTa: 'ஆட்சியர் அலுவலகம் & அரசு மருத்துவமனை', pos: { x: 44, y: 56 }, zone: 'South-West', latitude: 11.3340, longitude: 77.7120 },
+  { id: 'loc-4', name: 'Perundurai Road Corner', nameTa: 'பெருந்துறை ரோடு கார்னர்', pos: { x: 34, y: 44 }, zone: 'West', latitude: 11.3320, longitude: 77.6950 },
+  { id: 'loc-5', name: 'Brough Road Market', nameTa: 'பிரா ரோடு மார்க்கெட்', pos: { x: 51, y: 42 }, zone: 'Central', latitude: 11.3410, longitude: 77.7172 },
+  { id: 'loc-6', name: 'Veerappanchatiram Circle', nameTa: 'வீரப்பஞ்சத்திரம் வட்டம்', pos: { x: 42, y: 32 }, zone: 'North', latitude: 11.3650, longitude: 77.7120 }
 ];
 
+// Aligned with Django Admin 'Add driver location' Model fields:
+// - driver_name (CharField)
+// - phone (CharField)
+// - vehicle_type (ForeignKey / ChoiceField)
+// - latitude (DecimalField / FloatField)
+// - longitude (DecimalField / FloatField)
+// - eta_text (CharField)
+// - is_online (BooleanField)
+// - updated_at (DateTimeField)
 export const autoDrivers = [
   {
     id: 'auto-1',
+    // Django Backend Model Fields:
+    driver_name: 'Ramesh Kumar',
+    phone: '+91 94438 12345',
+    vehicle_type: 'standard',
+    latitude: 11.3485,
+    longitude: 77.7280,
+    eta_text: '2 mins away',
+    is_online: true,
+    updated_at: '2026-09-23T06:00:00Z',
+
+    // UI Backwards-Compatibility Fields:
     name: 'Ramesh Kumar',
+    nameEn: 'Ramesh Kumar',
     nameTa: 'ரமேஷ் குமார்',
     stand: 'Erode Bus Stand Stand #2',
     standTa: 'ஈரோடு பேருந்து நிலையம் ஆட்டோ சங்கம் #2',
-    phone: '+91 94438 12345',
+    vehicle: 'Passenger Auto (3 Seater)',
     vehicleNo: 'TN 36 AX 4582',
     type: 'Passenger Auto (3 Seater)',
     typeKey: 'standard',
@@ -45,11 +66,23 @@ export const autoDrivers = [
   },
   {
     id: 'auto-2',
+    // Django Backend Model Fields:
+    driver_name: 'Senthil Nathan',
+    phone: '+91 98427 67890',
+    vehicle_type: 'electric',
+    latitude: 11.3410,
+    longitude: 77.7172,
+    eta_text: '4 mins away',
+    is_online: true,
+    updated_at: '2026-09-23T06:00:00Z',
+
+    // UI Backwards-Compatibility Fields:
     name: 'Senthil Nathan',
+    nameEn: 'Senthil Nathan',
     nameTa: 'செந்தில் நாதன்',
     stand: 'Brough Road Eco Stand',
     standTa: 'பிரா ரோடு எலக்ட்ரிக் ஆட்டோ சங்கம்',
-    phone: '+91 98427 67890',
+    vehicle: 'Electric Auto (Eco 4 Seater)',
     vehicleNo: 'TN 36 BY 1120',
     type: 'Electric Auto (Eco 4 Seater)',
     typeKey: 'electric',
@@ -70,11 +103,23 @@ export const autoDrivers = [
   },
   {
     id: 'auto-3',
+    // Django Backend Model Fields:
+    driver_name: 'Murugan K',
+    phone: '+91 97880 54321',
+    vehicle_type: 'cargo',
+    latitude: 11.3280,
+    longitude: 77.7300,
+    eta_text: '6 mins away',
+    is_online: true,
+    updated_at: '2026-09-23T06:00:00Z',
+
+    // UI Backwards-Compatibility Fields:
     name: 'Murugan K',
+    nameEn: 'Murugan K',
     nameTa: 'முருகன் K',
     stand: 'Erode Railway Junction Stand',
     standTa: 'ஈரோடு ரயில் நிலையம் ஆட்டோ சங்கம்',
-    phone: '+91 97880 54321',
+    vehicle: 'Cargo & Parcel Auto (500kg)',
     vehicleNo: 'TN 36 CZ 8901',
     type: 'Cargo & Parcel Auto (500kg)',
     typeKey: 'cargo',
@@ -96,11 +141,23 @@ export const autoDrivers = [
   },
   {
     id: 'auto-4',
+    // Django Backend Model Fields:
+    driver_name: 'Vigneshwaran P',
+    phone: '+91 98941 23456',
+    vehicle_type: 'standard',
+    latitude: 11.3320,
+    longitude: 77.6950,
+    eta_text: '3 mins away',
+    is_online: true,
+    updated_at: '2026-09-23T06:00:00Z',
+
+    // UI Backwards-Compatibility Fields:
     name: 'Vigneshwaran P',
+    nameEn: 'Vigneshwaran P',
     nameTa: 'விக்னேஸ்வரன் P',
     stand: 'Perundurai Road Express Stand',
     standTa: 'பெருந்துறை ரோடு எக்ஸ்பிரஸ் சங்கம்',
-    phone: '+91 98941 23456',
+    vehicle: 'Passenger Auto (3 Seater)',
     vehicleNo: 'TN 36 EA 6742',
     type: 'Passenger Auto (3 Seater)',
     typeKey: 'standard',

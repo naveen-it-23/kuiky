@@ -32,7 +32,7 @@ import contactMapImg from '../../assets/contact_map_erode_hd.png';
 import vehicleAutoStandardImg from '../../assets/vehicles/vehicle_auto_standard.jpg';
 import vehicleAutoElectricImg from '../../assets/vehicles/vehicle_auto_electric.jpg';
 import vehicleAutoCargoImg from '../../assets/vehicles/vehicle_auto_cargo.jpg';
-import { createBookingApi } from '../../config/api';
+import { createBookingApi, fetchDriverLocationsApi, latLngToMapPos } from '../../config/api';
 
 export const RapidoServicesMap = ({ 
   initialMode = 'auto', 
@@ -49,7 +49,8 @@ export const RapidoServicesMap = ({
   // ─── AUTO BOOKING STATE ───
   const [pickupLoc, setPickupLoc] = useState(popularRideLocations[4]); // Brough Road Market
   const [dropLoc, setDropLoc] = useState(popularRideLocations[1]); // Railway Junction
-  const [selectedAutoType, setSelectedAutoType] = useState(initialAutoType || 'standard'); // 'standard' | 'electric' | 'cargo'
+  const [driversList, setDriversList] = useState(autoDrivers);
+  const [isLoadingDrivers, setIsLoadingDrivers] = useState(false);
   const [rideState, setRideState] = useState('idle'); // 'idle' | 'searching' | 'confirmed' | 'arrived' | 'completed'
   const [assignedDriver, setAssignedDriver] = useState(null);
   const [driverPos, setDriverPos] = useState({ x: 54, y: 32 });
@@ -57,6 +58,29 @@ export const RapidoServicesMap = ({
   const [rideOtp, setRideOtp] = useState('4829');
   const [liveBooking, setLiveBooking] = useState(null);
   const [isBookingApi, setIsBookingApi] = useState(false);
+
+  // Fetch driver locations from Django backend (/api/driver-locations/)
+  useEffect(() => {
+    let isMounted = true;
+    const loadDrivers = async () => {
+      setIsLoadingDrivers(true);
+      try {
+        const data = await fetchDriverLocationsApi();
+        if (isMounted && data && data.length > 0) {
+          setDriversList(data);
+        }
+      } catch (err) {
+        console.warn('[RapidoServicesMap] fetchDriverLocationsApi warning:', err);
+      } finally {
+        if (isMounted) setIsLoadingDrivers(false);
+      }
+    };
+    loadDrivers();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Filter only drivers where is_online === true (matching Django backend field)
+  const onlineDrivers = driversList.filter((d) => d.is_online !== false);
 
   // ─── PUNCTURE STATE ───
   const [selectedPunctureShop, setSelectedPunctureShop] = useState(punctureShops[0]);
@@ -94,9 +118,12 @@ export const RapidoServicesMap = ({
     const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
     setRideOtp(generatedOtp);
 
-    // Filter available driver matching auto type
-    const matchingDrivers = autoDrivers.filter(d => d.typeKey === selectedAutoType);
-    const chosenDriver = matchingDrivers.length > 0 ? matchingDrivers[0] : autoDrivers[0];
+    // Filter available online driver matching backend vehicle_type
+    const matchingDrivers = onlineDrivers.filter((d) => {
+      const vType = String(d.vehicle_type || d.typeKey || '').toLowerCase();
+      return vType.includes(selectedAutoType) || d.typeKey === selectedAutoType;
+    });
+    const chosenDriver = matchingDrivers.length > 0 ? matchingDrivers[0] : (onlineDrivers[0] || driversList[0]);
 
     const cleanPhone = (currentUser?.phone || '7810054614').replace(/[^0-9]/g, '').slice(-10);
     const fareVal = calculateFare();
@@ -109,7 +136,7 @@ export const RapidoServicesMap = ({
         pickup_address: `${pickupLoc.name}, Erode`,
         destination_address: `${dropLoc.name}, Erode`,
         estimated_fare: `${fareVal}.00`,
-        notes: `Auto Booking [${selectedAutoType.toUpperCase()}] • Driver: ${chosenDriver.name} (${chosenDriver.vehicleNo}) • OTP: ${generatedOtp}`
+        notes: `Auto Booking [${selectedAutoType.toUpperCase()}] • Driver: ${chosenDriver.driver_name || chosenDriver.name} (${chosenDriver.vehicleNo}) • Phone: ${chosenDriver.phone} • GPS: ${chosenDriver.latitude}, ${chosenDriver.longitude} • OTP: ${generatedOtp}`
       });
 
       if (res?.booking) {
@@ -282,7 +309,7 @@ export const RapidoServicesMap = ({
                 fontSize: '0.74rem',
                 fontWeight: 800
               }}>
-                {autoDrivers.length} Online
+                {onlineDrivers.length} Online
               </span>
             </div>
           )}
@@ -829,12 +856,20 @@ export const RapidoServicesMap = ({
                         </div>
                         <div>
                           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.98rem' }}>
-                            {assignedDriver.name}
+                            {assignedDriver.driver_name || assignedDriver.name}
                           </div>
-                          <div style={{ fontSize: '0.78rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <div style={{ fontSize: '0.78rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
                             <span>⭐ {assignedDriver.rating}</span>
                             <span>•</span>
                             <span>{assignedDriver.experience}</span>
+                            {assignedDriver.latitude && assignedDriver.longitude && (
+                              <>
+                                <span>•</span>
+                                <span style={{ color: '#04784b', fontWeight: 600 }}>
+                                  📍 {Number(assignedDriver.latitude).toFixed(4)}, {Number(assignedDriver.longitude).toFixed(4)}
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1426,9 +1461,9 @@ export const RapidoServicesMap = ({
             {/* ─── AUTO MODE: NEARBY AUTO RICKSHAWS PLOTTED ON MAP ─── */}
             {activeTab === 'auto' && (
               <>
-                {autoDrivers.map((driver) => {
+                {onlineDrivers.map((driver) => {
                   const isAssigned = assignedDriver && assignedDriver.id === driver.id;
-                  const pos = isAssigned ? driverPos : driver.mapPos;
+                  const pos = isAssigned ? driverPos : (driver.mapPos || latLngToMapPos(driver.latitude, driver.longitude));
 
                   return (
                     <div
@@ -1460,13 +1495,13 @@ export const RapidoServicesMap = ({
                       }}>
                         <img
                           src={
-                            driver.typeKey === 'electric'
+                            driver.typeKey === 'electric' || (driver.vehicle_type && String(driver.vehicle_type).toLowerCase().includes('elec'))
                               ? vehicleAutoElectricImg
-                              : driver.typeKey === 'cargo'
+                              : driver.typeKey === 'cargo' || (driver.vehicle_type && String(driver.vehicle_type).toLowerCase().includes('carg'))
                               ? vehicleAutoCargoImg
                               : vehicleAutoStandardImg
                           }
-                          alt={driver.name}
+                          alt={driver.driver_name || driver.name}
                           style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                         />
                         {isAssigned && (
@@ -1503,11 +1538,11 @@ export const RapidoServicesMap = ({
                         }}
                       >
                         {isAssigned ? (
-                          `Driver: ${driver.name.split(' ')[0]}`
+                          `Driver: ${(driver.driver_name || driver.name).split(' ')[0]}`
                         ) : (
                           <>
-                            <span className="driver-label-desktop">{driver.name.split(' ')[0]} • </span>
-                            <span>{driver.eta}</span>
+                            <span className="driver-label-desktop">{(driver.driver_name || driver.name).split(' ')[0]} • </span>
+                            <span>{driver.eta_text || driver.eta}</span>
                           </>
                         )}
                       </div>

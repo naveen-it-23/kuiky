@@ -420,18 +420,23 @@ export const AllServicesPage = () => {
 
   ];
 
-  // Contextual search filter for drivers on the Auto tab
-  const displayAutoDrivers = autoDrivers.filter((drv) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase().trim();
-    return (
-      (drv.nameEn && drv.nameEn.toLowerCase().includes(q)) ||
-      (drv.nameTa && drv.nameTa.toLowerCase().includes(q)) ||
-      (drv.vehicle && drv.vehicle.toLowerCase().includes(q)) ||
-      (drv.stand && drv.stand.toLowerCase().includes(q)) ||
-      (drv.standTa && drv.standTa.toLowerCase().includes(q))
-    );
-  });
+  // Contextual search filter for online drivers on the Auto tab
+  const displayAutoDrivers = autoDrivers
+    .filter((drv) => drv.is_online !== false)
+    .filter((drv) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        (drv.driver_name && drv.driver_name.toLowerCase().includes(q)) ||
+        (drv.nameEn && drv.nameEn.toLowerCase().includes(q)) ||
+        (drv.nameTa && drv.nameTa.toLowerCase().includes(q)) ||
+        (drv.vehicle && drv.vehicle.toLowerCase().includes(q)) ||
+        (drv.vehicle_type && String(drv.vehicle_type).toLowerCase().includes(q)) ||
+        (drv.phone && drv.phone.toLowerCase().includes(q)) ||
+        (drv.stand && drv.stand.toLowerCase().includes(q)) ||
+        (drv.standTa && drv.standTa.toLowerCase().includes(q))
+      );
+    });
 
   // Contextual search filter for ambulances on the Ambulance tab
   const baseCityAmbulances = ambulancesByCity[selectedCity] || ambulancesByCity.erode;
@@ -862,7 +867,7 @@ export const AllServicesPage = () => {
                 color: '#065f46'
               }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                <span>{autoDrivers.length} {lang === 'ta' ? 'ஆட்டோக்கள் நேரலை தயார்' : 'Autos Active Nearby'}</span>
+                <span>{autoDrivers.filter((d) => d.is_online !== false).length} {lang === 'ta' ? 'ஆட்டோக்கள் நேரலை தயார்' : 'Autos Active Nearby'}</span>
               </div>
             </div>
 
@@ -909,7 +914,7 @@ export const AllServicesPage = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>
-                        {lang === 'ta' ? drv.nameTa : drv.nameEn}
+                        {lang === 'ta' ? (drv.nameTa || drv.driver_name) : (drv.driver_name || drv.nameEn || drv.name)}
                       </strong>
                       <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#d97706' }}>
                         ★ {drv.rating}
@@ -942,8 +947,12 @@ export const AllServicesPage = () => {
                         />
                       </div>
                       <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                        <div style={{ fontWeight: 700, color: '#0f172a' }}>{drv.vehicle} • {drv.vehicleNo}</div>
-                        <div>📍 {lang === 'ta' ? drv.standTa : drv.stand} ({drv.trips} {lang === 'ta' ? 'சவாரிகள்' : 'trips'})</div>
+                        <div style={{ fontWeight: 700, color: '#0f172a' }}>
+                          {drv.vehicle || drv.vehicle_type || drv.type} • {drv.vehicleNo}
+                        </div>
+                        <div>
+                          📍 {lang === 'ta' ? drv.standTa : drv.stand} • <span style={{ color: '#04784b', fontWeight: 700 }}>{drv.eta_text || drv.eta}</span>
+                        </div>
                       </div>
                     </div>
 

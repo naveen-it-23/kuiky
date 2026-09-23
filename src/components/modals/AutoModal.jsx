@@ -9,6 +9,7 @@ export const AutoModal = () => {
   const [destination, setDestination] = useState('Erode Road Junction');
   const [autoType, setAutoType] = useState('standard');
   const [bookedDriver, setBookedDriver] = useState(null);
+  const activeDrivers = autoDrivers.filter((d) => d.is_online !== false);
 
   if (activeModal !== 'auto') return null;
 
@@ -169,11 +170,11 @@ export const AutoModal = () => {
 
             {/* Drivers List */}
             <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.85rem' }}>
-              Nearby Available Auto Drivers ({autoDrivers.length})
+              Nearby Available Auto Drivers ({activeDrivers.length})
             </h4>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              {autoDrivers.map((driver) => (
+              {activeDrivers.map((driver) => (
                 <div
                   key={driver.id}
                   style={{
@@ -188,10 +189,10 @@ export const AutoModal = () => {
                 >
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>
-                      {lang === 'ta' ? driver.nameTa : driver.name}
+                      {lang === 'ta' ? (driver.nameTa || driver.driver_name) : (driver.driver_name || driver.name)}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                      {lang === 'ta' ? driver.standTa : driver.stand} • <span style={{ color: '#d97706', fontWeight: 600 }}>{driver.eta}</span>
+                      {lang === 'ta' ? driver.standTa : driver.stand} • <span style={{ color: '#d97706', fontWeight: 600 }}>{driver.eta_text || driver.eta}</span>
                     </div>
                     <div style={{ fontSize: '0.78rem', color: '#10b981', fontWeight: 700, marginTop: '2px' }}>
                       ★ {driver.rating} ({driver.experience})
