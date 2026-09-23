@@ -1199,10 +1199,10 @@ textarea {
 
   .rapido-map-viewport {
     width: 100% !important;
-    height: 290px !important;
-    min-height: 290px !important;
-    max-height: 320px !important;
-    flex: 0 0 290px !important;
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 420px !important;
+    flex: 0 0 360px !important;
     order: 1 !important; /* Map on top so user sees live autos */
   }
 }
@@ -1274,14 +1274,16 @@ textarea {
 /* Driver Preview Card */
 .rapido-driver-preview-card {
   box-sizing: border-box !important;
+  max-height: calc(100% - 0.75rem) !important;
+  overflow-y: auto !important;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 @media (max-width: 480px) {
   .rapido-driver-preview-card {
-    width: calc(100% - 0.9rem) !important;
-    padding: 0.6rem 0.7rem !important;
-    bottom: 0.45rem !important;
+    width: calc(100% - 0.75rem) !important;
+    padding: 0.55rem 0.65rem !important;
+    bottom: 0.35rem !important;
   }
 }
 

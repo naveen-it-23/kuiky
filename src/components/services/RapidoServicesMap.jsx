@@ -2155,14 +2155,14 @@ export const RapidoServicesMap = ({
               className="rapido-driver-preview-card"
               style={{
                 position: 'absolute',
-                bottom: '0.65rem',
+                bottom: '0.45rem',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 backgroundColor: '#ffffff',
-                borderRadius: '1.1rem',
-                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.22)',
+                borderRadius: '1rem',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.22)',
                 border: '2px solid #d97706',
-                padding: '0.8rem 0.9rem',
+                padding: '0.6rem 0.75rem',
                 zIndex: 60,
                 width: 'calc(100% - 1.25rem)',
                 maxWidth: '380px',
@@ -2170,42 +2170,42 @@ export const RapidoServicesMap = ({
               }}
             >
               {/* Header Row: shop name + status + close */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.5rem', gap: '0.45rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', minWidth: 0, flex: 1 }}>
                   <div style={{
-                    width: '36px', height: '36px', borderRadius: '50%',
+                    width: '32px', height: '32px', borderRadius: '50%',
                     backgroundColor: '#fef3c7', border: '1.5px solid #d97706',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.2rem', flexShrink: 0
+                    fontSize: '1.1rem', flexShrink: 0
                   }}>
                     🔧
                   </div>
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.25 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {previewPunctureShop.name}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.66rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       Owner: <strong style={{ color: '#0f172a' }}>{previewPunctureShop.owner}</strong> • {previewPunctureShop.distance}
                     </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
                   <span style={{
                     backgroundColor: String(previewPunctureShop.status || '').includes('Closed') ? '#f1f5f9' : '#fef3c7',
                     color: String(previewPunctureShop.status || '').includes('Closed') ? '#64748b' : '#b45309',
-                    fontSize: '0.68rem', fontWeight: 800,
-                    padding: '0.18rem 0.48rem', borderRadius: '9999px', whiteSpace: 'nowrap'
+                    fontSize: '0.66rem', fontWeight: 800,
+                    padding: '0.15rem 0.45rem', borderRadius: '9999px', whiteSpace: 'nowrap'
                   }}>
-                    {sosState === 'dispatched' ? `🛵 Dispatched (${sosEta}s)` : (previewPunctureShop.status || 'Open 24/7')}
+                    {sosState === 'dispatched' ? `🛵 Dispatched` : (previewPunctureShop.status || 'Open 24/7')}
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewPunctureShop(null)}
                     style={{
                       background: '#f1f5f9', border: 'none',
-                      width: '26px', height: '26px', borderRadius: '50%',
+                      width: '24px', height: '24px', borderRadius: '50%',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', color: '#64748b', fontSize: '0.8rem', flexShrink: 0,
+                      cursor: 'pointer', color: '#64748b', fontSize: '0.75rem', flexShrink: 0,
                       fontWeight: 700
                     }}
                     title="Close preview"
@@ -2213,21 +2213,21 @@ export const RapidoServicesMap = ({
                 </div>
               </div>
 
-              {/* Info Grid: Clean rows with zero clipping */}
+              {/* Info Grid: Compact, zero clipping */}
               <div style={{
                 backgroundColor: '#fffbeb',
                 border: '1px solid #fde68a',
                 borderRadius: '8px',
-                padding: '0.55rem 0.75rem',
-                marginBottom: '0.55rem',
-                fontSize: '0.75rem'
+                padding: '0.45rem 0.65rem',
+                marginBottom: '0.45rem',
+                fontSize: '0.74rem'
               }}>
                 {/* Row 1: GPS on left, ETA badge on right */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem', marginBottom: '0.35rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', minWidth: 0 }}>
-                    <span style={{ color: '#d97706', fontSize: '0.78rem', flexShrink: 0 }}>📍</span>
-                    <span style={{ color: '#92400e', fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>GPS:</span>
-                    <span style={{ fontWeight: 800, color: '#b45309', fontSize: '0.74rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <span style={{ color: '#d97706', fontSize: '0.75rem', flexShrink: 0 }}>📍</span>
+                    <span style={{ color: '#92400e', fontSize: '0.64rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>GPS:</span>
+                    <span style={{ fontWeight: 800, color: '#b45309', fontSize: '0.72rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {Number(previewPunctureShop.latitude || 11.3410).toFixed(4)}, {Number(previewPunctureShop.longitude || 77.7172).toFixed(4)}
                     </span>
                   </div>
@@ -2235,10 +2235,10 @@ export const RapidoServicesMap = ({
                     backgroundColor: '#ffffff',
                     color: '#b45309',
                     border: '1px solid #fde68a',
-                    padding: '0.15rem 0.45rem',
-                    borderRadius: '6px',
+                    padding: '0.12rem 0.4rem',
+                    borderRadius: '5px',
                     fontWeight: 800,
-                    fontSize: '0.7rem',
+                    fontSize: '0.68rem',
                     whiteSpace: 'nowrap',
                     flexShrink: 0
                   }}>
@@ -2246,55 +2246,58 @@ export const RapidoServicesMap = ({
                   </div>
                 </div>
 
-                {/* Row 2: Full-width Address (Never truncated or cramped!) */}
-                <div style={{ marginBottom: '0.4rem' }}>
-                  <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                {/* Row 2: Address */}
+                <div style={{ marginBottom: '0.35rem' }}>
+                  <div style={{ color: '#92400e', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Address
                   </div>
-                  <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.76rem', lineHeight: '1.25' }}>
+                  <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.74rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {previewPunctureShop.address || 'Erode, Tamil Nadu'}
                   </div>
                 </div>
 
                 {/* Row 3: Phone on left + Rate/Rating on right */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '0.4rem', alignItems: 'center' }}>
                   <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                    <div style={{ color: '#92400e', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Phone
                     </div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.76rem', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.74rem', whiteSpace: 'nowrap' }}>
                       {previewPunctureShop.phone}
                     </div>
                   </div>
                   <div>
-                    <div style={{ color: '#92400e', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '2px' }}>
+                    <div style={{ color: '#92400e', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Est. Rate / Rating
                     </div>
-                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.74rem', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
                       ⭐ {previewPunctureShop.rating} • {previewPunctureShop.priceEstimate || '₹60 - ₹120'}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Services Badges row from Backend (Wrapped cleanly, NEVER cut off) */}
+              {/* Services Badges row: 1 neat row */}
               {Array.isArray(previewPunctureShop.services) && previewPunctureShop.services.length > 0 && (
                 <div style={{
                   display: 'flex',
-                  gap: '0.35rem',
-                  flexWrap: 'wrap',
-                  marginBottom: '0.6rem'
+                  gap: '0.3rem',
+                  overflow: 'hidden',
+                  marginBottom: '0.45rem',
+                  flexWrap: 'nowrap'
                 }}>
-                  {previewPunctureShop.services.slice(0, 3).map((srv, idx) => (
+                  {previewPunctureShop.services.slice(0, 2).map((srv, idx) => (
                     <span key={idx} style={{
                       backgroundColor: '#fffbeb',
                       color: '#92400e',
                       border: '1px solid #fde68a',
-                      fontSize: '0.66rem',
+                      fontSize: '0.64rem',
                       fontWeight: 700,
-                      padding: '0.15rem 0.45rem',
-                      borderRadius: '6px',
-                      whiteSpace: 'nowrap'
+                      padding: '0.12rem 0.4rem',
+                      borderRadius: '4px',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden'
                     }}>
                       ✓ {srv.replace(/Repair|Assistance/gi, '').trim()}
                     </span>
@@ -2303,18 +2306,18 @@ export const RapidoServicesMap = ({
               )}
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.45rem' }}>
+              <div style={{ display: 'flex', gap: '0.4rem' }}>
                 <a
                   href={`tel:${previewPunctureShop.phone}`}
                   style={{
                     flex: 1,
                     backgroundColor: '#f1f5f9',
                     color: '#0f172a',
-                    height: '38px',
+                    height: '35px',
                     borderRadius: '8px',
                     textAlign: 'center',
                     fontWeight: 700,
-                    fontSize: '0.78rem',
+                    fontSize: '0.76rem',
                     textDecoration: 'none',
                     display: 'flex',
                     alignItems: 'center',
@@ -2336,11 +2339,11 @@ export const RapidoServicesMap = ({
                       flex: 1,
                       backgroundColor: '#22c55e',
                       color: '#ffffff',
-                      height: '38px',
+                      height: '35px',
                       borderRadius: '8px',
                       textAlign: 'center',
                       fontWeight: 700,
-                      fontSize: '0.78rem',
+                      fontSize: '0.76rem',
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -2360,11 +2363,11 @@ export const RapidoServicesMap = ({
                     setMapZoom(1.6);
                   }}
                   style={{
-                    flex: 1.15,
+                    flex: 1.1,
                     backgroundColor: '#d97706',
                     color: '#ffffff',
                     border: 'none',
-                    height: '38px',
+                    height: '35px',
                     borderRadius: '8px',
                     fontWeight: 800,
                     fontSize: '0.76rem',
