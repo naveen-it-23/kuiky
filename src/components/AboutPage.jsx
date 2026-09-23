@@ -1,16 +1,115 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Zap, ShieldCheck, Users, Target, Eye, Heart, User, MapPin } from 'lucide-react';
 import aboutPhoneMockup from '../assets/about_phone_mockup.jpg';
 import aboutCommunityTrio from '../assets/about_community_trio.jpg';
 import aboutHeroVehicles from '../assets/about_hero_vehicles_ditto.png';
+import heroExactDitto from '../assets/hero_exact_ditto_2x.png';
 
-export const AboutPage = () => {
-  const { navigateTo } = useLanguage();
+export const AboutPage = ({ isEmbedded = false }) => {
+  const { navigateTo, currentPage, lang } = useLanguage();
+  const showHeroBanner = !isEmbedded && currentPage === 'about';
+
+  useEffect(() => {
+    if (!isEmbedded && currentPage === 'about') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage, isEmbedded]);
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh', overflowX: 'hidden' }}>
       
+      {/* ─── TOP HERO BANNER: EXACT DITTO IMAGE (WITHOUT SLIDING) ─── */}
+      {showHeroBanner && (
+        <section 
+          className="hero-slider-wrap"
+          style={{
+            position: 'relative',
+            width: '100%',
+            backgroundColor: '#f8fafc',
+            borderBottom: '1px solid #e2e8f0',
+            overflow: 'hidden',
+            boxSizing: 'border-box',
+            WebkitTapHighlightColor: 'transparent',
+            outline: 'none',
+            userSelect: 'none'
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '1440px',
+              margin: '0 auto',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Static Single Frame - Exact Ditto Image */}
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '2048 / 868',
+              userSelect: 'none'
+            }}>
+              <img
+                src={heroExactDitto}
+                alt="Kuiky - Need Help? We're Just a Tap Away."
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  aspectRatio: '2048 / 868',
+                  display: 'block',
+                  userSelect: 'none',
+                  pointerEvents: 'none'
+                }}
+              />
+
+              {/* Interactive Clickable Hotspots */}
+              <div
+                onClick={() => navigateTo('services', 'auto')}
+                title="Click to explore Kuiky Services"
+                style={{
+                  position: 'absolute', left: '2.5%', top: '12%', width: '42%', height: '76%',
+                  cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                  backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                  WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+                }}
+              />
+              <div
+                onClick={() => navigateTo('services', 'ambulance')}
+                title="🚑 Click to Book Emergency Ambulance"
+                style={{
+                  position: 'absolute', left: '44.5%', top: '30%', width: '19.2%', height: '54%',
+                  cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                  backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                  WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+                }}
+              />
+              <div
+                onClick={() => navigateTo('services', 'auto')}
+                title="🛺 Click to Book Passenger / Cargo Auto"
+                style={{
+                  position: 'absolute', left: '63.8%', top: '40%', width: '16%', height: '46%',
+                  cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                  backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                  WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+                }}
+              />
+              <div
+                onClick={() => navigateTo('services', 'puncture')}
+                title="🔧 Click to Call Tyre & Puncture Repair"
+                style={{
+                  position: 'absolute', left: '80%', top: '46%', width: '17%', height: '47%',
+                  cursor: 'pointer', zIndex: 10, borderRadius: '16px',
+                  backgroundColor: 'transparent', outline: 'none', border: 'none', boxShadow: 'none',
+                  WebkitTapHighlightColor: 'transparent', userSelect: 'none'
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ─── SECTION 1: HERO / BANNER ─── */}
       <section className="about-section about-hero-section" style={{
         padding: '3rem 1.5rem 3.5rem',

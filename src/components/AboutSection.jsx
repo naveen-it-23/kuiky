@@ -4,7 +4,7 @@ import { AboutPage } from './AboutPage';
 export const AboutSection = () => {
   return (
     <div id="about">
-      <AboutPage />
+      <AboutPage isEmbedded={true} />
     </div>
   );
 };
