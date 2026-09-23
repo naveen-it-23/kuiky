@@ -10,6 +10,7 @@ import { AllServicesPage } from './components/AllServicesPage';
 import { ProfilePage } from './components/ProfilePage';
 import { AboutPage } from './components/AboutPage';
 import { ContactPage } from './components/ContactPage';
+import { HowItWorksPage } from './components/HowItWorksPage';
 import { Footer } from './components/Footer';
 import { AutoModal } from './components/modals/AutoModal';
 import { AmbulanceModal } from './components/modals/AmbulanceModal';
@@ -66,6 +67,8 @@ function AppContent() {
           <AboutPage />
         ) : currentPage === 'contact' ? (
           <ContactPage />
+        ) : currentPage === 'how-it-works' ? (
+          <HowItWorksPage />
         ) : (
           <>
             <Hero />

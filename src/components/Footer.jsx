@@ -187,7 +187,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => navigateToAnchor('about', 'About')}
+                  onClick={() => navigateTo('about')}
                   style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.84rem', cursor: 'pointer', padding: 0, textAlign: 'left', transition: 'color 0.2s ease' }}
                   onMouseOver={(e) => e.currentTarget.style.color = '#10a349'}
                   onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}
@@ -197,7 +197,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button
-                  onClick={() => navigateToAnchor('how-it-works', 'How It Works')}
+                  onClick={() => navigateTo('how-it-works')}
                   style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.84rem', cursor: 'pointer', padding: 0, textAlign: 'left', transition: 'color 0.2s ease' }}
                   onMouseOver={(e) => e.currentTarget.style.color = '#10a349'}
                   onMouseOut={(e) => e.currentTarget.style.color = '#94a3b8'}

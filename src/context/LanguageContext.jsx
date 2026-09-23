@@ -50,6 +50,9 @@ export const LanguageProvider = ({ children }) => {
     if (h === '#contact') {
       return { page: 'contact', category: 'auto' };
     }
+    if (h === '#how-it-works' || h === '#howitworks') {
+      return { page: 'how-it-works', category: 'auto' };
+    }
     return { page: 'home', category: 'auto' };
   };
 
@@ -140,6 +143,8 @@ export const LanguageProvider = ({ children }) => {
       window.location.hash = '#about';
     } else if (page === 'contact') {
       window.location.hash = '#contact';
+    } else if (page === 'how-it-works' || page === 'howItWorks') {
+      window.location.hash = '#how-it-works';
     } else {
       window.location.hash = '#home';
     }

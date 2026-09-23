@@ -190,26 +190,41 @@ export const Navbar = () => {
           </div>
 
           {/* How It Works */}
-          <button 
-            onClick={() => navigateToAnchor('how-it-works', 'How It Works')}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontWeight: 600,
-              color: '#1e293b',
-              fontSize: '0.92rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              height: '100%',
-              transition: 'color 0.2s ease',
-              cursor: 'pointer',
-              padding: 0
-            }}
-            onMouseOver={(e) => e.currentTarget.style.color = '#04784b'}
-            onMouseOut={(e) => e.currentTarget.style.color = '#1e293b'}
-          >
-            How It Works
-          </button>
+          <div style={{ position: 'relative', height: '100%', display: 'inline-flex', alignItems: 'center' }}>
+            <button 
+              onClick={() => navigateTo('how-it-works')}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontWeight: currentPage === 'how-it-works' ? 700 : 600,
+                color: currentPage === 'how-it-works' ? '#04784b' : '#1e293b',
+                fontSize: '0.92rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                height: '100%',
+                transition: 'color 0.2s ease',
+                cursor: 'pointer',
+                padding: 0
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = '#04784b'}
+              onMouseOut={(e) => {
+                if (currentPage !== 'how-it-works') e.currentTarget.style.color = '#1e293b';
+              }}
+            >
+              How It Works
+            </button>
+            {currentPage === 'how-it-works' && (
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                borderRadius: '9999px',
+                backgroundColor: '#04784b'
+              }} />
+            )}
+          </div>
 
           {/* Contact */}
           <div style={{ position: 'relative', height: '100%', display: 'inline-flex', alignItems: 'center' }}>
@@ -645,7 +660,7 @@ export const Navbar = () => {
                       { label: '🏠 Home', action: () => { navigateTo('home'); setMobileMenuOpen(false); }, active: currentPage === 'home' },
                       { label: '⚡ Services', action: () => { navigateTo('services', 'auto'); setMobileMenuOpen(false); }, active: currentPage === 'services' },
                       { label: 'ℹ️ About', action: () => { navigateTo('about'); setMobileMenuOpen(false); }, active: currentPage === 'about' },
-                      { label: '🔄 How It Works', action: () => { navigateToAnchor('how-it-works', 'How It Works'); setMobileMenuOpen(false); }, active: false },
+                      { label: '🔄 How It Works', action: () => { navigateTo('how-it-works'); setMobileMenuOpen(false); }, active: currentPage === 'how-it-works' },
                       { label: '📞 Contact', action: () => { navigateTo('contact'); setMobileMenuOpen(false); }, active: currentPage === 'contact' },
                     ].map((item) => (
                       <button
